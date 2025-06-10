@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { SearchInterface } from '@/components/SearchInterface';
 import { FilterSidebar } from '@/components/FilterSidebar';
@@ -7,9 +6,8 @@ import { ChatInterface } from '@/components/ChatInterface';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import { AppSidebar } from '@/components/AppSidebar';
-import { Scale, MessageSquare, Search } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Scale, MessageSquare, Search, Filter } from 'lucide-react';
 
 export interface SearchFilters {
   tipo_digesto?: string[];
@@ -136,68 +134,109 @@ const Index = () => {
   };
 
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-background">
-        <AppSidebar filters={filters} onFiltersChange={setFilters} />
-        <main className="flex-1 flex flex-col">
-          <header className="border-b bg-card p-4">
-            <div className="flex items-center gap-4">
-              <SidebarTrigger />
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2">
-                  <Scale className="h-6 w-6 text-primary" />
-                  <h1 className="text-2xl font-bold">Digesto Jurídico</h1>
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  Sistema de búsqueda semántica de documentos legales
-                </div>
+    <div className="min-h-screen flex w-full bg-background">
+      <main className="flex-1 flex flex-col">
+        <header className="border-b bg-card p-4">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <Scale className="h-6 w-6 text-primary" />
+                <h1 className="text-2xl font-bold">Digesto Jurídico</h1>
+              </div>
+              <div className="text-sm text-muted-foreground">
+                Sistema de búsqueda semántica de documentos legales
               </div>
             </div>
-          </header>
-
-          <div className="flex-1 p-6">
-            <Tabs value={activeMode} onValueChange={(value) => setActiveMode(value as 'search' | 'chat')} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 max-w-md">
-                <TabsTrigger value="search" className="flex items-center gap-2">
-                  <Search className="h-4 w-4" />
-                  Búsqueda
-                </TabsTrigger>
-                <TabsTrigger value="chat" className="flex items-center gap-2">
-                  <MessageSquare className="h-4 w-4" />
-                  Chat IA
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="search" className="space-y-6">
-                <Card className="p-6">
-                  <SearchInterface
-                    query={query}
-                    onQueryChange={setQuery}
-                    mode="RESULTS_ONLY"
-                    onModeChange={setMode}
-                    onSearch={handleSearch}
-                    isLoading={isLoading}
-                  />
-                </Card>
-
-                {results.length > 0 && (
-                  <ResultsDisplay results={results} />
-                )}
-              </TabsContent>
-
-              <TabsContent value="chat" className="space-y-6">
-                <ChatInterface
-                  sessionId={sessionId}
-                  filters={filters}
-                  onSearch={handleSearch}
-                  isLoading={isLoading}
-                />
-              </TabsContent>
-            </Tabs>
           </div>
-        </main>
-      </div>
-    </SidebarProvider>
+        </header>
+
+        <div className="flex-1 p-6">
+          <Tabs value={activeMode} onValueChange={(value) => setActiveMode(value as 'search' | 'chat')} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 max-w-md">
+              <TabsTrigger value="search" className="flex items-center gap-2">
+                <Search className="h-4 w-4" />
+                Búsqueda
+              </TabsTrigger>
+              <TabsTrigger value="chat" className="flex items-center gap-2">
+                <MessageSquare className="h-4 w-4" />
+                Chat IA
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="search" className="space-y-6">
+              <Card className="p-6">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="flex-1">
+                    <SearchInterface
+                      query={query}
+                      onQueryChange={setQuery}
+                      mode="RESULTS_ONLY"
+                      onModeChange={setMode}
+                      onSearch={handleSearch}
+                      isLoading={isLoading}
+                    />
+                  </div>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" className="flex items-center gap-2">
+                        <Filter className="h-4 w-4" />
+                        Filtros
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80 p-0" align="end">
+                      <div className="border-b p-4">
+                        <h3 className="font-semibold text-lg">Filtros de Búsqueda</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Refina tu búsqueda con filtros específicos
+                        </p>
+                      </div>
+                      <div className="max-h-96 overflow-y-auto">
+                        <FilterSidebar filters={filters} onFiltersChange={setFilters} />
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </Card>
+
+              {results.length > 0 && (
+                <ResultsDisplay results={results} />
+              )}
+            </TabsContent>
+
+            <TabsContent value="chat" className="space-y-6">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="flex-1" />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="flex items-center gap-2">
+                      <Filter className="h-4 w-4" />
+                      Filtros
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-80 p-0" align="end">
+                    <div className="border-b p-4">
+                      <h3 className="font-semibold text-lg">Filtros de Búsqueda</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Refina tu búsqueda con filtros específicos
+                      </p>
+                    </div>
+                    <div className="max-h-96 overflow-y-auto">
+                      <FilterSidebar filters={filters} onFiltersChange={setFilters} />
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <ChatInterface
+                sessionId={sessionId}
+                filters={filters}
+                onSearch={handleSearch}
+                isLoading={isLoading}
+              />
+            </TabsContent>
+          </Tabs>
+        </div>
+      </main>
+    </div>
   );
 };
 
