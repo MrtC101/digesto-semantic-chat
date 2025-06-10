@@ -151,61 +151,19 @@ const Index = () => {
         </header>
 
         <div className="flex-1 p-6">
-          <Tabs value={activeMode} onValueChange={(value) => setActiveMode(value as 'search' | 'chat')} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 max-w-md">
-              <TabsTrigger value="search" className="flex items-center gap-2">
-                <Search className="h-4 w-4" />
-                Búsqueda
-              </TabsTrigger>
-              <TabsTrigger value="chat" className="flex items-center gap-2">
-                <MessageSquare className="h-4 w-4" />
-                Chat IA
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="search" className="space-y-6">
-              <Card className="p-6">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="flex-1">
-                    <SearchInterface
-                      query={query}
-                      onQueryChange={setQuery}
-                      mode="RESULTS_ONLY"
-                      onModeChange={setMode}
-                      onSearch={handleSearch}
-                      isLoading={isLoading}
-                    />
-                  </div>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button variant="outline" className="flex items-center gap-2">
-                        <Filter className="h-4 w-4" />
-                        Filtros
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-80 p-0" align="end">
-                      <div className="border-b p-4">
-                        <h3 className="font-semibold text-lg">Filtros de Búsqueda</h3>
-                        <p className="text-sm text-muted-foreground">
-                          Refina tu búsqueda con filtros específicos
-                        </p>
-                      </div>
-                      <div className="max-h-96 overflow-y-auto">
-                        <FilterSidebar filters={filters} onFiltersChange={setFilters} />
-                      </div>
-                    </PopoverContent>
-                  </Popover>
-                </div>
-              </Card>
-
-              {results.length > 0 && (
-                <ResultsDisplay results={results} />
-              )}
-            </TabsContent>
-
-            <TabsContent value="chat" className="space-y-6">
+          <div className="w-full space-y-6">
+            <Card className="p-6">
               <div className="flex items-center gap-4 mb-4">
-                <div className="flex-1" />
+                <div className="flex-1">
+                  <SearchInterface
+                    query={query}
+                    onQueryChange={setQuery}
+                    mode="RESULTS_ONLY"
+                    onModeChange={setMode}
+                    onSearch={handleSearch}
+                    isLoading={isLoading}
+                  />
+                </div>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button variant="outline" className="flex items-center gap-2">
@@ -226,14 +184,12 @@ const Index = () => {
                   </PopoverContent>
                 </Popover>
               </div>
-              <ChatInterface
-                sessionId={sessionId}
-                filters={filters}
-                onSearch={handleSearch}
-                isLoading={isLoading}
-              />
-            </TabsContent>
-          </Tabs>
+            </Card>
+
+            {results.length > 0 && (
+              <ResultsDisplay results={results} />
+            )}
+          </div>
         </div>
       </main>
     </div>
