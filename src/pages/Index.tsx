@@ -60,8 +60,7 @@ const Index = () => {
 
     setIsLoading(true);
     try {
-      // Here you would replace with your actual API endpoint
-      const apiUrl = 'YOUR_API_ENDPOINT_HERE';
+      const apiUrl = 'https://10.1.136.87/normita/api/v1/chat/from_contenidos';
       const params = new URLSearchParams({
         query_str: query,
         mode: mode,
@@ -94,40 +93,32 @@ const Index = () => {
         params.append('limit', filters.limit.toString());
       }
 
-      // Mock response for demonstration
-      // Replace this with actual fetch call
-      const mockResponse: ApiResponse = {
-        status: 'OK',
-        generated_response: mode === 'GENERATE' ? 'Esta es una respuesta generada por el LLM basada en los documentos encontrados...' : undefined,
-        results: [
-          {
-            tipo_digesto: 'LEYES',
-            ddganio: 2019,
-            ddgnro: 12,
-            ddgtitulo: 'Normativa de construcción',
-            ddgsumario: 'Normativa de construcción segura en zonas sísmicas',
-            estado_digesto: 'VIGENTE',
-            estado: 'PUBLICADO',
-            tipo_publicacion: 'PUBLICO',
-            ddgnormasrelacionadas: 'DEROGA DECRETO XXXX/XX',
-            ddgfechaalta: '2019-06-12',
-            ddgfechasancion: '2019-06-12',
-            ddgfechapublicacion: '2019-06-12',
-            ddgfechapromulgacion: '2019-06-12',
-            ddgfechaderogacion: null,
-            chunk: 'Visto: que es necesario establecer normativas claras para la construcción en zonas sísmicas y Considerando: que la seguridad de las construcciones es fundamental...',
-            page: 1
-          }
-        ]
-      };
+      const fullUrl = `${apiUrl}?${params.toString()}`;
+      console.log('Making API request to:', fullUrl);
 
-      setResults(mockResponse.results);
-      if (mockResponse.generated_response) {
-        setGeneratedResponse(mockResponse.generated_response);
+      const response = await fetch(fullUrl);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data: ApiResponse = await response.json();
+      
+      console.log('API response:', data);
+      
+      if (data.status === 'OK') {
+        setResults(data.results);
+        if (data.generated_response) {
+          setGeneratedResponse(data.generated_response);
+        }
+      } else {
+        console.error('API returned error status:', data);
+        // Handle error appropriately
       }
 
     } catch (error) {
       console.error('Error searching:', error);
+      // Handle error appropriately - you might want to show a toast notification
     } finally {
       setIsLoading(false);
     }
