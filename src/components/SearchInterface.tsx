@@ -7,8 +7,8 @@ import { Search } from 'lucide-react';
 interface SearchInterfaceProps {
   query: string;
   onQueryChange: (query: string) => void;
-  mode: 'RESULTS_ONLY' | 'GENERATE';
-  onModeChange: (mode: 'RESULTS_ONLY' | 'GENERATE') => void;
+  mode: 'GENERATE'  | 'RESULTS_ONLY';
+  onModeChange: (mode: 'GENERATE'  | 'RESULTS_ONLY') => void;
   onSearch: () => void;
   isLoading: boolean;
 }

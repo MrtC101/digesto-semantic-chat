@@ -4,12 +4,14 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { SearchResult } from '@/pages/Index';
 import { Calendar, FileText, BookOpen } from 'lucide-react';
-
+import { v4 as uuidv4 } from 'uuid';
+import { marked } from 'marked';
 interface ResultsDisplayProps {
   results: SearchResult[];
 }
 
 export const ResultsDisplay = ({ results }: ResultsDisplayProps) => {
+  console.log(results)
   const getStatusColor = (estado: string) => {
     switch (estado) {
       case 'VIGENTE':
@@ -49,18 +51,31 @@ export const ResultsDisplay = ({ results }: ResultsDisplayProps) => {
       return dateString;
     }
   };
-
+  console.log("result: ", results)
   return (
     <div className="space-y-4">
+
+      <div className="flex items-start p-6">
+        <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-6xl">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4 border-b pb-2">
+            Respuesta IA
+          </h1>
+            <div className="text-gray-800 text-base leading-relaxed" dangerouslySetInnerHTML={{__html: marked(results[0]?.generated_response)}} />
+        </div>
+      </div>
+      
+
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">
-          Resultados de búsqueda ({results.length})
+          Resultados de búsqueda
         </h2>
       </div>
 
       <div className="space-y-4">
-        {results.map((result, index) => (
-          <Card key={index} className="hover:shadow-md transition-shadow">
+        {results.map((entrie, index) => (
+        <div key={uuidv4()}>
+         {entrie.results.map((result) => 
+          <Card key={uuidv4()} className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
@@ -149,8 +164,11 @@ export const ResultsDisplay = ({ results }: ResultsDisplayProps) => {
                 )}
               </div>
             </CardContent>
-          </Card>
-        ))}
+          </Card>)}
+          )
+      </div>
+        ))
+      }
       </div>
     </div>
   );

@@ -8,6 +8,14 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+     proxy: {
+      '/api': {
+         target: 'https://10.1.136.87',
+          changeOrigin: true,
+          secure: false,
+          rewrite: path => path.replace(/^\/api/, '/normita/api/v1/chat/from_contenidos')
+      },
+    },
   },
   plugins: [
     react(),

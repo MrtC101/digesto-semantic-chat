@@ -8,6 +8,8 @@ import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Scale, MessageSquare, Search, Filter } from 'lucide-react';
+import axios from 'axios';
+import https from 'https';
 
 export interface SearchFilters {
   tipo_digesto?: string[];
@@ -48,19 +50,23 @@ export interface ApiResponse {
 const Index = () => {
   const [activeMode, setActiveMode] = useState<'search' | 'chat'>('search');
   const [query, setQuery] = useState('');
-  const [mode, setMode] = useState<'RESULTS_ONLY' | 'GENERATE'>('RESULTS_ONLY');
+  const [mode, setMode] = useState<'RESULTS_ONLY' | 'GENERATE'>('GENERATE');
   const [filters, setFilters] = useState<SearchFilters>({});
   const [results, setResults] = useState<SearchResult[]>([]);
   const [generatedResponse, setGeneratedResponse] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [sessionId] = useState(`session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
-
+  const [info, setInfo] = useState([])
   const handleSearch = async () => {
     if (!query.trim()) return;
 
     setIsLoading(true);
+  //  const httpsAgent = new https.Agent({ rejectUnauthorized: false });
     try {
-      const apiUrl = 'https://10.1.136.87/normita/api/v1/chat/from_contenidos';
+      const apiUrl = '/api';
+      /*axios.post(apiUrl)
+      .then(res => setResults([res.data]))
+      .catch(err => console.error(err));*/
       const params = new URLSearchParams({
         query_str: query,
         mode: mode,
@@ -96,9 +102,18 @@ const Index = () => {
       const fullUrl = `${apiUrl}?${params.toString()}`;
       console.log('Making API request to:', fullUrl);
 
-      const response = await fetch(fullUrl);
+      //const response = await fetch(fullUrl);
+
+      try {
+        const response = await axios.post(fullUrl);
+        console.log("abc:", response); // ✅ Aquí ves el response completo
+        setResults([response.data]);   // ✅ Guardas solo los datos que necesitas
+      } catch (err) {
+        console.error(err);
+      }
       
-      if (!response.ok) {
+      console.log("sdasdasd: ",results)
+      /*if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
@@ -114,7 +129,7 @@ const Index = () => {
       } else {
         console.error('API returned error status:', data);
         // Handle error appropriately
-      }
+      }*/
 
     } catch (error) {
       console.error('Error searching:', error);
@@ -132,7 +147,7 @@ const Index = () => {
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
                 <Scale className="h-6 w-6 text-primary" />
-                <h1 className="text-2xl font-bold">Digesto Jurídico</h1>
+                <h1 className="text-2xl font-bold">Normita</h1>
               </div>
               <div className="text-sm text-muted-foreground">
                 Sistema de búsqueda semántica de documentos legales
@@ -149,7 +164,7 @@ const Index = () => {
                   <SearchInterface
                     query={query}
                     onQueryChange={setQuery}
-                    mode="RESULTS_ONLY"
+                    mode="GENERATE"
                     onModeChange={setMode}
                     onSearch={handleSearch}
                     isLoading={isLoading}
