@@ -96,28 +96,26 @@ const Index = () => {
         filters.tipo_publicacion.forEach(tipo => params.append('tipo_publicacion', tipo));
       }
       if (filters.limit) {
-        console.log(filters.limit)
         params.append('limit', filters.limit.toString());
       }else{
         filters.limit = 50
-        console.log('entro acaaaa', filters.limit)
         params.append('limit', filters.limit.toString());
       }
 
       const fullUrl = `${apiUrl}?${params.toString()}`;
-      console.log('Making API request to:', fullUrl);
+      //console.log('Making API request to:', fullUrl);
 
       //const response = await fetch(fullUrl);
 
       try {
         const response = await axios.post(fullUrl);
-        console.log("abc:", response); // ✅ Aquí ves el response completo
+        //console.log("abc:", response); // ✅ Aquí ves el response completo
         setResults([response.data]);   // ✅ Guardas solo los datos que necesitas
       } catch (err) {
         console.error(err);
       }
       
-      console.log("sdasdasd: ",results)
+      //console.log("sdasdasd: ",results)
       /*if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

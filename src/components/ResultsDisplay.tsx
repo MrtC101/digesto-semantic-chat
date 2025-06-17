@@ -11,7 +11,7 @@ interface ResultsDisplayProps {
 }
 
 export const ResultsDisplay = ({ results }: ResultsDisplayProps) => {
-  console.log(results)
+  //console.log(results)
   const getStatusColor = (estado: string) => {
     switch (estado) {
       case 'VIGENTE':
@@ -51,7 +51,7 @@ export const ResultsDisplay = ({ results }: ResultsDisplayProps) => {
       return dateString;
     }
   };
-  console.log("result: ", results)
+  //console.log("result: ", results)
   return (
     <div className="space-y-4">
 
