@@ -96,6 +96,11 @@ const Index = () => {
         filters.tipo_publicacion.forEach(tipo => params.append('tipo_publicacion', tipo));
       }
       if (filters.limit) {
+        console.log(filters.limit)
+        params.append('limit', filters.limit.toString());
+      }else{
+        filters.limit = 50
+        console.log('entro acaaaa', filters.limit)
         params.append('limit', filters.limit.toString());
       }
 

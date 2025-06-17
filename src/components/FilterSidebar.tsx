@@ -240,14 +240,15 @@ export const FilterSidebar = ({ filters, onFiltersChange }: FilterSidebarProps) 
         </CardHeader>
         <CardContent>
           <Input
+            id='FiltroLimite'
             type="number"
-            placeholder="10"
+            placeholder="50"
             min="1"
             max="100"
             value={filters.limit || ''}
             onChange={(e) => onFiltersChange({
               ...filters,
-              limit: e.target.value ? parseInt(e.target.value) : undefined
+              limit: e.target.value ? parseInt(e.target.value) : 50
             })}
           />
           <p className="text-xs text-muted-foreground mt-1">

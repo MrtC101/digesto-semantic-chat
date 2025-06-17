@@ -165,7 +165,7 @@ export const ResultsDisplay = ({ results }: ResultsDisplayProps) => {
               </div>
             </CardContent>
           </Card>)}
-          )
+          
       </div>
         ))
       }
