@@ -2,29 +2,16 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { SearchResult } from '@/pages/Index';
 import { Search } from 'lucide-react';
+import { useSearchContext } from '@/hooks/use-search-context';
 
-interface SearchInterfaceProps {
-  query: string;
-  onQueryChange: (query: string) => void;
-  onSearch: () => void;
-  setQuery: React.Dispatch<React.SetStateAction<string>>;
-  isLoading: boolean;
-}
+export const SearchInterface = () => {
 
-export const SearchInterface = ({ 
-  query, 
-  onQueryChange, 
-  onSearch,
-  setQuery,
-  isLoading 
-}: SearchInterfaceProps) => {
+  const searchContext = useSearchContext();
 
   const handleSearch = () => {
-    if (!chatInput.trim()) return;
-    setQuery(chatInput);
-    onSearch();
+    if (!searchContext.searchField.trim()) return;
+    searchContext.setQuery(searchContext.searchField);
   }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -44,22 +31,23 @@ export const SearchInterface = ({
           id="search-query"
           type="text"
           placeholder="Ej: ¿mi casa soporta un terremoto?"
-          value={query}
-          onChange={(e) => onQueryChange(e.target.value)}
+          value={searchContext.searchField}
+          onChange={(e) => searchContext.setSearchField(e.target.value)}
           onKeyPress={handleKeyPress}
           className="pr-12"
         />
-        <Button 
+        <Button
           onClick={handleSearch}
-          size="sm" 
+          size="sm"
           className="absolute right-1 top-1/2 -translate-y-1/2"
-          disabled={isLoading || !query.trim()}
+          disabled={searchContext.isLoading || !searchContext.searchField.trim()}
         >
           <Search className="h-4 w-4" />
         </Button>
       </div>
       <p className="text-xs text-muted-foreground">
-        Ingresa tu consulta en lenguaje natural para buscar en el digesto jurídico
+        Ingresa tu consulta en lenguaje natural para buscar en el digesto
+        jurídico
       </p>
     </div>
   );
