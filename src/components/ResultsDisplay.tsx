@@ -1,22 +1,21 @@
-
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Calendar, FileText, BookOpen } from 'lucide-react';
-import { v4 as uuidv4 } from 'uuid';
-import { marked } from 'marked';
-import { useSearchContext } from '@/hooks/use-search-context';
-import { CardResult } from './CardResult';
-
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Calendar, FileText, BookOpen } from "lucide-react";
+import { v4 as uuidv4 } from "uuid";
+import { marked } from "marked";
+import { useSearchContext } from "@/hooks/use-search-context";
+import { CardResult } from "./CardResult";
+import DOMPurify from "dompurify";
 
 export interface SearchResult {
   chunk: string;
   ddganio: number;
-  ddgfechaalta?:string;
+  ddgfechaalta?: string;
   ddgfechaderogacion?: string;
   ddgfechapromulgacion?: string;
   ddgfechapublicacion?: string;
-  ddgfechasancion?:string;
+  ddgfechasancion?: string;
   ddgid: number;
   ddgnormasrelacionadas: string;
   ddgnro: string;
@@ -31,11 +30,11 @@ export interface SearchResult {
   tipo_publicacion: string;
 }
 
-
 export const ResultsDisplay = () => {
-
   const searchContext = useSearchContext();
-
+  const cleanHtml = DOMPurify.sanitize(
+    marked(searchContext.response?.generated_response)
+  );
   return (
     <div className="space-y-4">
       <div className="flex items-start p-6">
@@ -44,10 +43,8 @@ export const ResultsDisplay = () => {
             Respuesta IA
           </h1>
           <div
-            className="text-gray-800 text-base leading-relaxed"
-            dangerouslySetInnerHTML={{
-              __html: marked(searchContext.response?.generated_response),
-            }}
+            className="markdown text-base leading-relaxed [&_a]:text-blue-600 [&_a]:underline hover:[&_a]:text-blue-800"
+            dangerouslySetInnerHTML={{ __html: cleanHtml }}
           />
         </div>
       </div>
@@ -62,7 +59,7 @@ export const ResultsDisplay = () => {
         ) : (
           searchContext.response?.results
             .slice()
-            .sort((r1, r2) => r1.distance- r2.distance)
+            .sort((r1, r2) => r1.distance - r2.distance)
             .map((result, index) => (
               <div key={uuidv4()}>
                 <CardResult result={result} />
