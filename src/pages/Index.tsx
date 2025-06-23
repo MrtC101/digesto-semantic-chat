@@ -144,7 +144,6 @@ const Index = () => {
         const fullUrl = `${apiUrl}?${params.toString()}`;
         const response = await axios.post(fullUrl);
         searchContext.setResponse(response.data);
-        console.log("Buscó");
       } catch (error) {
         console.error("Error searching:", error);
       } finally {
@@ -164,10 +163,10 @@ const Index = () => {
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
                 <Scale className="h-6 w-6 text-primary" />
-                <h1 className="text-2xl font-bold">Normita</h1>
+                <h1 className="text-2xl font-bold">Normita IA</h1>
               </div>
               <div className="text-sm text-muted-foreground">
-                Sistema de búsqueda semántica de documentos legales
+                
               </div>
             </div>
           </div>
