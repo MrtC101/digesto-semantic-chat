@@ -2,34 +2,35 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { SearchResult } from '@/pages/Index';
 import { Search } from 'lucide-react';
 
 interface SearchInterfaceProps {
   query: string;
   onQueryChange: (query: string) => void;
-  mode: 'GENERATE'  | 'RESULTS_ONLY';
-  onModeChange: (mode: 'GENERATE'  | 'RESULTS_ONLY') => void;
   onSearch: () => void;
+  setQuery: React.Dispatch<React.SetStateAction<string>>;
   isLoading: boolean;
 }
 
 export const SearchInterface = ({ 
   query, 
   onQueryChange, 
-  mode, 
-  onModeChange, 
-  onSearch, 
+  onSearch,
+  setQuery,
   isLoading 
 }: SearchInterfaceProps) => {
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+
+  const handleSearch = () => {
+    if (!chatInput.trim()) return;
+    setQuery(chatInput);
     onSearch();
-  };
+  }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      onSearch();
+      handleSearch();
     }
   };
 
@@ -49,7 +50,7 @@ export const SearchInterface = ({
           className="pr-12"
         />
         <Button 
-          onClick={onSearch}
+          onClick={handleSearch}
           size="sm" 
           className="absolute right-1 top-1/2 -translate-y-1/2"
           disabled={isLoading || !query.trim()}

@@ -2,10 +2,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { SearchResult } from '@/pages/Index';
 import { Calendar, FileText, BookOpen } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { marked } from 'marked';
+import { SearchResult } from '@/pages/Index';
+
 interface ResultsDisplayProps {
   results: SearchResult[];
 }

@@ -1,12 +1,15 @@
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
+import { SearchResult } from '@/pages/Index';
 import { SearchFilters } from '@/pages/Index';
 import { Send, MessageSquare, Bot, User } from 'lucide-react';
+import axios from 'axios';
+import { marked } from 'marked';
 
 interface ChatMessage {
   id: string;
@@ -18,13 +21,19 @@ interface ChatMessage {
 
 interface ChatInterfaceProps {
   sessionId: string;
-  filters: SearchFilters;
+  query: string;
+  setQuery: React.Dispatch<React.SetStateAction<string>>;
   onSearch: () => void;
   isLoading: boolean;
+  setLoading:  React.Dispatch<React.SetStateAction<boolean>>;
+  results: SearchResult[];
 }
 
-export const ChatInterface = ({ sessionId, filters, onSearch, isLoading }: ChatInterfaceProps) => {
-  const [query, setQuery] = useState('');
+export const ChatInterface = ({ sessionId, query, setQuery, onSearch, isLoading, setLoading, results }: ChatInterfaceProps) => {
+
+  const [chatInput, setChatInput] = useState<string>("")
+  const [filters, setFilters] = useState<SearchFilters>({});
+
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: '1',
@@ -34,66 +43,57 @@ export const ChatInterface = ({ sessionId, filters, onSearch, isLoading }: ChatI
     }
   ]);
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = () => {
     if (!query.trim()) return;
+    setQuery(query);
+    onSearch();
+  };
 
+  // Handles the query message:
+  useEffect(() => {
+    if (!query.trim()) return;
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       type: 'user',
       message: query,
       timestamp: new Date(),
     };
-
     setMessages(prev => [...prev, userMessage]);
-    const currentQuery = query;
-    setQuery('');
+  }, [setQuery]);
 
-    try {
-      // Here you would make the actual API call with mode: 'GENERATE'
-      // For now, we'll simulate a response
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
+  // Handles the response message:
+  useEffect(() => {
+    if (results.length == 0) return;
+    const processResults = async () => {
+      setLoading(true);
+      if (!results?.[0]?.generated_response) return;
 
-      const assistantMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        type: 'assistant',
-        message: `Basándome en la consulta "${currentQuery}", he encontrado información relevante en el digesto jurídico. 
+      try {
+        const text = await marked(results[0].generated_response);
+        const assistantMessage: ChatMessage = {
+          id: (Date.now() + 1).toString(),
+          type: 'assistant',
+          message: text,
+          timestamp: new Date(),
+        };
+        setMessages(prev => [...prev, assistantMessage]);
+      } catch (error) {
+        console.error("Error procesando la respuesta:", error);
+        const errorMessage: ChatMessage = {
+          id: (Date.now() + 1).toString(),
+          type: 'assistant',
+          message: 'Lo siento, ocurrió un error al procesar tu consulta.',
+          timestamp: new Date(),
+        };
+        setMessages(prev => [...prev, errorMessage]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-Según los documentos analizados, las normativas de construcción en zonas sísmicas están reguladas principalmente por la Ley 12/2019, que establece criterios específicos de seguridad estructural.
-
-Esta normativa es de aplicación obligatoria y se encuentra vigente desde su publicación en 2019. Los principales puntos que debes considerar son:
-
-1. **Evaluación sísmica**: Toda construcción debe contar con un estudio sísmico previo
-2. **Materiales certificados**: Se requiere el uso de materiales con certificación antisísmica
-3. **Supervisión técnica**: La obra debe estar supervisada por un profesional habilitado
-
-¿Te gustaría que profundice en algún aspecto específico de esta normativa?`,
-        timestamp: new Date(),
-        results: [
-          {
-            tipo_digesto: 'LEYES',
-            ddganio: 2019,
-            ddgnro: 12,
-            ddgtitulo: 'Normativa de construcción en zonas sísmicas'
-          }
-        ]
-      };
-
-      setMessages(prev => [...prev, assistantMessage]);
-
-    } catch (error) {
-      console.error('Error sending message:', error);
-      const errorMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        type: 'assistant',
-        message: 'Lo siento, ha ocurrido un error al procesar tu consulta. Por favor, inténtalo de nuevo.',
-        timestamp: new Date(),
-      };
-      setMessages(prev => [...prev, errorMessage]);
-    }
-  };
-
+    processResults();
+  }, [results, setLoading]);
+  
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -101,7 +101,7 @@ Esta normativa es de aplicación obligatoria y se encuentra vigente desde su pub
     }
   };
 
-  const activeFiltersCount = Object.values(filters).filter(v => 
+  const activeFiltersCount = Object.values(filters).filter(v =>
     Array.isArray(v) ? v.length > 0 : v !== undefined && v !== ''
   ).length;
 
@@ -128,33 +128,31 @@ Esta normativa es de aplicación obligatoria y se encuentra vigente desde su pub
               {messages.map((message) => (
                 <div
                   key={message.id}
-                  className={`flex gap-3 ${
-                    message.type === 'user' ? 'justify-end' : 'justify-start'
-                  }`}
+                  className={`flex gap-3 ${message.type === 'user' ? 'justify-end' : 'justify-start'
+                    }`}
                 >
                   <div
-                    className={`flex gap-3 max-w-[80%] ${
-                      message.type === 'user' ? 'flex-row-reverse' : 'flex-row'
-                    }`}
+                    className={`flex gap-3 max-w-[80%] ${message.type === 'user' ? 'flex-row-reverse' : 'flex-row'
+                      }`}
                   >
-                    <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-                      message.type === 'user' 
-                        ? 'bg-primary text-primary-foreground' 
+                    <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${message.type === 'user'
+                        ? 'bg-primary text-primary-foreground'
                         : 'bg-muted text-muted-foreground'
-                    }`}>
+                      }`}>
                       {message.type === 'user' ? (
                         <User className="h-4 w-4" />
                       ) : (
                         <Bot className="h-4 w-4" />
                       )}
                     </div>
-                    <div className={`rounded-lg p-3 ${
-                      message.type === 'user'
+                    <div className={`rounded-lg p-3 ${message.type === 'user'
                         ? 'bg-primary text-primary-foreground'
                         : 'bg-muted'
-                    }`}>
-                      <p className="text-sm whitespace-pre-wrap">{message.message}</p>
-                      
+                      }`}>
+
+                      {/** MESSAGE IS DISPLAYED HERE */}
+                      <div className="text-sm whitespace-pre-wrap" dangerouslySetInnerHTML={{__html: message.message}}></div>
+{/* 
                       {message.results && message.results.length > 0 && (
                         <div className="mt-3 pt-3 border-t border-border/20">
                           <p className="text-xs font-medium mb-2">Documentos consultados:</p>
@@ -169,19 +167,19 @@ Esta normativa es de aplicación obligatoria y se encuentra vigente desde su pub
                             ))}
                           </div>
                         </div>
-                      )}
-                      
+                      )} */}
+
                       <p className="text-xs opacity-70 mt-2">
-                        {message.timestamp.toLocaleTimeString('es-ES', { 
-                          hour: '2-digit', 
-                          minute: '2-digit' 
+                        {message.timestamp.toLocaleTimeString('es-ES', {
+                          hour: '2-digit',
+                          minute: '2-digit'
                         })}
                       </p>
                     </div>
                   </div>
                 </div>
               ))}
-              
+
               {isLoading && (
                 <div className="flex gap-3 justify-start">
                   <div className="flex gap-3 max-w-[80%]">
@@ -192,10 +190,10 @@ Esta normativa es de aplicación obligatoria y se encuentra vigente desde su pub
                       <div className="flex items-center gap-2">
                         <div className="animate-pulse flex space-x-1">
                           <div className="h-2 w-2 bg-muted-foreground/50 rounded-full animate-bounce"></div>
-                          <div className="h-2 w-2 bg-muted-foreground/50 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                          <div className="h-2 w-2 bg-muted-foreground/50 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                          <div className="h-2 w-2 bg-muted-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                          <div className="h-2 w-2 bg-muted-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                         </div>
-                        <span className="text-xs text-muted-foreground">Analizando documentos...</span>
+                        <span className="text-xs text-muted-foreground">Esperando la respuesta...</span>
                       </div>
                     </div>
                   </div>
@@ -203,18 +201,18 @@ Esta normativa es de aplicación obligatoria y se encuentra vigente desde su pub
               )}
             </div>
           </ScrollArea>
-
+          {/*marked(results[0]?.generated_response*/}
           <div className="flex gap-2 mt-4">
             <Input
               placeholder="Escribe tu consulta legal aquí..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              value={chatInput}
+              onChange={(e) => setChatInput(e.target.value)}
               onKeyPress={handleKeyPress}
               disabled={isLoading}
               className="flex-1"
             />
-            <Button 
-              onClick={handleSendMessage} 
+            <Button
+              onClick={handleSendMessage} //onSearch
               disabled={!query.trim() || isLoading}
               size="icon"
             >

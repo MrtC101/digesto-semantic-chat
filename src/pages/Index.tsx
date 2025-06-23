@@ -57,16 +57,17 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [sessionId] = useState(`session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
   const [info, setInfo] = useState([])
-  const handleSearch = async () => {
+
+
+
+const handleSearch = async () => {
     if (!query.trim()) return;
 
     setIsLoading(true);
-  //  const httpsAgent = new https.Agent({ rejectUnauthorized: false });
+
     try {
       const apiUrl = '/api';
-      /*axios.post(apiUrl)
-      .then(res => setResults([res.data]))
-      .catch(err => console.error(err));*/
+      
       const params = new URLSearchParams({
         query_str: query,
         mode: mode,
@@ -103,47 +104,21 @@ const Index = () => {
       }
 
       const fullUrl = `${apiUrl}?${params.toString()}`;
-      //console.log('Making API request to:', fullUrl);
+      const response = await axios.post(fullUrl);
+      setResults([response.data]);   // ✅ Guardas solo los datos que necesitas
 
-      //const response = await fetch(fullUrl);
-
-      try {
-        const response = await axios.post(fullUrl);
-        //console.log("abc:", response); // ✅ Aquí ves el response completo
-        setResults([response.data]);   // ✅ Guardas solo los datos que necesitas
-      } catch (err) {
-        console.error(err);
-      }
-      
-      //console.log("sdasdasd: ",results)
-      /*if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data: ApiResponse = await response.json();
-      
-      console.log('API response:', data);
-      
-      if (data.status === 'OK') {
-        setResults(data.results);
-        if (data.generated_response) {
-          setGeneratedResponse(data.generated_response);
-        }
-      } else {
-        console.error('API returned error status:', data);
-        // Handle error appropriately
-      }*/
+      console.log('Making API request to:', fullUrl);
+      //console.log("response:", response);
 
     } catch (error) {
       console.error('Error searching:', error);
-      // Handle error appropriately - you might want to show a toast notification
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex w-full bg-background">
+     <div className="min-h-screen flex w-full bg-background">
       <main className="flex-1 flex flex-col">
         <header className="border-b bg-card p-4">
           <div className="flex items-center gap-4">
@@ -160,19 +135,60 @@ const Index = () => {
         </header>
 
         <div className="flex-1 p-6">
-          <div className="w-full space-y-6">
-            <Card className="p-6">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="flex-1">
-                  <SearchInterface
-                    query={query}
-                    onQueryChange={setQuery}
-                    mode="GENERATE"
-                    onModeChange={setMode}
-                    onSearch={handleSearch}
-                    isLoading={isLoading}
-                  />
+          <Tabs value={activeMode} onValueChange={(value) => setActiveMode(value as 'search' | 'chat')} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 max-w-md">
+              <TabsTrigger value="search" className="flex items-center gap-2">
+                <Search className="h-4 w-4" />
+                Búsqueda
+              </TabsTrigger>
+              <TabsTrigger value="chat" className="flex items-center gap-2">
+                <MessageSquare className="h-4 w-4" />
+                Chat IA
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="search" className="space-y-6">
+              <Card className="p-6">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="flex-1">
+                    <SearchInterface
+                      query={query}
+                      onQueryChange={setQuery}
+                      onSearch={handleSearch}
+                      setQuery={setQuery}
+                      isLoading={isLoading}
+                    />
+                  </div>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" className="flex items-center gap-2">
+                        <Filter className="h-4 w-4" />
+                        Filtros
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80 p-0" align="end">
+                      <div className="border-b p-4">
+                        <h3 className="font-semibold text-lg">Filtros de Búsqueda</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Refina tu búsqueda con filtros específicos
+                        </p>
+                      </div>
+                      <div className="max-h-96 overflow-y-auto">
+                        <FilterSidebar filters={filters} onFiltersChange={setFilters} />
+                      </div>
+                    </PopoverContent>
+                  </Popover>
                 </div>
+              </Card>
+
+              {results.length > 0 && (
+                <ResultsDisplay results={results} />
+              )}
+            </TabsContent>
+
+            <TabsContent value="chat" className="space-y-6">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="flex-1" />
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button variant="outline" className="flex items-center gap-2">
@@ -193,12 +209,17 @@ const Index = () => {
                   </PopoverContent>
                 </Popover>
               </div>
-            </Card>
-
-            {results.length > 0 && (
-              <ResultsDisplay results={results} />
-            )}
-          </div>
+              <ChatInterface
+                sessionId={sessionId}
+                query={query}
+                setQuery={setQuery}
+                onSearch={handleSearch}
+                isLoading={isLoading}
+                setLoading={setIsLoading}
+                results={results}
+              />
+            </TabsContent>
+          </Tabs>
         </div>
       </main>
     </div>
