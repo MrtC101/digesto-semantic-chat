@@ -80,7 +80,7 @@ export const ChatInterface = ({ sessionId }: ChatInterfaceProps) => {
                     <div
                       className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
                         message.type === "user"
-                          ? "bg-primary text-primary-foreground"
+                          ? "bg-violet-600 text-primary-foreground"
                           : "bg-muted text-muted-foreground"
                       }`}
                     >
@@ -91,9 +91,9 @@ export const ChatInterface = ({ sessionId }: ChatInterfaceProps) => {
                       )}
                     </div>
                     <div
-                      className={`rounded-lg p-3 ${
+                      className={` rounded-lg p-3 ${
                         message.type === "user"
-                          ? "bg-primary text-primary-foreground"
+                          ? "bg-violet-600 text-primary-foreground"
                           : "bg-muted"
                       }`}
                     >
