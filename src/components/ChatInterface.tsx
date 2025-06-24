@@ -10,6 +10,7 @@ import { marked } from "marked";
 import { useSearchContext } from "@/hooks/use-search-context";
 import { SearchResult } from "./ResultsDisplay";
 import DOMPurify from "dompurify";
+import { NormitaPicture } from "./NormitaIcon";
 
 export interface ChatMessage {
   id: string;
@@ -88,19 +89,19 @@ export const ChatInterface = ({ sessionId }: ChatInterfaceProps) => {
                     message.type === "user" ? "flex-row-reverse" : "flex-row"
                   }`}
                 >
-                  <div
-                    className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-                      message.type === "user"
-                        ? "bg-gray-600 text-white"
-                        : "bg-gray-600 text-white"
-                    }`}
-                  >
-                    {message.type === "user" ? (
+                  {message.type === "user" ? (
+                    <div
+                      className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                        message.type === "user"
+                          ? "bg-gray-600 text-white"
+                          : "bg-gray-600 text-white"
+                      }`}
+                    >
                       <User className="h-4 w-4" />
-                    ) : (
-                      <Bot className="h-4 w-4" />
-                    )}
-                  </div>
+                    </div>
+                  ) : (
+                    <NormitaPicture />
+                  )}
                   <div
                     className={`rounded-lg p-3 ${
                       message.type === "user"
