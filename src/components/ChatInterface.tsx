@@ -45,160 +45,166 @@ export const ChatInterface = ({ sessionId }: ChatInterfaceProps) => {
   ).length;
 
   return (
-    <div className="space-y-4">
-      <Card>
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
+    <Card className="flex-1 min-h-0 overflow-auto">
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2">
+            <div className="bg-primary/10 text-primary p-2 rounded-full">
               <MessageSquare className="h-5 w-5" />
-              Consulta con IA Legal
-            </CardTitle>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Badge variant="outline">Sesión: {sessionId.slice(-8)}</Badge>
-              {activeFiltersCount > 0 && (
-                <Badge variant="secondary">
-                  {activeFiltersCount} filtros activos
-                </Badge>
-              )}
             </div>
+            <span>
+              ¡Chateá con{" "}
+              <span className="font-bold text-primary">Normita</span>!
+            </span>
+          </CardTitle>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Badge variant="outline">Sesión: {sessionId.slice(-8)}</Badge>
+            {activeFiltersCount > 0 && (
+              <Badge variant="secondary">
+                {activeFiltersCount} filtros activos
+              </Badge>
+            )}
           </div>
-        </CardHeader>
-        <CardContent>
-          <ScrollArea className="h-96 overflow-y-auto w-full pr-4">
-            <div className="space-y-4">
-              {searchContext.messages.map((message) => (
+        </div>
+      </CardHeader>
+      <CardContent className="pt-5">
+        <ScrollArea
+          className="overflow-y-auto w-full pr-4"
+          style={{ height: "calc(70vh)" }}
+        >
+          <div className="space-y-4">
+            {searchContext.messages.map((message) => (
+              <div
+                key={message.id}
+                className={`flex gap-3 ${
+                  message.type === "user" ? "justify-end" : "justify-start"
+                }`}
+              >
                 <div
-                  key={message.id}
-                  className={`flex gap-3 ${
-                    message.type === "user" ? "justify-end" : "justify-start"
+                  className={`flex gap-3 max-w-[80%] ${
+                    message.type === "user" ? "flex-row-reverse" : "flex-row"
                   }`}
                 >
                   <div
-                    className={`flex gap-3 max-w-[80%] ${
-                      message.type === "user" ? "flex-row-reverse" : "flex-row"
+                    className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                      message.type === "user"
+                        ? "bg-gray-600 text-primary-foreground"
+                        : "text-white"
                     }`}
+                    style={
+                      message.type !== "user"
+                        ? { backgroundColor: "var(--muni-color)" }
+                        : undefined
+                    }
                   >
-                    <div
-                      className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-                        message.type === "user"
-                          ? "bg-gray-600 text-primary-foreground"
-                          : "text-white"
-                      }`}
-                      style={
-                        message.type !== "user"
-                          ? { backgroundColor: "var(--muni-color)" }
-                          : undefined
-                      }
-                    >
-                      {message.type === "user" ? (
-                        <User className="h-4 w-4" />
-                      ) : (
-                        <Bot className="h-4 w-4" />
-                      )}
-                    </div>
-                    <div
-                      className={`rounded-lg p-3 ${
-                        message.type === "user"
-                          ? "bg-gray-600 text-primary-foreground"
-                          : "text-white"
-                      }`}
-                      style={
-                        message.type !== "user"
-                          ? { backgroundColor: "var(--muni-color)" }
-                          : undefined
-                      }
-                    >
-                      {/** MESSAGE IS DISPLAYED HERE */}
-                      <div
-                        className="markdown text-base leading-relaxed [&_a]:text-blue-600 [&_a]:underline hover:[&_a]:text-blue-800"
-                        dangerouslySetInnerHTML={{
-                          __html: DOMPurify.sanitize(marked(message.message)),
-                        }}
-                      />
-                      {/* 
-                      {message.results && message.results.length > 0 && (
-                        <div className="mt-3 pt-3 border-t border-border/20">
-                          <p className="text-xs font-medium mb-2">Documentos consultados:</p>
-                          <div className="space-y-1">
-                            {message.results.map((result, index) => (
-                              <div key={index} className="text-xs">
-                                <Badge variant="outline" className="mr-1">
-                                  {result.tipo_digesto}
-                                </Badge>
-                                {result.ddganio}/{result.ddgnro} - {result.ddgtitulo}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )} */}
-
-                      <p className="text-xs opacity-70 mt-2">
-                        {message.timestamp.toLocaleTimeString("es-ES", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-
-              {searchContext.isLoading && (
-                <div className="flex gap-3 justify-start">
-                  <div className="flex gap-3 max-w-[80%]">
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-muted text-muted-foreground flex items-center justify-center">
+                    {message.type === "user" ? (
+                      <User className="h-4 w-4" />
+                    ) : (
                       <Bot className="h-4 w-4" />
-                    </div>
-                    <div className="rounded-lg p-3 bg-muted">
-                      <div className="flex items-center gap-2">
-                        <div className="animate-pulse flex space-x-1">
-                          <div className="h-2 w-2 bg-muted-foreground/50 rounded-full animate-bounce"></div>
-                          <div
-                            className="h-2 w-2 bg-muted-foreground/50 rounded-full animate-bounce"
-                            style={{ animationDelay: "0.1s" }}
-                          ></div>
-                          <div
-                            className="h-2 w-2 bg-muted-foreground/50 rounded-full animate-bounce"
-                            style={{ animationDelay: "0.2s" }}
-                          ></div>
+                    )}
+                  </div>
+                  <div
+                    className={`rounded-lg p-3 ${
+                      message.type === "user"
+                        ? "bg-gray-600 text-primary-foreground"
+                        : "text-white"
+                    }`}
+                    style={
+                      message.type !== "user"
+                        ? { backgroundColor: "var(--muni-color)" }
+                        : undefined
+                    }
+                  >
+                    {/** MESSAGE IS DISPLAYED HERE */}
+                    <div
+                      className="markdown text-base leading-relaxed [&_a]:text-blue-600 [&_a]:underline hover:[&_a]:text-blue-800"
+                      dangerouslySetInnerHTML={{
+                        __html: DOMPurify.sanitize(marked(message.message)),
+                      }}
+                    />
+                    {/* 
+                    {message.results && message.results.length > 0 && (
+                      <div className="mt-3 pt-3 border-t border-border/20">
+                        <p className="text-xs font-medium mb-2">Documentos consultados:</p>
+                        <div className="space-y-1">
+                          {message.results.map((result, index) => (
+                            <div key={index} className="text-xs">
+                              <Badge variant="outline" className="mr-1">
+                                {result.tipo_digesto}
+                              </Badge>
+                              {result.ddganio}/{result.ddgnro} - {result.ddgtitulo}
+                            </div>
+                          ))}
                         </div>
-                        <span className="text-xs text-muted-foreground">
-                          Esperando la respuesta...
-                        </span>
                       </div>
+                    )} */}
+
+                    <p className="text-xs opacity-70 mt-2">
+                      {message.timestamp.toLocaleTimeString("es-ES", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {searchContext.isLoading && (
+              <div className="flex gap-3 justify-start">
+                <div className="flex gap-3 max-w-[80%]">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-muted text-muted-foreground flex items-center justify-center">
+                    <Bot className="h-4 w-4" />
+                  </div>
+                  <div className="rounded-lg p-3 bg-muted">
+                    <div className="flex items-center gap-2">
+                      <div className="animate-pulse flex space-x-1">
+                        <div className="h-2 w-2 bg-muted-foreground/50 rounded-full animate-bounce"></div>
+                        <div
+                          className="h-2 w-2 bg-muted-foreground/50 rounded-full animate-bounce"
+                          style={{ animationDelay: "0.1s" }}
+                        ></div>
+                        <div
+                          className="h-2 w-2 bg-muted-foreground/50 rounded-full animate-bounce"
+                          style={{ animationDelay: "0.2s" }}
+                        ></div>
+                      </div>
+                      <span className="text-xs text-muted-foreground">
+                        Esperando la respuesta...
+                      </span>
                     </div>
                   </div>
                 </div>
-              )}
-            </div>
-          </ScrollArea>
-          {/*marked(results[0]?.generated_response*/}
-          <div className="flex gap-2 mt-4">
-            <Input
-              placeholder="Escribe tu consulta legal aquí..."
-              value={searchContext.searchField}
-              onChange={(e) => searchContext.setSearchField(e.target.value)}
-              onKeyPress={handleKeyPress}
-              disabled={searchContext.isLoading}
-              className="flex-1"
-            />
-            <Button
-              onClick={handleSendMessage}
-              disabled={
-                !searchContext.searchField.trim() || searchContext.isLoading
-              }
-              size="icon"
-            >
-              <Send className="h-4 w-4" />
-            </Button>
+              </div>
+            )}
           </div>
+        </ScrollArea>
+        {/*marked(results[0]?.generated_response*/}
+        <div className="flex gap-2 mt-4">
+          <Input
+            placeholder="Escribe tu consulta aquí..."
+            value={searchContext.searchField}
+            onChange={(e) => searchContext.setSearchField(e.target.value)}
+            onKeyPress={handleKeyPress}
+            disabled={searchContext.isLoading}
+            className="flex-1"
+          />
+          <Button
+            onClick={handleSendMessage}
+            disabled={
+              !searchContext.searchField.trim() || searchContext.isLoading
+            }
+            size="icon"
+          >
+            <Send className="h-4 w-4" />
+          </Button>
+        </div>
 
-          <p className="text-xs text-muted-foreground mt-2">
-            Presiona Enter para enviar • Los filtros activos se aplicarán
-            automáticamente
-          </p>
-        </CardContent>
-      </Card>
-    </div>
+        <p className="text-xs text-muted-foreground mt-2">
+          Presiona Enter para enviar • Los filtros activos se aplicarán
+          automáticamente
+        </p>
+      </CardContent>
+    </Card>
   );
 };
