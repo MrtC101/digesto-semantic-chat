@@ -9,6 +9,7 @@ import { Send, MessageSquare, Bot, User } from "lucide-react";
 import { marked } from "marked";
 import { useSearchContext } from "@/hooks/use-search-context";
 import { SearchResult } from "./ResultsDisplay";
+import DOMPurify from "dompurify";
 
 export interface ChatMessage {
   id: string;
@@ -99,9 +100,11 @@ export const ChatInterface = ({ sessionId }: ChatInterfaceProps) => {
                     >
                       {/** MESSAGE IS DISPLAYED HERE */}
                       <div
-                        className="text-sm whitespace-pre-wrap"
-                        dangerouslySetInnerHTML={{ __html: message.message }}
-                      ></div>
+                        className="markdown text-base leading-relaxed [&_a]:text-blue-600 [&_a]:underline hover:[&_a]:text-blue-800"
+                        dangerouslySetInnerHTML={{
+                          __html: DOMPurify.sanitize(marked(message.message)),
+                        }}
+                      />
                       {/* 
                       {message.results && message.results.length > 0 && (
                         <div className="mt-3 pt-3 border-t border-border/20">

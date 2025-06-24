@@ -32,9 +32,6 @@ export interface SearchResult {
 
 export const ResultsDisplay = () => {
   const searchContext = useSearchContext();
-  const cleanHtml = DOMPurify.sanitize(
-    marked(searchContext.response?.generated_response)
-  );
   return (
     <div className="space-y-4">
       <div className="flex items-start p-6">
@@ -44,7 +41,11 @@ export const ResultsDisplay = () => {
           </h1>
           <div
             className="markdown text-base leading-relaxed [&_a]:text-blue-600 [&_a]:underline hover:[&_a]:text-blue-800"
-            dangerouslySetInnerHTML={{ __html: cleanHtml }}
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(
+                marked(searchContext.response?.generated_response)
+              ),
+            }}
           />
         </div>
       </div>
