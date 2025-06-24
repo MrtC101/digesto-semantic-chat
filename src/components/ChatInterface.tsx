@@ -91,11 +91,6 @@ export const ChatInterface = ({ sessionId }: ChatInterfaceProps) => {
                         ? "bg-gray-600 text-primary-foreground"
                         : "text-white"
                     }`}
-                    style={
-                      message.type !== "user"
-                        ? { backgroundColor: "var(--muni-color)" }
-                        : undefined
-                    }
                   >
                     {message.type === "user" ? (
                       <User className="h-4 w-4" />
@@ -109,11 +104,6 @@ export const ChatInterface = ({ sessionId }: ChatInterfaceProps) => {
                         ? "bg-gray-600 text-primary-foreground"
                         : "text-white"
                     }`}
-                    style={
-                      message.type !== "user"
-                        ? { backgroundColor: "var(--muni-color)" }
-                        : undefined
-                    }
                   >
                     {/** MESSAGE IS DISPLAYED HERE */}
                     <div
