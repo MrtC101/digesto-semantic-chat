@@ -37,7 +37,7 @@ const Index = () => {
   const [sessionId] = useState(
     `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   );
-  const [activeMode, setActiveMode] = useState<"search" | "chat">("search");
+  const [activeMode, setActiveMode] = useState<"search" | "chat">("chat");
   const [mode, setMode] = useState<"RESULTS_ONLY" | "GENERATE">("GENERATE");
   const [filters, setFilters] = useState<SearchFilters>({});
 
@@ -158,25 +158,30 @@ const Index = () => {
   return (
     <div className="min-h-screen flex w-full bg-background">
       <main className="flex-1 flex flex-col">
-        <header className="border-b bg-card p-4">
+        <header
+          className="border-b bg-card p-4"
+          style={{
+            backgroundColor: "var(--muni-color)",
+          }}
+        >
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
-                <Scale className="h-6 w-6 text-primary" />
-                <h1 className="text-2xl font-bold">Normita IA</h1>
+                <Scale className="h-6 w-6 text-white" />
+                <h1 className="text-2xl font-bold text-white">Normita IA</h1>
               </div>
-              <div className="text-sm text-muted-foreground">
-                
-              </div>
+              <div className="text-sm text-muted-foreground"></div>
             </div>
           </div>
         </header>
 
-        <div className="flex-1 p-6">
-          <Tabs
+        <div className="flex-1 min-h-0 flex flex-col p-6">
+          <ChatInterface sessionId={sessionId} />
+
+          {/* <Tabs
             value={activeMode}
             onValueChange={(value) => setActiveMode(value as "search" | "chat")}
-            className="w-full"
+            className="flex flex-col w-full flex-1"
           >
             <TabsList className="grid w-full grid-cols-2 max-w-md">
               <TabsTrigger value="search" className="flex items-center gap-2">
@@ -228,7 +233,10 @@ const Index = () => {
               {searchContext.response && <ResultsDisplay />}
             </TabsContent>
 
-            <TabsContent value="chat" className="space-y-6">
+            <TabsContent
+              value="chat"
+              className="flex-1 min-h-0 overflow-auto space-y-8"
+            >
               <div className="flex items-center gap-4 mb-4">
                 <div className="flex-1" />
                 <Popover>
@@ -262,7 +270,7 @@ const Index = () => {
 
               <ChatInterface sessionId={sessionId} />
             </TabsContent>
-          </Tabs>
+          </Tabs> */}
         </div>
       </main>
     </div>
