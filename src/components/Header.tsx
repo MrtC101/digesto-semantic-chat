@@ -2,7 +2,10 @@ import { Scale } from "lucide-react";
 
 export function Header() {
   return (
-    <header className="border-b bg-card p-4 bg-background">
+    <header
+      className="border-b bg-card p-4 bg-background"
+      style={{ background: "#343541" }}
+    >
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
