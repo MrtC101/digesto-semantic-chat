@@ -45,7 +45,10 @@ export const ChatInterface = ({ sessionId }: ChatInterfaceProps) => {
   ).length;
 
   return (
-    <Card className="flex-1 min-h-0 overflow-auto">
+    <Card
+      className="flex-1 min-h-0 overflow-auto"
+      style={{ background: "#343541" }}
+    >
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
@@ -88,8 +91,8 @@ export const ChatInterface = ({ sessionId }: ChatInterfaceProps) => {
                   <div
                     className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
                       message.type === "user"
-                        ? "bg-gray-600 text-primary-foreground"
-                        : "text-white"
+                        ? "bg-gray-600 text-white"
+                        : "bg-gray-600 text-white"
                     }`}
                   >
                     {message.type === "user" ? (
@@ -101,34 +104,17 @@ export const ChatInterface = ({ sessionId }: ChatInterfaceProps) => {
                   <div
                     className={`rounded-lg p-3 ${
                       message.type === "user"
-                        ? "bg-gray-600 text-primary-foreground"
-                        : "text-white"
+                        ? "bg-gray-600 text-white"
+                        : "bg-gray-600 text-white"
                     }`}
                   >
                     {/** MESSAGE IS DISPLAYED HERE */}
                     <div
-                      className="markdown text-base leading-relaxed [&_a]:text-blue-600 [&_a]:underline hover:[&_a]:text-blue-800"
+                      className="markdown text-base leading-relaxed [&_a]:text-sky-300 [&_a]:underline hover:[&_a]:text-sky-500"
                       dangerouslySetInnerHTML={{
                         __html: DOMPurify.sanitize(marked(message.message)),
                       }}
                     />
-                    {/* 
-                    {message.results && message.results.length > 0 && (
-                      <div className="mt-3 pt-3 border-t border-border/20">
-                        <p className="text-xs font-medium mb-2">Documentos consultados:</p>
-                        <div className="space-y-1">
-                          {message.results.map((result, index) => (
-                            <div key={index} className="text-xs">
-                              <Badge variant="outline" className="mr-1">
-                                {result.tipo_digesto}
-                              </Badge>
-                              {result.ddganio}/{result.ddgnro} - {result.ddgtitulo}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )} */}
-
                     <p className="text-xs opacity-70 mt-2">
                       {message.timestamp.toLocaleTimeString("es-ES", {
                         hour: "2-digit",
