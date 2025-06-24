@@ -64,7 +64,7 @@ export const ChatInterface = ({ sessionId }: ChatInterfaceProps) => {
           </div>
         </CardHeader>
         <CardContent>
-          <ScrollArea className="h-96 w-full pr-4">
+          <ScrollArea className="h-96 overflow-y-auto w-full pr-4">
             <div className="space-y-4">
               {searchContext.messages.map((message) => (
                 <div
@@ -81,9 +81,14 @@ export const ChatInterface = ({ sessionId }: ChatInterfaceProps) => {
                     <div
                       className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
                         message.type === "user"
-                          ? "bg-violet-600 text-primary-foreground"
-                          : "bg-muted text-muted-foreground"
+                          ? "bg-gray-600 text-primary-foreground"
+                          : "text-white"
                       }`}
+                      style={
+                        message.type !== "user"
+                          ? { backgroundColor: "var(--muni-color)" }
+                          : undefined
+                      }
                     >
                       {message.type === "user" ? (
                         <User className="h-4 w-4" />
@@ -92,11 +97,16 @@ export const ChatInterface = ({ sessionId }: ChatInterfaceProps) => {
                       )}
                     </div>
                     <div
-                      className={` rounded-lg p-3 ${
+                      className={`rounded-lg p-3 ${
                         message.type === "user"
-                          ? "bg-violet-600 text-primary-foreground"
-                          : "bg-muted"
+                          ? "bg-gray-600 text-primary-foreground"
+                          : "text-white"
                       }`}
+                      style={
+                        message.type !== "user"
+                          ? { backgroundColor: "var(--muni-color)" }
+                          : undefined
+                      }
                     >
                       {/** MESSAGE IS DISPLAYED HERE */}
                       <div

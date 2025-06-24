@@ -156,18 +156,21 @@ const Index = () => {
   }, [searchContext.query, searchContext.setQuery]);
 
   return (
-    <div className="min-h-screen flex w-full bg-background">
+    <div className="min-h-screen flex w-full bg-background ">
       <main className="flex-1 flex flex-col">
-        <header className="border-b bg-card p-4">
+        <header
+          className="border-b bg-card p-4"
+          style={{
+            backgroundColor: "var(--muni-color)",
+          }}
+        >
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
-                <Scale className="h-6 w-6 text-primary" />
-                <h1 className="text-2xl font-bold">Normita IA</h1>
+                <Scale className="h-6 w-6 text-white" />
+                <h1 className="text-2xl font-bold text-white">Normita IA</h1>
               </div>
-              <div className="text-sm text-muted-foreground">
-                
-              </div>
+              <div className="text-sm text-muted-foreground"></div>
             </div>
           </div>
         </header>
