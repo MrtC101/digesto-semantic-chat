@@ -15,6 +15,7 @@ import { Scale, MessageSquare, Search, Filter } from "lucide-react";
 import axios from "axios";
 import { useSearchContext } from "@/hooks/use-search-context";
 import { marked } from "marked";
+import { Header } from "@/components/Header";
 
 export interface SearchFilters {
   tipo_digesto?: string[];
@@ -158,27 +159,12 @@ const Index = () => {
   return (
     <div className="min-h-screen flex w-full bg-background">
       <main className="flex-1 flex flex-col">
-        <header
-          className="border-b bg-card p-4"
-          style={{
-            backgroundColor: "var(--muni-color)",
-          }}
-        >
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <Scale className="h-6 w-6 text-white" />
-                <h1 className="text-2xl font-bold text-white">Normita IA</h1>
-              </div>
-              <div className="text-sm text-muted-foreground"></div>
-            </div>
-          </div>
-        </header>
-
+        <Header />
         <div className="flex-1 min-h-0 flex flex-col p-6">
           <ChatInterface sessionId={sessionId} />
-
-          {/* <Tabs
+        </div>
+      </main>
+      {/* <Tabs
             value={activeMode}
             onValueChange={(value) => setActiveMode(value as "search" | "chat")}
             className="flex flex-col w-full flex-1"
@@ -271,8 +257,6 @@ const Index = () => {
               <ChatInterface sessionId={sessionId} />
             </TabsContent>
           </Tabs> */}
-        </div>
-      </main>
     </div>
   );
 };

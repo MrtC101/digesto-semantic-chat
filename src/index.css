@@ -6,7 +6,6 @@
 
 @layer base {
   :root {
-    --muni-color: rgb(118, 83, 248);
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
