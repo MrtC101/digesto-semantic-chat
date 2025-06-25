@@ -4,11 +4,16 @@ import { Separator } from "@/components/ui/separator";
 import { Calendar, FileText, BookOpen } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { marked } from "marked";
-import { useSearchContext } from "@/hooks/use-search-context";
+import { useSearchContext } from "@/hooks/use-chat-context";
 import { CardResult } from "./CardResult";
 import DOMPurify from "dompurify";
 
-export interface SearchResult {
+interface SearchResponse {
+  generated_response: string;
+  results: SearchResult[];
+}
+
+interface SearchResult {
   chunk: string;
   ddganio: number;
   ddgfechaalta?: string;

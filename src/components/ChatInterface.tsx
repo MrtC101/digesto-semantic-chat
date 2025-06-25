@@ -1,16 +1,18 @@
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useEffect, useState, useRef } from "react";
+import { MessageSquare, Bot, User, Scale, Search, Filter } from "lucide-react";
+import DOMPurify from "dompurify";
+import { marked } from "marked";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+
 import { Badge } from "@/components/ui/badge";
-import { SearchFilters } from "@/pages/Index";
-import { Send, MessageSquare, Bot, User } from "lucide-react";
-import { marked } from "marked";
-import { useSearchContext } from "@/hooks/use-search-context";
-import { SearchResult } from "./ResultsDisplay";
-import DOMPurify from "dompurify";
-import { NormitaPicture } from "./NormitaIcon";
+
+import useChatContext from "@/hooks/use-chat-context";
+
+import { NormitaPicture } from "@/components/NormitaIcon";
+import { SearchResult } from "./ChatContext";
+import ChatTextBar from "./ChatTextBar";
 
 export interface ChatMessage {
   id: string;
@@ -20,168 +22,191 @@ export interface ChatMessage {
   results?: SearchResult[];
 }
 
+function LoadingDisplay() {
+  return (
+    <div className="flex gap-3 justify-start">
+      <div className="flex gap-3 max-w-[80%]">
+        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-muted text-muted-foreground flex items-center justify-center">
+          <Bot className="h-4 w-4" />
+        </div>
+        <div className="rounded-lg p-3 bg-muted">
+          <div className="flex items-center gap-2">
+            <div className="animate-pulse flex space-x-1">
+              <div className="h-2 w-2 bg-muted-foreground/50 rounded-full animate-bounce"></div>
+              <div
+                className="h-2 w-2 bg-muted-foreground/50 rounded-full animate-bounce"
+                style={{ animationDelay: "0.1s" }}
+              ></div>
+              <div
+                className="h-2 w-2 bg-muted-foreground/50 rounded-full animate-bounce"
+                style={{ animationDelay: "0.2s" }}
+              ></div>
+            </div>
+            <span className="text-xs text-muted-foreground">
+              Esperando la respuesta...
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ChatMessage({ message }: { message: ChatMessage }) {
+  return (
+    <div
+      key={message.id}
+      className={`flex gap-3 ${
+        message.type === "user" ? "justify-end" : "justify-start"
+      }`}
+    >
+      <div
+        className={`flex gap-3 max-w-[80%] ${
+          message.type === "user" ? "flex-row-reverse" : "flex-row"
+        }`}
+      >
+        {message.type === "user" ? (
+          <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-gray-600 text-white">
+            <User className="h-4 w-4" />
+          </div>
+        ) : (
+          <NormitaPicture />
+        )}
+
+        <div className="rounded-lg p-3 bg-gray-600 text-white">
+          <div
+            className="
+                      markdown
+                      text-base
+                      leading-relaxed
+                      [&_a]:text-sky-300
+                      [&_a]:underline
+                      hover:[&_a]:text-sky-500
+                      [&_p]:break-words
+                      [&_p]:whitespace-pre-wrap
+                      "
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(marked(message.message)),
+            }}
+          />
+          <p className="text-xs opacity-70 mt-2">
+            {message.timestamp.toLocaleTimeString("es-ES", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const processResults = async () => {
+  if (!response) return;
+  searchContext.setIsLoading(true);
+
+  if (!searchContext.response?.generated_response) return;
+  const text = await marked(searchContext.response?.generated_response);
+  const assistantMessage: ChatMessage = {
+    id: (Date.now() + 1).toString(),
+    type: "assistant",
+    message: text,
+    timestamp: new Date(),
+  };
+  searchContext.setMessages((prev) => [...prev, assistantMessage]);
+
+  searchContext.setIsLoading(false);
+};
+
+const AddDefaultMessage = () => {
+  if (!searchContext.query.trim()) return;
+  const userMessage: ChatMessage = {
+    id: Date.now().toString(),
+    type: "user",
+    message: searchContext.query,
+    timestamp: new Date(),
+  };
+  searchContext.setMessages((prev) => [...prev, userMessage]);
+};
+
+interface ChatHeaderProps {
+  sessionId: string;
+  filterCounts: number;
+}
+
+function ChatHeader({ sessionId, filterCounts }: ChatHeaderProps) {
+  return (
+    <div className="flex items-center justify-between">
+      <CardTitle className="flex items-center gap-2">
+        <div className="bg-primary/10 text-primary p-2 rounded-full">
+          <MessageSquare className="h-5 w-5" />
+        </div>
+        <span>
+          ¡Chateá con <span className="font-bold text-primary">Normita</span>!
+        </span>
+      </CardTitle>
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <Badge variant="outline">Sesión: {sessionId.slice(-8)}</Badge>
+        {filterCounts > 0 && (
+          <Badge variant="secondary">{filterCounts} filtros activos</Badge>
+        )}
+      </div>
+    </div>
+  );
+}
+
 interface ChatInterfaceProps {
   sessionId: string;
 }
 
-export const ChatInterface = ({ sessionId }: ChatInterfaceProps) => {
-  const [filters, setFilters] = useState<SearchFilters>({});
-  
-  const searchContext = useSearchContext();
-
-  const handleSendMessage = () => {
-    if (!searchContext.searchField.trim()) return;
-    searchContext.setQuery(searchContext.searchField);
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
-  };
+const ChatInterface = ({ sessionId }: ChatInterfaceProps) => {
+  const { filters, messages, isLoading } = useChatContext();
 
   const activeFiltersCount = Object.values(filters).filter((v) =>
     Array.isArray(v) ? v.length > 0 : v !== undefined && v !== ""
   ).length;
 
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // // Sends message to the chat:
+  // useEffect(() => {
+  //   AddDefaultMessage();
+  // }, [query]);
+
+  // // Handles the response message:
+  // useEffect(() => {
+  //   processResults();
+  // }, [response, setIsLoading]);
+
+  useEffect(() => {
+    // Al actualizar mensajes, scrollear abajo
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages]);
+
   return (
-    <Card
-      className="flex-1 min-h-0 overflow-auto"
-      style={{ background: "#343541" }}
-    >
+    <Card className="flex-1 flex-col md:flex-row w-full min-h-0 overflow-auto bg-card">
       <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <div className="bg-primary/10 text-primary p-2 rounded-full">
-              <MessageSquare className="h-5 w-5" />
-            </div>
-            <span>
-              ¡Chateá con{" "}
-              <span className="font-bold text-primary">Normita</span>!
-            </span>
-          </CardTitle>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Badge variant="outline">Sesión: {sessionId.slice(-8)}</Badge>
-            {activeFiltersCount > 0 && (
-              <Badge variant="secondary">
-                {activeFiltersCount} filtros activos
-              </Badge>
-            )}
-          </div>
-        </div>
+        <ChatHeader sessionId={sessionId} filterCounts={activeFiltersCount} />
       </CardHeader>
       <CardContent className="pt-5">
         <ScrollArea
+          ref={scrollRef}
           className="overflow-y-auto w-full pr-4"
           style={{ height: "calc(70vh)" }}
         >
           <div className="space-y-4">
-            {searchContext.messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex gap-3 ${
-                  message.type === "user" ? "justify-end" : "justify-start"
-                }`}
-              >
-                <div
-                  className={`flex gap-3 max-w-[80%] ${
-                    message.type === "user" ? "flex-row-reverse" : "flex-row"
-                  }`}
-                >
-                  {message.type === "user" ? (
-                    <div
-                      className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-                        message.type === "user"
-                          ? "bg-gray-600 text-white"
-                          : "bg-gray-600 text-white"
-                      }`}
-                    >
-                      <User className="h-4 w-4" />
-                    </div>
-                  ) : (
-                    <NormitaPicture />
-                  )}
-                  <div
-                    className={`rounded-lg p-3 ${
-                      message.type === "user"
-                        ? "bg-gray-600 text-white"
-                        : "bg-gray-600 text-white"
-                    }`}
-                  >
-                    {/** MESSAGE IS DISPLAYED HERE */}
-                    <div
-                      className="markdown text-base leading-relaxed [&_a]:text-sky-300 [&_a]:underline hover:[&_a]:text-sky-500"
-                      dangerouslySetInnerHTML={{
-                        __html: DOMPurify.sanitize(marked(message.message)),
-                      }}
-                    />
-                    <p className="text-xs opacity-70 mt-2">
-                      {message.timestamp.toLocaleTimeString("es-ES", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </p>
-                  </div>
-                </div>
-              </div>
+            {messages.map((message) => (
+              <ChatMessage message={message} />
             ))}
-
-            {searchContext.isLoading && (
-              <div className="flex gap-3 justify-start">
-                <div className="flex gap-3 max-w-[80%]">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-muted text-muted-foreground flex items-center justify-center">
-                    <Bot className="h-4 w-4" />
-                  </div>
-                  <div className="rounded-lg p-3 bg-muted">
-                    <div className="flex items-center gap-2">
-                      <div className="animate-pulse flex space-x-1">
-                        <div className="h-2 w-2 bg-muted-foreground/50 rounded-full animate-bounce"></div>
-                        <div
-                          className="h-2 w-2 bg-muted-foreground/50 rounded-full animate-bounce"
-                          style={{ animationDelay: "0.1s" }}
-                        ></div>
-                        <div
-                          className="h-2 w-2 bg-muted-foreground/50 rounded-full animate-bounce"
-                          style={{ animationDelay: "0.2s" }}
-                        ></div>
-                      </div>
-                      <span className="text-xs text-muted-foreground">
-                        Esperando la respuesta...
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+            {isLoading && <LoadingDisplay />}
           </div>
         </ScrollArea>
-        {/*marked(results[0]?.generated_response*/}
-        <div className="flex gap-2 mt-4">
-          <Input
-            placeholder="Escribe tu consulta aquí..."
-            value={searchContext.searchField}
-            onChange={(e) => searchContext.setSearchField(e.target.value)}
-            onKeyPress={handleKeyPress}
-            disabled={searchContext.isLoading}
-            className="flex-1"
-          />
-          <Button
-            onClick={handleSendMessage}
-            disabled={
-              !searchContext.searchField.trim() || searchContext.isLoading
-            }
-            size="icon"
-          >
-            <Send className="h-4 w-4" />
-          </Button>
-        </div>
-
-        <p className="text-xs text-muted-foreground mt-2">
-          Presiona Enter para enviar • Los filtros activos se aplicarán
-          automáticamente
-        </p>
+        <ChatTextBar sessionId={sessionId} />
       </CardContent>
     </Card>
   );
 };
+
+export default ChatInterface;

@@ -1,6 +1,6 @@
 import { BookOpen, Calendar, FileText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { SearchResult } from "./ResultsDisplay";
 import { v4 as uuidv4 } from "uuid";
 

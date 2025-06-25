@@ -1,23 +1,63 @@
 import { createContext, useState } from "react";
 import { ChatMessage } from "./ChatInterface";
-import { SearchResponse } from "@/pages/Index";
 
-interface SearchContextType {
+export interface SearchResult {
+  chunk: string;
+  ddganio: number;
+  ddgfechaalta?: string;
+  ddgfechaderogacion?: string;
+  ddgfechapromulgacion?: string;
+  ddgfechapublicacion?: string;
+  ddgfechasancion?: string;
+  ddgid: number;
+  ddgnormasrelacionadas: string;
+  ddgnro: string;
+  ddgsumario: string;
+  ddgtitulo: string;
+  distance: number;
+  estado: string;
+  estado_digesto: string;
+  pagina: number;
+  tipo_digesto: string;
+  tipo_ley: string;
+  tipo_publicacion: string;
+}
+
+interface SearchResponse {
+  generated_response: string;
+  results: SearchResult[];
+}
+
+interface SearchFilters {
+  tipo_digesto?: string[];
+  ddganio?: number[];
+  ddgfechasancion_desde?: string;
+  ddgfechasancion_hasta?: string;
+  estado?: string[];
+  estado_digesto?: string[];
+  tipo_publicacion?: string[];
+  limit?: number;
+}
+
+export interface ChatContextType {
   query: string;
+  filters: SearchFilters,
   searchField: string;
   isLoading: boolean;
   response: SearchResponse;
   messages: ChatMessage[];
   setQuery: React.Dispatch<React.SetStateAction<string>>;
+  setFilters: React.Dispatch<React.SetStateAction<SearchFilters>>;
   setSearchField: React.Dispatch<React.SetStateAction<string>>;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setResponse: React.Dispatch<React.SetStateAction<SearchResponse>>;
   setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
 }
 
-export const SearchContext = createContext<SearchContextType | undefined>(undefined);
+const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
-export function SearchProvider({ children }: { children: React.ReactNode }) {
+export function ChatProvider({ children }: { children: React.ReactNode }) {
+  const [filters, setFilters] = useState<SearchFilters>({});
   const [query, setQuery] = useState("");
   const [searchField, setSearchField] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -33,8 +73,10 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
   ]);
 
   return (
-    <SearchContext.Provider
+    <ChatContext.Provider
       value={{
+        filters,
+        setFilters,
         query,
         setQuery,
         searchField,
@@ -48,6 +90,6 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
       }}
     >
       {children}
-    </SearchContext.Provider>
+    </ChatContext.Provider>
   );
-};
+}
