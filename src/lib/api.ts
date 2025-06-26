@@ -55,7 +55,7 @@ const callAPI = async (sessionId, userQuery, filters, setAssistantMsg) => {
     setAssistantMsg(
       "Lo siento, ocurrió un error al procesar tu consulta. Intenta más tarde."
     );
-    console.error("Error searching:", error);
+    //console.error("Error searching:", error);
   }
 };
 
