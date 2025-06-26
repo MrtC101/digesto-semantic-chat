@@ -4,7 +4,7 @@ import {
   SidebarContent,
   SidebarHeader,
 } from "@/components/ui/sidebar";
-import { FilterSidebar } from './FilterSidebar';
+import { FilterSidebar } from '../FilterSidebar';
 import { SearchFilters } from '@/pages/Index';
 
 interface AppSidebarProps {

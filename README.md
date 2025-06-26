@@ -1,73 +1,64 @@
-# Welcome to your Lovable project
-
-## Project info
-
-**URL**: https://lovable.dev/projects/3fd90b0d-64df-4d7c-8c55-d5a12c16aa3f
-
-## How can I edit this code?
-
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/3fd90b0d-64df-4d7c-8c55-d5a12c16aa3f) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/3fd90b0d-64df-4d7c-8c55-d5a12c16aa3f) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+ # 🏛️ Normita AI Chat
+ 
+ **Normita AI Chat** es una interfaz web desarrollada para uso interno de la Municipalidad de Godoy Cruz. Este proyecto fue iniciado utilizando una IA generativa de código llamada `lovable-dev[bot]`, y posteriormente fue personalizada de acuerdo a los requerimientos del municipio.
+ 
+ La aplicación permite interactuar con un modelo de lenguaje reducido, cuyo conocimiento base está compuesto por normas, digestos y resoluciones generadas por la municipalidad.
+ 
+ ---
+ 
+ ## 🚀 Tecnologías utilizadas
+ 
+ - [Bun](https:bun.sh/)
+ - [React](https:reactjs.org/)
+ - [Vite](https:vitejs.dev/)
+ - [TypeScript](https:www.typescriptlang.org/)
+ - [Tailwind CSS](https:tailwindcss.com/)
+ - [shadcn/ui](https:ui.shadcn.com/)
+ 
+ ---
+ 
+ ## 📦 Instalación
+ 
+ Con [npm](https:www.npmjs.com/):
+ 
+ ```bash
+ npm install
+ ```
+ 
+ Con [Bun](https:bun.sh/):
+ 
+ ```bash
+ bun install
+ ```
+ 
+ ---
+ 
+ ## 🧩 Estructura del proyecto
+ 
+ ```
+ ├── public/            # Archivos públicos y logos
+ ├── src/
+ │   ├── components/    # Componentes reutilizables de la UI
+ │   ├── hooks/         # Custom hooks
+ │   ├── lib/           # Utilidades y helpers
+ │   ├── pages/         # Páginas principales
+ ```
+ 
+ ---
+ 
+ ## 👥 Autores
+ 
+ Desarrollado por la **Municipalidad de Godoy Cruz**.
+ 
+ ---
+ 
+ ## 📌 Notas
+ 
+ - Próximamente se agregará un archivo `.yaml` para facilitar el deploy en servidores internos.
+ - Se incorporará una carpeta o rama dedicada al _bundle_ final del frontend para su distribución.
+ 
+ ---
+ 
+ ## 🛠️ Contribuciones
+ 
+ Este proyecto es de uso interno. Por el momento no se aceptan contribuciones externas.
