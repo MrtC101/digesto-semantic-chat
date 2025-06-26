@@ -53,7 +53,9 @@ const callAPI = async (sessionId, userQuery, filters, setAssistantMsg) => {
     setAssistantMsg(answare?.generated_response);
   } catch (error) {
     setAssistantMsg(
-      "Lo siento, ocurrió un error al procesar tu consulta. Intenta más tarde."
+      `❌ **Lo sentimos**  
+Ocurrió un error al procesar tu consulta.  
+Por favor, intentá nuevamente más tarde.`
     );
     //console.error("Error searching:", error);
   }

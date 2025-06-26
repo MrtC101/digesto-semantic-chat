@@ -16,7 +16,9 @@ export interface ChatContextType {
   setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
 }
 
-export const ChatContext = createContext<ChatContextType | undefined>(undefined);
+export const ChatContext = createContext<ChatContextType | undefined>(
+  undefined
+);
 
 export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [filters, setFilters] = useState<SearchFilters>({});
@@ -27,8 +29,19 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     {
       id: "1",
       type: "assistant",
-      message:
-        "¡Hola! Soy tu asistente legal especializado en el Digesto Jurídico. Puedes hacerme preguntas sobre leyes, ordenanzas, decretos y demás normativas. ¿En qué puedo ayudarte hoy?",
+      message: `## 👋 ¡Hola!
+
+Soy tu **asistente legal** especializado en el **Digesto Jurídico** de la Municipalidad.
+
+Podés preguntarme sobre:
+
+- 📘 Leyes
+- 🏛️ Ordenanzas
+- 📄 Decretos
+- 📚 Otras normativas municipales
+
+> ¿En qué puedo ayudarte hoy?
+      `,
       timestamp: new Date(),
     },
   ]);
