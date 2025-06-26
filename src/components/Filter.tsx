@@ -3,10 +3,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@radix-ui/react-popover";
-import { Button } from "react-day-picker";
 import { FilterSidebar } from "./FilterSidebar";
+import useChatContext from "@/hooks/use-chat-context";
+import { Filter } from "lucide-react";
+import { Button } from "./ui/button";
 
-function Filter() {
+
+
+function FilterButton() {
+  const { filters, setFilters } = useChatContext();
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -30,4 +35,4 @@ function Filter() {
   );
 }
 
-export default Filter;
+export default FilterButton;

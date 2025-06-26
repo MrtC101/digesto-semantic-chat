@@ -5,13 +5,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import { SearchProvider } from "./components/SearchContext";
+import { ChatProvider } from "./components/ChatContext";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <SearchProvider>
+    <ChatProvider>
       <TooltipProvider>
         <Toaster />
         <Sonner />
@@ -23,7 +23,7 @@ const App = () => (
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
-    </SearchProvider>
+    </ChatProvider>
   </QueryClientProvider>
 );
 

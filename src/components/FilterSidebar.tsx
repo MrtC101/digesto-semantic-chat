@@ -7,7 +7,18 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { SearchFilters } from '@/pages/Index';
+
+
+export interface SearchFilters {
+  tipo_digesto?: string[];
+  ddganio?: number[];
+  ddgfechasancion_desde?: string;
+  ddgfechasancion_hasta?: string;
+  estado?: string[];
+  estado_digesto?: string[];
+  tipo_publicacion?: string[];
+  limit?: number;
+}
 
 interface FilterSidebarProps {
   filters: SearchFilters;

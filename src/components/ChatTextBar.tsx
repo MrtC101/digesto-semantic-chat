@@ -1,95 +1,47 @@
 import useChatContext from "@/hooks/use-chat-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import axios from "axios";
-import { useEffect } from "react";
+import { useState } from "react";
 import { Send } from "lucide-react";
+
+export interface SearchResult {
+  chunk: string;
+  ddganio: number;
+  ddgfechaalta?: string;
+  ddgfechaderogacion?: string;
+  ddgfechapromulgacion?: string;
+  ddgfechapublicacion?: string;
+  ddgfechasancion?: string;
+  ddgid: number;
+  ddgnormasrelacionadas: string;
+  ddgnro: string;
+  ddgsumario: string;
+  ddgtitulo: string;
+  distance: number;
+  estado: string;
+  estado_digesto: string;
+  pagina: number;
+  tipo_digesto: string;
+  tipo_ley: string;
+  tipo_publicacion: string;
+}
+
+export interface SearchResponse {
+  generated_response: string;
+  results: SearchResult[];
+}
 
 interface ChatTextBarProps {
   sessionId: string;
 }
 
 function ChatTextBar({ sessionId }: ChatTextBarProps) {
-  const {
-    filters,
-    searchField,
-    query,
-    isLoading,
-    setQuery,
-    setIsLoading,
-    setResponse,
-    setSearchField,
-  } = useChatContext();
-
-  useEffect(() => {
-    const callAPI = async () => {
-      setQuery(searchField);
-      if (!query.trim()) return;
-
-      setIsLoading(true);
-      try {
-        const apiUrl = "/api";
-
-        const params = new URLSearchParams({
-          query_str: query,
-          mode: "GENERATE",
-          session_id: sessionId,
-        });
-
-        // Add filters to params
-        if (filters.tipo_digesto?.length) {
-          filters.tipo_digesto.forEach((tipo) =>
-            params.append("tipo_digesto", tipo)
-          );
-        }
-        if (filters.ddganio?.length) {
-          filters.ddganio.forEach((anio) =>
-            params.append("ddganio", anio.toString())
-          );
-        }
-        if (filters.ddgfechasancion_desde) {
-          params.append("ddgfechasancion_desde", filters.ddgfechasancion_desde);
-        }
-        if (filters.ddgfechasancion_hasta) {
-          params.append("ddgfechasancion_hasta", filters.ddgfechasancion_hasta);
-        }
-        if (filters.estado?.length) {
-          filters.estado.forEach((est) => params.append("estado", est));
-        }
-        if (filters.estado_digesto?.length) {
-          filters.estado_digesto.forEach((est) =>
-            params.append("estado_digesto", est)
-          );
-        }
-        if (filters.tipo_publicacion?.length) {
-          filters.tipo_publicacion.forEach((tipo) =>
-            params.append("tipo_publicacion", tipo)
-          );
-        }
-        if (filters.limit) {
-          params.append("limit", filters.limit.toString());
-        } else {
-          filters.limit = 50;
-          params.append("limit", filters.limit.toString());
-        }
-
-        const fullUrl = `${apiUrl}?${params.toString()}`;
-        const response = await axios.post(fullUrl);
-        setResponse(response.data);
-      } catch (error) {
-        console.error("Error searching:", error);
-      } finally {
-        setIsLoading(false);
-        setSearchField("");
-        setQuery("");
-      }
-    };
-    callAPI();
-  }, [query]);
+  const [inputText, setInputText] = useState("");
+  const { isLoading, setUserMsg } = useChatContext();
 
   const handleSendMessage = () => {
-    if (!searchField.trim()) return;
-    setQuery(searchField);
+    setUserMsg(inputText);
+    setInputText("");
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -104,15 +56,15 @@ function ChatTextBar({ sessionId }: ChatTextBarProps) {
       <div className="flex gap-2 mt-4">
         <Input
           placeholder="Escribe tu consulta aquí..."
-          value={searchField}
-          onChange={(e) => setSearchField(e.target.value)}
+          value={inputText}
+          onChange={(e) => setInputText(e.target.value)}
           onKeyPress={handleKeyPress}
           disabled={isLoading}
           className="flex-1"
         />
         <Button
           onClick={handleSendMessage}
-          disabled={!searchField.trim() || isLoading}
+          disabled={!inputText.trim() || isLoading}
           size="icon"
         >
           <Send className="h-4 w-4" />

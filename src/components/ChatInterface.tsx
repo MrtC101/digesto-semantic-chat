@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from "react";
 import { MessageSquare, Bot, User, Scale, Search, Filter } from "lucide-react";
-import DOMPurify from "dompurify";
 import { marked } from "marked";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,124 +9,10 @@ import { Badge } from "@/components/ui/badge";
 
 import useChatContext from "@/hooks/use-chat-context";
 
-import { NormitaPicture } from "@/components/NormitaIcon";
-import { SearchResult } from "./ChatContext";
 import ChatTextBar from "./ChatTextBar";
-
-export interface ChatMessage {
-  id: string;
-  type: "user" | "assistant";
-  message: string;
-  timestamp: Date;
-  results?: SearchResult[];
-}
-
-function LoadingDisplay() {
-  return (
-    <div className="flex gap-3 justify-start">
-      <div className="flex gap-3 max-w-[80%]">
-        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-muted text-muted-foreground flex items-center justify-center">
-          <Bot className="h-4 w-4" />
-        </div>
-        <div className="rounded-lg p-3 bg-muted">
-          <div className="flex items-center gap-2">
-            <div className="animate-pulse flex space-x-1">
-              <div className="h-2 w-2 bg-muted-foreground/50 rounded-full animate-bounce"></div>
-              <div
-                className="h-2 w-2 bg-muted-foreground/50 rounded-full animate-bounce"
-                style={{ animationDelay: "0.1s" }}
-              ></div>
-              <div
-                className="h-2 w-2 bg-muted-foreground/50 rounded-full animate-bounce"
-                style={{ animationDelay: "0.2s" }}
-              ></div>
-            </div>
-            <span className="text-xs text-muted-foreground">
-              Esperando la respuesta...
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ChatMessage({ message }: { message: ChatMessage }) {
-  return (
-    <div
-      key={message.id}
-      className={`flex gap-3 ${
-        message.type === "user" ? "justify-end" : "justify-start"
-      }`}
-    >
-      <div
-        className={`flex gap-3 max-w-[80%] ${
-          message.type === "user" ? "flex-row-reverse" : "flex-row"
-        }`}
-      >
-        {message.type === "user" ? (
-          <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-gray-600 text-white">
-            <User className="h-4 w-4" />
-          </div>
-        ) : (
-          <NormitaPicture />
-        )}
-
-        <div className="rounded-lg p-3 bg-gray-600 text-white">
-          <div
-            className="
-                      markdown
-                      text-base
-                      leading-relaxed
-                      [&_a]:text-sky-300
-                      [&_a]:underline
-                      hover:[&_a]:text-sky-500
-                      [&_p]:break-words
-                      [&_p]:whitespace-pre-wrap
-                      "
-            dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(marked(message.message)),
-            }}
-          />
-          <p className="text-xs opacity-70 mt-2">
-            {message.timestamp.toLocaleTimeString("es-ES", {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-const processResults = async () => {
-  if (!response) return;
-  searchContext.setIsLoading(true);
-
-  if (!searchContext.response?.generated_response) return;
-  const text = await marked(searchContext.response?.generated_response);
-  const assistantMessage: ChatMessage = {
-    id: (Date.now() + 1).toString(),
-    type: "assistant",
-    message: text,
-    timestamp: new Date(),
-  };
-  searchContext.setMessages((prev) => [...prev, assistantMessage]);
-
-  searchContext.setIsLoading(false);
-};
-
-const AddDefaultMessage = () => {
-  if (!searchContext.query.trim()) return;
-  const userMessage: ChatMessage = {
-    id: Date.now().toString(),
-    type: "user",
-    message: searchContext.query,
-    timestamp: new Date(),
-  };
-  searchContext.setMessages((prev) => [...prev, userMessage]);
-};
+import { ChatMessage, LoadingDisplay } from "./ChatMessages";
+import FilterButton from "./Filter";
+import callAPI from "@/lib/api";
 
 interface ChatHeaderProps {
   sessionId: string;
@@ -146,6 +31,7 @@ function ChatHeader({ sessionId, filterCounts }: ChatHeaderProps) {
         </span>
       </CardTitle>
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <FilterButton />
         <Badge variant="outline">Sesión: {sessionId.slice(-8)}</Badge>
         {filterCounts > 0 && (
           <Badge variant="secondary">{filterCounts} filtros activos</Badge>
@@ -160,7 +46,16 @@ interface ChatInterfaceProps {
 }
 
 const ChatInterface = ({ sessionId }: ChatInterfaceProps) => {
-  const { filters, messages, isLoading } = useChatContext();
+  const {
+    userMsg,
+    assistantMsg,
+    filters,
+    messages,
+    isLoading,
+    setIsLoading,
+    setAssistantMsg,
+    setMessages,
+  } = useChatContext();
 
   const activeFiltersCount = Object.values(filters).filter((v) =>
     Array.isArray(v) ? v.length > 0 : v !== undefined && v !== ""
@@ -168,18 +63,46 @@ const ChatInterface = ({ sessionId }: ChatInterfaceProps) => {
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // // Sends message to the chat:
-  // useEffect(() => {
-  //   AddDefaultMessage();
-  // }, [query]);
+  useEffect(() => {
+    // Adds Users Message to chat
+    const AddUserMessage = () => {
+      if (!userMsg.trim()) return;
+      const userMessage: ChatMessage = {
+        id: Date.now().toString(),
+        type: "user",
+        message: userMsg,
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, userMessage]);
+    };
+    AddUserMessage();
+  }, [userMsg]);
+  
+  useEffect(() => {
+    //Adds Assistance Message to chat
+    const AddAssistanceMessage = () => {
+      if (!assistantMsg) return;
+      const assistantMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        type: "assistant",
+        message: assistantMsg,
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, assistantMessage]);
+    };
+    AddAssistanceMessage();
+    setIsLoading(false);
+  }, [assistantMsg]);
 
-  // // Handles the response message:
-  // useEffect(() => {
-  //   processResults();
-  // }, [response, setIsLoading]);
 
   useEffect(() => {
-    // Al actualizar mensajes, scrollear abajo
+    if (!userMsg.trim()) return;
+    setIsLoading(true);
+    callAPI(sessionId, userMsg, filters, setAssistantMsg);
+  }, [userMsg]);
+
+  // Auto Scroll down
+  useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
@@ -197,8 +120,8 @@ const ChatInterface = ({ sessionId }: ChatInterfaceProps) => {
           style={{ height: "calc(70vh)" }}
         >
           <div className="space-y-4">
-            {messages.map((message) => (
-              <ChatMessage message={message} />
+            {messages.map((message, index) => (
+              <ChatMessage key={index} message={message} />
             ))}
             {isLoading && <LoadingDisplay />}
           </div>
