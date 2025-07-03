@@ -59,7 +59,6 @@ function ChatTextBar({ sessionId }: ChatTextBarProps) {
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
           onKeyPress={handleKeyPress}
-          disabled={isLoading}
           className="flex-1"
         />
         <Button

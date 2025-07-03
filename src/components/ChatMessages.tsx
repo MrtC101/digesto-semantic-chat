@@ -78,16 +78,28 @@ export function ChatMessage({ message }: { message: ChatMessage }) {
 						markdown
 						text-base
 						leading-relaxed
+            break-words
+            whitespace-pre-wrap
 						[&_a]:text-sky-300
 						[&_a]:underline
 						hover:[&_a]:text-sky-500
 						[&_p]:break-words
 						[&_p]:whitespace-pre-wrap
-						"
+            [&_a]:text-sky-300
+            [&_a]:underline
+            hover:[&_a]:text-sky-500
+            [&_p]:break-words
+            [&_p]:whitespace-pre-wrap
+            [&_code]:break-words
+            [&_pre]:break-words
+            [&_td]:break-words
+            [&_th]:break-words
+            "
             dangerouslySetInnerHTML={{
               __html: html,
             }}
           />
+
           <p className="text-xs opacity-70 mt-2">
             {message.timestamp.toLocaleTimeString("es-ES", {
               hour: "2-digit",
