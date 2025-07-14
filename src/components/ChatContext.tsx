@@ -29,19 +29,21 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     {
       id: "1",
       type: "assistant",
-      message: `## 👋 ¡Hola!
+      message: `👋 **¡Hola!**
 
-Soy tu **asistente legal** especializado en el **Digesto Jurídico** de la Municipalidad.
+Soy tu **asistente legal**, especializado en el **Digesto Jurídico** de la Municipalidad.
 
-Podés preguntarme sobre:
+Podés consultarme sobre:
 
-- 📘 Leyes
-- 🏛️ Ordenanzas
-- 📄 Decretos
-- 📚 Otras normativas municipales
+- 📘 **Leyes**
+- 🏛️ **Ordenanzas**
+- 📄 **Decretos**
+- 📚 **Otras normativas municipales**
+- 🗺️ **Información geográfica de Godoy Cruz**  
+  Podés consultar la **zonificación**, **distrito** y **barrio** de cualquier dirección.
 
-> ¿En qué puedo ayudarte hoy?
-      `,
+> 🗣️ **¿En qué puedo ayudarte hoy?**
+`,
       timestamp: new Date(),
     },
   ]);

@@ -79,7 +79,6 @@ export function ChatMessage({ message }: { message: ChatMessage }) {
 						text-base
 						leading-relaxed
             break-words
-            whitespace-pre-wrap
 						[&_a]:text-sky-300
 						[&_a]:underline
 						hover:[&_a]:text-sky-500
