@@ -29,8 +29,14 @@ export const FilterSidebar = ({ filters, onFiltersChange }: FilterSidebarProps) 
   const [newYear, setNewYear] = useState('');
 
   const tipoDigestoOptions = ['LEYES', 'ORDENANZAS', 'RESOLUCIONES', 'DECRETOS', 'CONVENIOS'];
-  const estadoOptions = ['PUBLICADO', 'PENDIENTE PUBLICACION'];
-  const estadoDigestoOptions = ['NO VIGENTE', 'VIGENTE', 'DEROGADO/A', 'MODIFICADO/A'];
+  const estadoOptions = ['INCIERTO','PUBLICADO', 'PENDIENTE PUBLICACION'];
+  const estadoDigestoOptions = [
+    "INCIERTO",
+    "NO VIGENTE",
+    "VIGENTE",
+    "DEROGADO/A",
+    "MODIFICADO/A",
+  ];
   const tipoPublicacionOptions = ['PUBLICO', 'INTERNO HCD', 'INTERNO EJECUTIVO'];
 
   const handleCheckboxChange = (category: keyof SearchFilters, value: string, checked: boolean) => {
