@@ -45,10 +45,13 @@ export interface ChatMessage {
 
 export function ChatMessage({ message }: { message: ChatMessage }) {
 	const [html, setHtml] = useState<string | null>(null);
-	useEffect(() => {
+  useEffect(() => {
     (async () => {
-      const raw = await marked(message.message);
-      setHtml(DOMPurify.sanitize(raw));
+      const raw = DOMPurify.sanitize(message.message, {
+        ALLOWED_ATTR: ["href", "target", "rel"],
+      });
+      const mark = await marked(raw);
+      setHtml(mark);
     })();
   }, [message]);
   
