@@ -1,35 +1,8 @@
-import useChatContext from "@/hooks/use-chat-context";
+import useChatContext from "@/hooks/use_chat_context_hook";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Send } from "lucide-react";
-
-export interface SearchResult {
-  chunk: string;
-  ddganio: number;
-  ddgfechaalta?: string;
-  ddgfechaderogacion?: string;
-  ddgfechapromulgacion?: string;
-  ddgfechapublicacion?: string;
-  ddgfechasancion?: string;
-  ddgid: number;
-  ddgnormasrelacionadas: string;
-  ddgnro: string;
-  ddgsumario: string;
-  ddgtitulo: string;
-  distance: number;
-  estado: string;
-  estado_digesto: string;
-  pagina: number;
-  tipo_digesto: string;
-  tipo_ley: string;
-  tipo_publicacion: string;
-}
-
-export interface SearchResponse {
-  generated_response: string;
-  results: SearchResult[];
-}
 
 interface ChatTextBarProps {
   sessionId: string;
@@ -40,6 +13,7 @@ function ChatTextBar({ sessionId }: ChatTextBarProps) {
   const { isLoading, setUserMsg } = useChatContext();
 
   const handleSendMessage = () => {
+    if (!inputText.trim() || isLoading) return;
     setUserMsg(inputText);
     setInputText("");
   };
@@ -60,6 +34,7 @@ function ChatTextBar({ sessionId }: ChatTextBarProps) {
           onChange={(e) => setInputText(e.target.value)}
           onKeyPress={handleKeyPress}
           className="flex-1"
+          disabled={isLoading}
         />
         <Button
           onClick={handleSendMessage}

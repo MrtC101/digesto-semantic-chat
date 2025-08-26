@@ -1,4 +1,4 @@
-import { SearchResponse } from "@/components/ChatTextBar";
+import { SearchResult } from "@/components/Chat/types";
 import axios from "axios";
 
 function AddFilters(params, filters) {
@@ -49,7 +49,7 @@ const callAPI = async (sessionId, userQuery, filters, setAssistantMsg) => {
   const fullUrl = `${apiUrl}?${params.toString()}`;
   try {
     const response = await axios.post(fullUrl);
-    const answare: SearchResponse = response.data;
+    const answare: SearchResult = response.data;
     setAssistantMsg(answare?.generated_response);
   } catch (error) {
     setAssistantMsg(

@@ -1,35 +1,31 @@
-
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-
-
-export interface SearchFilters {
-  tipo_digesto?: string[];
-  ddganio?: number[];
-  ddgfechasancion_desde?: string;
-  ddgfechasancion_hasta?: string;
-  estado?: string[];
-  estado_digesto?: string[];
-  tipo_publicacion?: string[];
-  limit?: number;
-}
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import type { SearchFilters } from "../types";
 
 interface FilterSidebarProps {
   filters: SearchFilters;
   onFiltersChange: (filters: SearchFilters) => void;
 }
 
-export const FilterSidebar = ({ filters, onFiltersChange }: FilterSidebarProps) => {
-  const [newYear, setNewYear] = useState('');
+export const FilterSidebar = ({
+  filters,
+  onFiltersChange,
+}: FilterSidebarProps) => {
+  const [newYear, setNewYear] = useState("");
 
-  const tipoDigestoOptions = ['LEYES', 'ORDENANZAS', 'RESOLUCIONES', 'DECRETOS', 'CONVENIOS'];
-  const estadoOptions = ['INCIERTO','PUBLICADO', 'PENDIENTE PUBLICACION'];
+  const tipoDigestoOptions = [
+    "LEYES",
+    "ORDENANZAS",
+    "RESOLUCIONES",
+    "DECRETOS",
+    "CONVENIOS",
+  ];
+  const estadoOptions = ["INCIERTO", "PUBLICADO", "PENDIENTE PUBLICACION"];
   const estadoDigestoOptions = [
     "INCIERTO",
     "NO VIGENTE",
@@ -37,17 +33,25 @@ export const FilterSidebar = ({ filters, onFiltersChange }: FilterSidebarProps) 
     "DEROGADO/A",
     "MODIFICADO/A",
   ];
-  const tipoPublicacionOptions = ['PUBLICO', 'INTERNO HCD', 'INTERNO EJECUTIVO'];
+  const tipoPublicacionOptions = [
+    "PUBLICO",
+    "INTERNO HCD",
+    "INTERNO EJECUTIVO",
+  ];
 
-  const handleCheckboxChange = (category: keyof SearchFilters, value: string, checked: boolean) => {
-    const currentValues = filters[category] as string[] || [];
-    const newValues = checked 
+  const handleCheckboxChange = (
+    category: keyof SearchFilters,
+    value: string,
+    checked: boolean
+  ) => {
+    const currentValues = (filters[category] as string[]) || [];
+    const newValues = checked
       ? [...currentValues, value]
-      : currentValues.filter(v => v !== value);
-    
+      : currentValues.filter((v) => v !== value);
+
     onFiltersChange({
       ...filters,
-      [category]: newValues.length > 0 ? newValues : undefined
+      [category]: newValues.length > 0 ? newValues : undefined,
     });
   };
 
@@ -58,19 +62,19 @@ export const FilterSidebar = ({ filters, onFiltersChange }: FilterSidebarProps) 
       if (!currentYears.includes(year)) {
         onFiltersChange({
           ...filters,
-          ddganio: [...currentYears, year].sort((a, b) => b - a)
+          ddganio: [...currentYears, year].sort((a, b) => b - a),
         });
       }
-      setNewYear('');
+      setNewYear("");
     }
   };
 
   const handleYearRemove = (year: number) => {
     const currentYears = filters.ddganio || [];
-    const newYears = currentYears.filter(y => y !== year);
+    const newYears = currentYears.filter((y) => y !== year);
     onFiltersChange({
       ...filters,
-      ddganio: newYears.length > 0 ? newYears : undefined
+      ddganio: newYears.length > 0 ? newYears : undefined,
     });
   };
 
@@ -78,8 +82,8 @@ export const FilterSidebar = ({ filters, onFiltersChange }: FilterSidebarProps) 
     onFiltersChange({});
   };
 
-  const activeFiltersCount = Object.values(filters).filter(v => 
-    Array.isArray(v) ? v.length > 0 : v !== undefined && v !== ''
+  const activeFiltersCount = Object.values(filters).filter((v) =>
+    Array.isArray(v) ? v.length > 0 : v !== undefined && v !== ""
   ).length;
 
   return (
@@ -105,8 +109,8 @@ export const FilterSidebar = ({ filters, onFiltersChange }: FilterSidebarProps) 
               <Checkbox
                 id={`tipo-${tipo}`}
                 checked={filters.tipo_digesto?.includes(tipo) || false}
-                onCheckedChange={(checked) => 
-                  handleCheckboxChange('tipo_digesto', tipo, checked as boolean)
+                onCheckedChange={(checked) =>
+                  handleCheckboxChange("tipo_digesto", tipo, checked as boolean)
                 }
               />
               <Label htmlFor={`tipo-${tipo}`} className="text-sm font-normal">
@@ -159,27 +163,35 @@ export const FilterSidebar = ({ filters, onFiltersChange }: FilterSidebarProps) 
         </CardHeader>
         <CardContent className="space-y-3">
           <div>
-            <Label htmlFor="fecha-desde" className="text-xs">Desde</Label>
+            <Label htmlFor="fecha-desde" className="text-xs">
+              Desde
+            </Label>
             <Input
               id="fecha-desde"
               type="date"
-              value={filters.ddgfechasancion_desde || ''}
-              onChange={(e) => onFiltersChange({
-                ...filters,
-                ddgfechasancion_desde: e.target.value || undefined
-              })}
+              value={filters.ddgfechasancion_desde || ""}
+              onChange={(e) =>
+                onFiltersChange({
+                  ...filters,
+                  ddgfechasancion_desde: e.target.value || undefined,
+                })
+              }
             />
           </div>
           <div>
-            <Label htmlFor="fecha-hasta" className="text-xs">Hasta</Label>
+            <Label htmlFor="fecha-hasta" className="text-xs">
+              Hasta
+            </Label>
             <Input
               id="fecha-hasta"
               type="date"
-              value={filters.ddgfechasancion_hasta || ''}
-              onChange={(e) => onFiltersChange({
-                ...filters,
-                ddgfechasancion_hasta: e.target.value || undefined
-              })}
+              value={filters.ddgfechasancion_hasta || ""}
+              onChange={(e) =>
+                onFiltersChange({
+                  ...filters,
+                  ddgfechasancion_hasta: e.target.value || undefined,
+                })
+              }
             />
           </div>
         </CardContent>
@@ -195,11 +207,14 @@ export const FilterSidebar = ({ filters, onFiltersChange }: FilterSidebarProps) 
               <Checkbox
                 id={`estado-${estado}`}
                 checked={filters.estado?.includes(estado) || false}
-                onCheckedChange={(checked) => 
-                  handleCheckboxChange('estado', estado, checked as boolean)
+                onCheckedChange={(checked) =>
+                  handleCheckboxChange("estado", estado, checked as boolean)
                 }
               />
-              <Label htmlFor={`estado-${estado}`} className="text-sm font-normal">
+              <Label
+                htmlFor={`estado-${estado}`}
+                className="text-sm font-normal"
+              >
                 {estado}
               </Label>
             </div>
@@ -217,11 +232,18 @@ export const FilterSidebar = ({ filters, onFiltersChange }: FilterSidebarProps) 
               <Checkbox
                 id={`estado-digesto-${estado}`}
                 checked={filters.estado_digesto?.includes(estado) || false}
-                onCheckedChange={(checked) => 
-                  handleCheckboxChange('estado_digesto', estado, checked as boolean)
+                onCheckedChange={(checked) =>
+                  handleCheckboxChange(
+                    "estado_digesto",
+                    estado,
+                    checked as boolean
+                  )
                 }
               />
-              <Label htmlFor={`estado-digesto-${estado}`} className="text-sm font-normal">
+              <Label
+                htmlFor={`estado-digesto-${estado}`}
+                className="text-sm font-normal"
+              >
                 {estado}
               </Label>
             </div>
@@ -239,11 +261,18 @@ export const FilterSidebar = ({ filters, onFiltersChange }: FilterSidebarProps) 
               <Checkbox
                 id={`tipo-pub-${tipo}`}
                 checked={filters.tipo_publicacion?.includes(tipo) || false}
-                onCheckedChange={(checked) => 
-                  handleCheckboxChange('tipo_publicacion', tipo, checked as boolean)
+                onCheckedChange={(checked) =>
+                  handleCheckboxChange(
+                    "tipo_publicacion",
+                    tipo,
+                    checked as boolean
+                  )
                 }
               />
-              <Label htmlFor={`tipo-pub-${tipo}`} className="text-sm font-normal">
+              <Label
+                htmlFor={`tipo-pub-${tipo}`}
+                className="text-sm font-normal"
+              >
                 {tipo}
               </Label>
             </div>
@@ -257,16 +286,18 @@ export const FilterSidebar = ({ filters, onFiltersChange }: FilterSidebarProps) 
         </CardHeader>
         <CardContent>
           <Input
-            id='FiltroLimite'
+            id="FiltroLimite"
             type="number"
             placeholder="50"
             min="1"
             max="100"
-            value={filters.limit || ''}
-            onChange={(e) => onFiltersChange({
-              ...filters,
-              limit: e.target.value ? parseInt(e.target.value) : 50
-            })}
+            value={filters.limit || ""}
+            onChange={(e) =>
+              onFiltersChange({
+                ...filters,
+                limit: e.target.value ? parseInt(e.target.value) : 50,
+              })
+            }
           />
           <p className="text-xs text-muted-foreground mt-1">
             Máximo 100 resultados

@@ -1,9 +1,9 @@
 import DOMPurify from "dompurify";
-import { NormitaPicture } from "./NormitaIcon";
+import { NormitaPicture } from "@/components/Chat/ChatInterface/normita_icon";
 import { Bot, User } from "lucide-react";
 import { marked } from "marked";
-import { SearchResult } from "./ChatTextBar";
 import { useEffect, useState } from "react";
+import type { ChatMessage as ChatMessageType } from "../types";
 
 export function LoadingDisplay() {
   return (
@@ -35,25 +35,27 @@ export function LoadingDisplay() {
   );
 }
 
-export interface ChatMessage {
-  id: string;
-  type: "user" | "assistant";
-  message: string;
-  timestamp: Date;
-  results?: SearchResult[];
+interface ChatMessageProps {
+  message: ChatMessageType;
 }
 
-export function ChatMessage({ message }: { message: ChatMessage }) {
-	const [html, setHtml] = useState<string | null>(null);
+export function ChatMessage({ message }: ChatMessageProps) {
+  const [html, setHtml] = useState<string>("");
+  
   useEffect(() => {
     (async () => {
-      const raw = DOMPurify.sanitize(message.message, {
-        ALLOWED_ATTR: ["href", "target", "rel"],
-      });
-      const mark = await marked(raw);
-      setHtml(mark);
+      try {
+        const raw = DOMPurify.sanitize(message.message, {
+          ALLOWED_ATTR: ["href", "target", "rel"],
+        });
+        const mark = await marked(raw);
+        setHtml(mark);
+      } catch (error) {
+        console.error("Error processing markdown:", error);
+        setHtml(message.message);
+      }
     })();
-  }, [message]);
+  }, [message.message]);
   
   return (
     <div
@@ -78,24 +80,19 @@ export function ChatMessage({ message }: { message: ChatMessage }) {
         <div className="rounded-lg p-3 bg-gray-600 text-white">
           <div
             className="
-						markdown
-						text-base
-						leading-relaxed
-            break-words
-						[&_a]:text-sky-300
-						[&_a]:underline
-						hover:[&_a]:text-sky-500
-						[&_p]:break-words
-						[&_p]:whitespace-pre-wrap
-            [&_a]:text-sky-300
-            [&_a]:underline
-            hover:[&_a]:text-sky-500
-            [&_p]:break-words
-            [&_p]:whitespace-pre-wrap
-            [&_code]:break-words
-            [&_pre]:break-words
-            [&_td]:break-words
-            [&_th]:break-words
+              markdown
+              text-base
+              leading-relaxed
+              break-words
+              [&_a]:text-sky-300
+              [&_a]:underline
+              hover:[&_a]:text-sky-500
+              [&_p]:break-words
+              [&_p]:whitespace-pre-wrap
+              [&_code]:break-words
+              [&_pre]:break-words
+              [&_td]:break-words
+              [&_th]:break-words
             "
             dangerouslySetInnerHTML={{
               __html: html,

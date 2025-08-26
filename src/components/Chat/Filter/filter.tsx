@@ -2,17 +2,16 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@radix-ui/react-popover";
-import { FilterSidebar } from "./FilterSidebar";
-import useChatContext from "@/hooks/use-chat-context";
+} from "@/components/ui/popover";
+import { FilterSidebar } from "../Sidebar/filter_sidebar";
+import useChatContext from "@/hooks/use_chat_context_hook";
 import { Filter } from "lucide-react";
-import { Button } from "./ui/button";
-import { Card } from "./ui/card";
-
-
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 function FilterButton() {
   const { filters, setFilters } = useChatContext();
+  
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -21,8 +20,8 @@ function FilterButton() {
           Filtros
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="z-50 w-80 p-0 bg-muted" align="end">
-        <Card>
+      <PopoverContent className="z-50 w-80 p-0 bg-background border" align="end">
+        <Card className="border-0">
           <div className="border-b p-4">
             <h3 className="font-semibold text-lg">Filtros de Búsqueda</h3>
             <p className="text-sm text-muted-foreground">

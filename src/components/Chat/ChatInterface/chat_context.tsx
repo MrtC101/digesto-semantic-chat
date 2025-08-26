@@ -1,7 +1,5 @@
 import { createContext, useState } from "react";
-import { ChatMessage } from "./ChatMessages";
-import { SearchResponse } from "./ChatTextBar";
-import { SearchFilters } from "./FilterSidebar";
+import { SearchFilters, ChatMessage } from "@/components/Chat/types";
 
 export interface ChatContextType {
   filters: SearchFilters;
