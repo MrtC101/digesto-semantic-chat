@@ -1,7 +1,11 @@
 import { Badge } from "@/components/ui/badge";
-import { useEffect, useState } from "react";
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
 import type { Chat } from "../types";
+import useChatContext from "@/hooks/use_chat_context_hook";
 
 interface ChatItem {
   id: string;
@@ -10,54 +14,41 @@ interface ChatItem {
   chat: Chat;
 }
 
-interface ChatItemsProps {
-  newChatState: ReturnType<typeof useState<Chat | undefined>>;
-  activeChatState: ReturnType<typeof useState<Chat | undefined>>;
-}
+function ChatItems() {
 
-function ChatItems({ 
-  newChatState: [newChat], 
-  activeChatState: [activeChat, setActiveChat] 
-}: ChatItemsProps) {
-  const [chatItems, setChatItems] = useState<ChatItem[]>([]);
+  const { chats, activeChat, setActiveChatId} = useChatContext()
 
-  useEffect(() => {
-    if (newChat) {
-      const newItem: ChatItem = {
-        id: Date.now().toString(),
-        tag: newChat.tag.name,
-        sessionId: newChat.sessionId,
-        chat: newChat,
-      };
-      setChatItems((prev) => [...prev, newItem]);
-      setActiveChat(newChat);
-    }
-  }, [newChat, setActiveChat]);
+  const chatItems: ChatItem[] = chats.map((chat) => ({
+    id: chat.sessionId,
+    tag: chat.tag.name,
+    sessionId: chat.sessionId,
+    chat,
+  }));
 
   const handleChatSelect = (chat: Chat) => {
-    setActiveChat(chat);
+    setActiveChatId(chat.sessionId);
   };
 
   return (
     <SidebarMenu>
       {chatItems.map((item) => (
         <SidebarMenuItem key={item.id}>
-          <SidebarMenuButton 
+          <SidebarMenuButton
             onClick={() => handleChatSelect(item.chat)}
-            className={`flex flex-col items-start gap-1 p-3 ${
-              activeChat?.sessionId === item.sessionId 
-                ? 'bg-accent text-accent-foreground' 
-                : ''
+            className={`flex flex-col items-start gap-1 p-1 ${
+              activeChat?.sessionId === item.sessionId
+                ? "bg-accent text-accent-foreground"
+                : ""
             }`}
           >
-            <div className="flex items-center gap-2 w-full">
+            <div className="flex justify-center items-center gap-2 w-full h-full">
+              <Badge variant="secondary" className="text-xs">
+                {item.tag}
+              </Badge>
               <Badge variant="outline" className="text-xs">
                 {item.sessionId.slice(-8)}
               </Badge>
             </div>
-            <Badge variant="secondary" className="text-xs">
-              {item.tag}
-            </Badge>
           </SidebarMenuButton>
         </SidebarMenuItem>
       ))}

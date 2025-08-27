@@ -1,17 +1,11 @@
-import { createContext, useState } from "react";
-import { SearchFilters, ChatMessage } from "@/components/Chat/types";
+import { createContext, useMemo, useState } from "react";
+import { SearchFilters, ChatMessage, Chat, Tag } from "@/components/Chat/types";
 
 export interface ChatContextType {
-  filters: SearchFilters;
-  userMsg: string;
-  assistantMsg: string;
-  isLoading: boolean;
-  messages: ChatMessage[];
-  setFilters: React.Dispatch<React.SetStateAction<SearchFilters>>;
-  setUserMsg: React.Dispatch<React.SetStateAction<string>>;
-  setAssistantMsg: React.Dispatch<React.SetStateAction<string>>;
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
+  chats: Chat[];
+  setChats: ReturnType<typeof useState<Chat[]>>[1];
+  activeChat: Chat;
+  setActiveChatId: ReturnType<typeof useState<string | null>>[1];
 }
 
 export const ChatContext = createContext<ChatContextType | undefined>(
@@ -19,47 +13,17 @@ export const ChatContext = createContext<ChatContextType | undefined>(
 );
 
 export function ChatProvider({ children }: { children: React.ReactNode }) {
-  const [filters, setFilters] = useState<SearchFilters>({});
-  const [userMsg, setUserMsg] = useState<string>("");
-  const [assistantMsg, setAssistantMsg] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: "1",
-      type: "assistant",
-      message: `👋 **¡Hola!**
+  const [chats, setChats] = useState<Chat[]>([]);
+  const [activeChatId, setActiveChatId] = useState<string | null>(null);
 
-Soy tu **asistente legal**, especializado en el **Digesto Jurídico** de la Municipalidad.
-
-Podés consultarme sobre:
-
-- 📘 **Leyes**
-- 🏛️ **Ordenanzas**
-- 📄 **Decretos**
-- 📚 **Otras normativas municipales**
-- 🗺️ **Información geográfica de Godoy Cruz**  
-  Podés consultar la **zonificación**, **distrito** y **barrio** de cualquier dirección.
-
-> 🗣️ **¿En qué puedo ayudarte hoy?**
-`,
-      timestamp: new Date(),
-    },
-  ]);
+  const activeChat: Chat = useMemo(
+    () => chats.find((c) => c.sessionId === activeChatId),
+    [chats, activeChatId]
+  );
 
   return (
     <ChatContext.Provider
-      value={{
-        filters,
-        setFilters,
-        userMsg,
-        setUserMsg,
-        assistantMsg,
-        setAssistantMsg,
-        isLoading,
-        setIsLoading,
-        messages,
-        setMessages,
-      }}
+      value={{ chats, setChats, activeChat, setActiveChatId }}
     >
       {children}
     </ChatContext.Provider>

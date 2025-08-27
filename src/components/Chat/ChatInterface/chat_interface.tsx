@@ -33,6 +33,7 @@ function ChatHeader({ sessionId, filterCounts }: ChatHeaderProps) {
           ¡Chateá con <span className="font-bold text-primary">Normita</span>!
         </span>
       </CardTitle>
+      
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         {filterCounts > 0 && (
           <Badge variant="secondary">{filterCounts} filtros activos</Badge>
@@ -44,27 +45,12 @@ function ChatHeader({ sessionId, filterCounts }: ChatHeaderProps) {
   );
 }
 
-interface ChatInterfaceProps {
-  activeChatState: ReturnType<typeof useState<Chat | undefined>>;
-}
-
-const ChatInterface = ({ activeChatState }: ChatInterfaceProps) => {
-  const [activeChat] = activeChatState;
-  const {
-    userMsg,
-    assistantMsg,
-    filters,
-    messages,
-    isLoading,
-    setIsLoading,
-    setAssistantMsg,
-    setMessages,
-    setUserMsg,
-  } = useChatContext();
+const ChatInterface = () => {
+  const { activeChat } = useChatContext()
 
   const sessionId = activeChat?.sessionId || `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-  const activeFiltersCount = Object.values(filters).filter((v) =>
+  const activeFiltersCount = Object.values(activeChat.filters).filter((v) =>
     Array.isArray(v) ? v.length > 0 : v !== undefined && v !== ""
   ).length;
 
@@ -112,17 +98,18 @@ const ChatInterface = ({ activeChatState }: ChatInterfaceProps) => {
     if (callAPI) {
       callAPI(sessionId, userMsg, filters, setAssistantMsg);
     }
-  }, [userMsg, sessionId, filters, setIsLoading, setAssistantMsg]);
+  }, []);
 
+  /* Move scroll */
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (messages.length > 0 && scrollAreaRef.current) {
+    if (activeChat.messages.length > 0 && scrollAreaRef.current) {
       scrollAreaRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages.length]);
+  }, [activeChat.messages.length]);
 
   return (
-    <Card className="flex-1 flex flex-col w-full min-h-0 overflow-hidden">
+    <Card className="flex-1 flex flex-col w-full h-full max-h-[90vh] overflow-hidden">
       <CardHeader className="pb-3">
         <ChatHeader sessionId={sessionId} filterCounts={activeFiltersCount} />
       </CardHeader>
@@ -133,15 +120,15 @@ const ChatInterface = ({ activeChatState }: ChatInterfaceProps) => {
           style={{ height: "70vh" }}
         >
           <div className="space-y-4">
-            {messages.map((message, index) => (
+            {activeChat.messages.map((message, index) => (
               <div
                 key={message.id}
-                ref={index === messages.length - 1 ? scrollAreaRef : null}
+                ref={index === activeChat.messages.length - 1 ? scrollAreaRef : null}
               >
                 <ChatMessage message={message} />
               </div>
             ))}
-            {isLoading && <LoadingDisplay />}
+            {activeChat.isLoading && <LoadingDisplay />}
           </div>
         </ScrollArea>
         <ChatTextBar sessionId={sessionId} />

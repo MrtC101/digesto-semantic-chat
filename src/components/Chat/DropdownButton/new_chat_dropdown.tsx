@@ -9,17 +9,11 @@ import LoadDropDownButtons from "@/components/Chat/DropdownButton/load_dropdown_
 import { useState } from "react";
 import { Chat } from "../types";
 
-interface NewChatButtonProps {
-  newChatState: ReturnType<typeof useState<Chat | undefined>>;
-}
-
-function NewChatButton({ newChatState }: NewChatButtonProps) {
-  const [, setNewChat] = newChatState;
-  
+function NewChatButton() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className="mb-4 bg-blue-600 hover:bg-blue-700 text-white">
+        <Button className="bg-blue-600 hover:bg-blue-700 text-white">
           <PlusIcon className="mr-2 h-4 w-4" />
           Nuevo Chat
         </Button>
@@ -30,7 +24,7 @@ function NewChatButton({ newChatState }: NewChatButtonProps) {
         sideOffset={4}
         className="w-56 max-h-60 overflow-y-auto animate-in fade-in zoom-in-95"
       >
-        <LoadDropDownButtons setNewChat={setNewChat} />
+        <LoadDropDownButtons />
       </DropdownMenuContent>
     </DropdownMenu>
   );

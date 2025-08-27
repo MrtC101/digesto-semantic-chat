@@ -48,6 +48,11 @@ export interface Chat {
   sessionId: string;
   tag: Tag;
   messages: ChatMessage[];
+  userMessages: ChatMessage[];
+  assistantMessages: ChatMessage[];
+  last_user_msg: string;
+  last_ass_msg: string;
   filters: SearchFilters;
   isLoading: boolean;
+  addNewMessage: (msg: string) => void;
 }
