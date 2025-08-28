@@ -1,11 +1,11 @@
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import type { Chat, Tag } from "../types";
-import { createNewChat } from "../ChatInterface/chat_context";
+import type { Chat, Tag } from "../Chat/types";
+import { createNewChat } from "../ChatContext/chat_context";
 import useChatContext from "@/hooks/use_chat_context_hook";
 
-function LoadDropDownButtons() {
+function CreateDropdown() {
   const [tagList, setTagList] = useState<Tag[]>([]);
   const {
     activeChatState: [, setActiveChat],
@@ -57,4 +57,4 @@ function LoadDropDownButtons() {
   );
 }
 
-export default LoadDropDownButtons;
+export default CreateDropdown;

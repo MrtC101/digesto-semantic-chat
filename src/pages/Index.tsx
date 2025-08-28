@@ -1,4 +1,4 @@
-import PageHeader from "@/components/PageHeader";
+import PageHeader from "@/components/ChatSidebar/page_header";
 import ChatPage from "@/pages/chat_page"
 
 const Index = () => {

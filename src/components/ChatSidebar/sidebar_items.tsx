@@ -4,7 +4,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import type { Chat } from "../types";
+import type { Chat } from "@/components/Chat/types";
 import useChatContext from "@/hooks/use_chat_context_hook";
 
 interface ChatItem {
@@ -14,7 +14,7 @@ interface ChatItem {
   chat: Chat;
 }
 
-function ChatItems() {
+function SideBarItem() {
 
   const { chats, activeChat, setActiveChatId} = useChatContext()
 
@@ -63,4 +63,4 @@ function ChatItems() {
   );
 }
 
-export default ChatItems;
+export default SideBarItem;

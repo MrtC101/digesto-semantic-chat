@@ -3,15 +3,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEffect, useRef, useState } from "react";
 import { Send } from "lucide-react";
+import callAPI from "@/lib/api";
 
-function ChatTextBar() {
+function ChatInput() {
   const { activeChat } = useChatContext()
   const [inputText, setInputText] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
-
+  
   const handleSendMessage = () => {
     if (!inputText.trim() || activeChat.isLoading) return;
-    activeChat.addNewMessage(inputText);
+    activeChat.addNewMessage("user", inputText);
+    activeChat.isLoading = true;
+    callAPI(activeChat);
     setInputText("");
   };
 
@@ -56,4 +59,4 @@ function ChatTextBar() {
   );
 }
 
-export default ChatTextBar;
+export default ChatInput;

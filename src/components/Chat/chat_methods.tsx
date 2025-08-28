@@ -1,4 +1,4 @@
-import { Chat, Tag } from "../types";
+import { Chat, Tag, ChatMessage } from "./types";
 
 export function createNewChat(tag: Tag): Chat {
   const newChat: Chat = {
@@ -15,14 +15,21 @@ export function createNewChat(tag: Tag): Chat {
     get assistantMessages() {
       return this.messages.filter((msg) => msg.type === "assistant");
     },
-    get last_user_msg() {
+    get lastUserMessage() {
       return this.userMessages[this.userMessages.length - 1];
     },
-    get last_ass_msg() {
+    get lastAssistMessage() {
       return this.assistantMessages[this.assistantMessages.length - 1];
     },
-    addNewMessage(msg: string) {
-      this.messages.push({ type: "user", text: msg });
+    addNewMessage(type: "user" | "assistant", msg_text: string) {
+      if (!msg_text.trim()) return;
+      const msg: ChatMessage = {
+        id: Date.now().toString(),
+        type: type,
+        message: msg_text,
+        timestamp: new Date(),
+      };
+      this.messages.push(msg);
     },
   };
   return newChat;

@@ -5,9 +5,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { PlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import LoadDropDownButtons from "@/components/Chat/DropdownButton/load_dropdown_buttons";
-import { useState } from "react";
-import { Chat } from "../types";
+import CreateDropdown from "@/components/ChatCreateButton/create_dropdown";
 
 function NewChatButton() {
   return (
@@ -24,7 +22,7 @@ function NewChatButton() {
         sideOffset={4}
         className="w-56 max-h-60 overflow-y-auto animate-in fade-in zoom-in-95"
       >
-        <LoadDropDownButtons />
+        <CreateDropdown />
       </DropdownMenuContent>
     </DropdownMenu>
   );

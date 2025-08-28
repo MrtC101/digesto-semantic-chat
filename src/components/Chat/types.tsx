@@ -23,6 +23,7 @@ export interface SearchResult {
   tipo_digesto: string;
   tipo_ley: string;
   tipo_publicacion: string;
+  generated_response: string;
 }
 
 export interface ChatMessage {
@@ -50,9 +51,9 @@ export interface Chat {
   messages: ChatMessage[];
   userMessages: ChatMessage[];
   assistantMessages: ChatMessage[];
-  last_user_msg: string;
-  last_ass_msg: string;
+  lastUserMessage: ChatMessage;
+  lastAssistMessage: ChatMessage;
   filters: SearchFilters;
   isLoading: boolean;
-  addNewMessage: (msg: string) => void;
+  addNewMessage: (type: "user" | "assistant", msg: string) => void;
 }

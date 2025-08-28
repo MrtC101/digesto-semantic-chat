@@ -1,9 +1,8 @@
 import { useState } from "react";
-import ChatInterface from "@/components/Chat/ChatInterface/chat_interface";
-import SideBar from "@/components/Chat/Sidebar/sidebar";
-import NewChatButton from "@/components/Chat/DropdownButton/new_chat_dropdown";
-import { ChatProvider } from "@/components/Chat/ChatInterface/chat_context";
-import type { Chat } from "@/components/Chat/types";
+import ChatInterface from "@/components/Chat/chat";
+import SideBar from "@/components/Chat/ChatSidebar/sidebar";
+import NewChatButton from "@/components/ChatCreateButton/chat_create_button";
+import { ChatProvider } from "@/components/ChatContext/chat_context";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 function ChatPage() {
@@ -32,7 +31,7 @@ function ChatPage() {
             <NewChatButton />
           </div>
           <div className="flex-1">
-            {/* <ChatInterface /> */}
+            <ChatInterface />
           </div>
         </div>
       </SidebarProvider>

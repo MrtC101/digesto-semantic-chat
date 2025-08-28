@@ -7,15 +7,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 
 import useChatContext from "@/hooks/use_chat_context_hook";
-import ChatTextBar from "@/components/Chat/ChatInterface/chat_textbar";
+import ChatInput from "@/components/Chat/chat_input";
 import {
   ChatMessage,
   LoadingDisplay,
-} from "@/components/Chat/ChatInterface/chat_messages";
-import FilterButton from "../Filter/filter";
-import callAPI from "@/lib/api";
-
-import type { Chat, ChatMessage as ChatMessageType } from "../types";
+} from "@/components/Chat/chat_message";
+import FilterButton from "./Filter/filter";
 
 interface ChatHeaderProps {
   sessionId: string;
@@ -47,59 +44,10 @@ function ChatHeader({ sessionId, filterCounts }: ChatHeaderProps) {
 
 const ChatInterface = () => {
   const { activeChat } = useChatContext()
-
-  const sessionId = activeChat?.sessionId || `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
   const activeFiltersCount = Object.values(activeChat.filters).filter((v) =>
     Array.isArray(v) ? v.length > 0 : v !== undefined && v !== ""
   ).length;
-
-  useEffect(() => {
-    // Adds Users Message to chat
-    const AddUserMessage = () => {
-      if (!userMsg.trim()) return;
-      const userMessage: ChatMessageType = {
-        id: Date.now().toString(),
-        type: "user",
-        message: userMsg,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, userMessage]);
-    };
-    AddUserMessage();
-    if (userMsg.trim()) {
-      setUserMsg("");
-    }
-  }, [userMsg, setMessages, setUserMsg]);
-
-  useEffect(() => {
-    //Adds Assistance Message to chat
-    const AddAssistanceMessage = () => {
-      if (!assistantMsg) return;
-      const assistantMessage: ChatMessageType = {
-        id: (Date.now() + 1).toString(),
-        type: "assistant",
-        message: assistantMsg,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, assistantMessage]);
-    };
-    AddAssistanceMessage();
-    if (assistantMsg) {
-      setAssistantMsg("");
-      setIsLoading(false);
-    }
-  }, [assistantMsg, setMessages, setAssistantMsg, setIsLoading]);
-
-  //Call api
-  useEffect(() => {
-    if (!userMsg.trim()) return;
-    setIsLoading(true);
-    if (callAPI) {
-      callAPI(sessionId, userMsg, filters, setAssistantMsg);
-    }
-  }, []);
-
+  
   /* Move scroll */
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -111,7 +59,10 @@ const ChatInterface = () => {
   return (
     <Card className="flex-1 flex flex-col w-full h-full max-h-[90vh] overflow-hidden">
       <CardHeader className="pb-3">
-        <ChatHeader sessionId={sessionId} filterCounts={activeFiltersCount} />
+        <ChatHeader
+          sessionId={activeChat.sessionId}
+          filterCounts={activeFiltersCount}
+        />
       </CardHeader>
       <Separator />
       <CardContent className="pt-5 flex flex-col flex-1 min-h-0">
@@ -123,7 +74,11 @@ const ChatInterface = () => {
             {activeChat.messages.map((message, index) => (
               <div
                 key={message.id}
-                ref={index === activeChat.messages.length - 1 ? scrollAreaRef : null}
+                ref={
+                  index === activeChat.messages.length - 1
+                    ? scrollAreaRef
+                    : null
+                }
               >
                 <ChatMessage message={message} />
               </div>
@@ -131,7 +86,7 @@ const ChatInterface = () => {
             {activeChat.isLoading && <LoadingDisplay />}
           </div>
         </ScrollArea>
-        <ChatTextBar sessionId={sessionId} />
+        <ChatInput />
       </CardContent>
     </Card>
   );

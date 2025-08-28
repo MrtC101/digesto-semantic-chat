@@ -3,15 +3,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { FilterSidebar } from "../Sidebar/filter_sidebar";
 import useChatContext from "@/hooks/use_chat_context_hook";
 import { Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { FilterSidebar } from "./filter_sidebar";
 
 function FilterButton() {
-  const { filters, setFilters } = useChatContext();
-  
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -20,7 +18,10 @@ function FilterButton() {
           Filtros
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="z-50 w-80 p-0 bg-background border" align="end">
+      <PopoverContent
+        className="z-50 w-80 p-0 bg-background border"
+        align="end"
+      >
         <Card className="border-0">
           <div className="border-b p-4">
             <h3 className="font-semibold text-lg">Filtros de Búsqueda</h3>
@@ -29,7 +30,7 @@ function FilterButton() {
             </p>
           </div>
           <div className="max-h-96 overflow-y-auto">
-            <FilterSidebar filters={filters} onFiltersChange={setFilters} />
+            <FilterSidebar />
           </div>
         </Card>
       </PopoverContent>

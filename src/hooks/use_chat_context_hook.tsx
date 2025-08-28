@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { ChatContext, ChatContextType } from "@/components/Chat/ChatInterface/chat_context";
+import { ChatContext, ChatContextType } from "@/components/ChatContext/chat_context";
 
 export default function useChatContext(): ChatContextType {
   const context = useContext(ChatContext);

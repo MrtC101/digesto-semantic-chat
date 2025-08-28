@@ -1,4 +1,4 @@
-import { SearchResult } from "@/components/Chat/types";
+import { Chat, SearchResult } from "@/components/Chat/types";
 import axios from "axios";
 
 function AddFilters(params, filters) {
@@ -38,26 +38,28 @@ function AddFilters(params, filters) {
   }
 }
 
-const callAPI = async (sessionId, userQuery, filters, setAssistantMsg) => {
+const callAPI = async (activeChat: Chat) => {
   const apiUrl = "/api";
   const params = new URLSearchParams({
-    query_str: userQuery,
+    query_str: activeChat.lastUserMessage.message,
     mode: "GENERATE",
-    session_id: sessionId,
+    session_id: activeChat.sessionId,
   });
-  AddFilters(params, filters);
+  AddFilters(params, activeChat.filters);
+
   const fullUrl = `${apiUrl}?${params.toString()}`;
+
   try {
     const response = await axios.post(fullUrl);
     const answare: SearchResult = response.data;
-    setAssistantMsg(answare?.generated_response);
+    activeChat.addNewMessage("assistant", answare?.generated_response);
   } catch (error) {
-    setAssistantMsg(
+    activeChat.addNewMessage(
+      "assistant",
       `❌ **Lo sentimos**  
-Ocurrió un error al procesar tu consulta.  
-Por favor, intentá nuevamente más tarde.`
+      Ocurrió un error al procesar tu consulta.  
+      Por favor, intentá nuevamente más tarde.`
     );
-    //console.error("Error searching:", error);
   }
 };
 

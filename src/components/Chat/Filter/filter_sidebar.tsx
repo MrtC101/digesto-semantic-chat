@@ -6,17 +6,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { SearchFilters } from "../types";
+import useChatContext from "@/hooks/use_chat_context_hook";
 
-interface FilterSidebarProps {
-  filters: SearchFilters;
-  onFiltersChange: (filters: SearchFilters) => void;
-}
-
-export const FilterSidebar = ({
-  filters,
-  onFiltersChange,
-}: FilterSidebarProps) => {
+export const FilterSidebar = () => {
+  const { activeChat } = useChatContext()
   const [newYear, setNewYear] = useState("");
+  const filters = activeChat.filters
 
   const tipoDigestoOptions = [
     "LEYES",
