@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ChatInterface from "@/components/Chat/chat";
-import SideBar from "@/components/Chat/ChatSidebar/sidebar";
+import SideBar from "@/components/ChatSidebar/chat_sidebar";
 import NewChatButton from "@/components/ChatCreateButton/chat_create_button";
 import { ChatProvider } from "@/components/ChatContext/chat_context";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";

@@ -8,18 +8,17 @@ import { Badge } from "@/components/ui/badge";
 
 import useChatContext from "@/hooks/use_chat_context_hook";
 import ChatInput from "@/components/Chat/chat_input";
-import {
-  ChatMessage,
-  LoadingDisplay,
-} from "@/components/Chat/chat_message";
+import { ChatMessage, LoadingDisplay } from "@/components/Chat/chat_message";
 import FilterButton from "./Filter/filter";
+import { Chat } from "./types";
 
-interface ChatHeaderProps {
-  sessionId: string;
-  filterCounts: number;
-}
+function ChatHeader({ activeChat }: { activeChat: Chat }) {
+  const filterCounts = activeChat
+    ? Object.values(activeChat.filters).filter((v) =>
+        Array.isArray(v) ? v.length > 0 : v !== undefined && v !== ""
+      ).length
+    : 0;
 
-function ChatHeader({ sessionId, filterCounts }: ChatHeaderProps) {
   return (
     <div className="flex items-center justify-between">
       <CardTitle className="flex items-center gap-2">
@@ -30,39 +29,47 @@ function ChatHeader({ sessionId, filterCounts }: ChatHeaderProps) {
           ¡Chateá con <span className="font-bold text-primary">Normita</span>!
         </span>
       </CardTitle>
-      
+
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         {filterCounts > 0 && (
           <Badge variant="secondary">{filterCounts} filtros activos</Badge>
         )}
         <FilterButton />
-        <Badge variant="outline">Sesión: {sessionId.slice(-8)}</Badge>
+        <Badge variant="outline">
+          Sesión: {activeChat.sessionId.slice(-8)}
+        </Badge>
       </div>
     </div>
   );
 }
 
 const ChatInterface = () => {
-  const { activeChat } = useChatContext()
-  const activeFiltersCount = Object.values(activeChat.filters).filter((v) =>
-    Array.isArray(v) ? v.length > 0 : v !== undefined && v !== ""
-  ).length;
-  
-  /* Move scroll */
+  const { activeChat } = useChatContext();
+
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (activeChat.messages.length > 0 && scrollAreaRef.current) {
+    if (activeChat?.messages.length > 0 && scrollAreaRef.current) {
       scrollAreaRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [activeChat.messages.length]);
+  }, [activeChat?.messages.length]);
+
+  // Verificar que activeChat existe
+  if (!activeChat) {
+    return (
+      <Card className="flex-1 flex flex-col w-full h-full max-h-[90vh] overflow-hidden">
+        <CardContent className="flex items-center justify-center h-full">
+          <p className="text-muted-foreground">
+            Selecciona o crea un chat para comenzar
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="flex-1 flex flex-col w-full h-full max-h-[90vh] overflow-hidden">
       <CardHeader className="pb-3">
-        <ChatHeader
-          sessionId={activeChat.sessionId}
-          filterCounts={activeFiltersCount}
-        />
+        <ChatHeader activeChat={activeChat} />
       </CardHeader>
       <Separator />
       <CardContent className="pt-5 flex flex-col flex-1 min-h-0">

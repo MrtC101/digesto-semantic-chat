@@ -1,20 +1,17 @@
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import type { Chat, Tag } from "../Chat/types";
-import { createNewChat } from "../ChatContext/chat_context";
+import type { Tag } from "../Chat/types";
 import useChatContext from "@/hooks/use_chat_context_hook";
+import { createNewChat } from "../Chat/chat_methods";
 
 function CreateDropdown() {
   const [tagList, setTagList] = useState<Tag[]>([]);
-  const {
-    activeChatState: [, setActiveChat],
-    chatsState: [, setChats],
-  } = useChatContext();
-  
+  const { setActiveChatId, setChats } = useChatContext();
+
   function setNewActiveChat(tag: Tag) {
     const newChat = createNewChat(tag);
-    setActiveChat(newChat);
+    setActiveChatId(newChat.sessionId);
     setChats((prev) => [...prev, newChat]);
   }
 

@@ -39,6 +39,8 @@ function AddFilters(params, filters) {
 }
 
 const callAPI = async (activeChat: Chat) => {
+  console.log(activeChat);
+
   const apiUrl = "/api";
   const params = new URLSearchParams({
     query_str: activeChat.lastUserMessage.message,
@@ -48,7 +50,6 @@ const callAPI = async (activeChat: Chat) => {
   AddFilters(params, activeChat.filters);
 
   const fullUrl = `${apiUrl}?${params.toString()}`;
-
   try {
     const response = await axios.post(fullUrl);
     const answare: SearchResult = response.data;

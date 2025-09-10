@@ -13,10 +13,8 @@ interface ChatItem {
   sessionId: string;
   chat: Chat;
 }
-
 function SideBarItem() {
-
-  const { chats, activeChat, setActiveChatId} = useChatContext()
+  const { chats, activeChat, setActiveChatId } = useChatContext();
 
   const chatItems: ChatItem[] = chats.map((chat) => ({
     id: chat.sessionId,
@@ -26,7 +24,10 @@ function SideBarItem() {
   }));
 
   const handleChatSelect = (chat: Chat) => {
-    setActiveChatId(chat.sessionId);
+    if (!chat.isLoading) {
+      // Prevenir cambios durante carga
+      setActiveChatId(chat.sessionId);
+    }
   };
 
   return (
@@ -35,6 +36,7 @@ function SideBarItem() {
         <SidebarMenuItem key={item.id}>
           <SidebarMenuButton
             onClick={() => handleChatSelect(item.chat)}
+            disabled={item.chat.isLoading} // Deshabilitar durante carga
             className={`flex flex-col items-start gap-1 p-1 ${
               activeChat?.sessionId === item.sessionId
                 ? "bg-accent text-accent-foreground"
@@ -48,6 +50,9 @@ function SideBarItem() {
               <Badge variant="outline" className="text-xs">
                 {item.sessionId.slice(-8)}
               </Badge>
+              {item.chat.isLoading && (
+                <div className="animate-spin h-3 w-3 border border-current border-t-transparent rounded-full" />
+              )}
             </div>
           </SidebarMenuButton>
         </SidebarMenuItem>

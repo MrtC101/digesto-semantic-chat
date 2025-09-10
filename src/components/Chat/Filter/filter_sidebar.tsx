@@ -9,30 +9,19 @@ import type { SearchFilters } from "../types";
 import useChatContext from "@/hooks/use_chat_context_hook";
 
 export const FilterSidebar = () => {
-  const { activeChat } = useChatContext()
-  const [newYear, setNewYear] = useState("");
-  const filters = activeChat.filters
+  const { activeChat, setChats } = useChatContext();
 
-  const tipoDigestoOptions = [
-    "LEYES",
-    "ORDENANZAS",
-    "RESOLUCIONES",
-    "DECRETOS",
-    "CONVENIOS",
-  ];
-  const estadoOptions = ["INCIERTO", "PUBLICADO", "PENDIENTE PUBLICACION"];
-  const estadoDigestoOptions = [
-    "INCIERTO",
-    "NO VIGENTE",
-    "VIGENTE",
-    "DEROGADO/A",
-    "MODIFICADO/A",
-  ];
-  const tipoPublicacionOptions = [
-    "PUBLICO",
-    "INTERNO HCD",
-    "INTERNO EJECUTIVO",
-  ];
+  if (!activeChat) return null;
+
+  const filters = activeChat.filters;
+
+  const updateFilters = (newFilters: SearchFilters) => {
+    setChats(prev => prev.map(chat => 
+      chat.sessionId === activeChat.sessionId 
+        ? { ...chat, filters: newFilters }
+        : chat
+    ));
+  };
 
   const handleCheckboxChange = (
     category: keyof SearchFilters,
@@ -44,7 +33,7 @@ export const FilterSidebar = () => {
       ? [...currentValues, value]
       : currentValues.filter((v) => v !== value);
 
-    onFiltersChange({
+    updateFilters({
       ...filters,
       [category]: newValues.length > 0 ? newValues : undefined,
     });
@@ -55,7 +44,7 @@ export const FilterSidebar = () => {
     if (year && year > 1900 && year <= new Date().getFullYear()) {
       const currentYears = filters.ddganio || [];
       if (!currentYears.includes(year)) {
-        onFiltersChange({
+        updateFilters({
           ...filters,
           ddganio: [...currentYears, year].sort((a, b) => b - a),
         });
@@ -64,17 +53,8 @@ export const FilterSidebar = () => {
     }
   };
 
-  const handleYearRemove = (year: number) => {
-    const currentYears = filters.ddganio || [];
-    const newYears = currentYears.filter((y) => y !== year);
-    onFiltersChange({
-      ...filters,
-      ddganio: newYears.length > 0 ? newYears : undefined,
-    });
-  };
-
   const clearAllFilters = () => {
-    onFiltersChange({});
+    updateFilters({});
   };
 
   const activeFiltersCount = Object.values(filters).filter((v) =>
@@ -143,7 +123,6 @@ export const FilterSidebar = () => {
                     onClick={() => handleYearRemove(year)}
                     className="ml-1 hover:text-destructive"
                   >
-                    ×
                   </button>
                 </Badge>
               ))}
@@ -166,8 +145,8 @@ export const FilterSidebar = () => {
               type="date"
               value={filters.ddgfechasancion_desde || ""}
               onChange={(e) =>
-                onFiltersChange({
-                  ...filters,
+                (activeChat.filters = {
+                  ...activeChat.filters,
                   ddgfechasancion_desde: e.target.value || undefined,
                 })
               }
@@ -182,8 +161,8 @@ export const FilterSidebar = () => {
               type="date"
               value={filters.ddgfechasancion_hasta || ""}
               onChange={(e) =>
-                onFiltersChange({
-                  ...filters,
+                (activeChat.filters = {
+                  ...activeChat.filters,
                   ddgfechasancion_hasta: e.target.value || undefined,
                 })
               }
@@ -288,8 +267,8 @@ export const FilterSidebar = () => {
             max="100"
             value={filters.limit || ""}
             onChange={(e) =>
-              onFiltersChange({
-                ...filters,
+              (activeChat.filters = {
+                ...activeChat.filters,
                 limit: e.target.value ? parseInt(e.target.value) : 50,
               })
             }

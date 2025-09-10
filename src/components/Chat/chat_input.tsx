@@ -4,16 +4,37 @@ import { Input } from "@/components/ui/input";
 import { useEffect, useRef, useState } from "react";
 import { Send } from "lucide-react";
 import callAPI from "@/lib/api";
+import { Chat, ChatMessage } from "./types";
 
 function ChatInput() {
-  const { activeChat } = useChatContext()
+  const { activeChat, setChats, chats } = useChatContext();
   const [inputText, setInputText] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
-  
+
   const handleSendMessage = () => {
-    if (!inputText.trim() || activeChat.isLoading) return;
-    activeChat.addNewMessage("user", inputText);
-    activeChat.isLoading = true;
+    if (!inputText.trim() || !activeChat || activeChat.isLoading) return;
+
+    // Crear nuevo mensaje
+    const newMessage = {
+      id: Date.now().toString(),
+      type: "user" as const,
+      message: inputText,
+      timestamp: new Date(),
+    };
+    
+    // Actualizar el chat correctamente
+    setChats((prev) =>
+      chats.map((chat) =>
+        chat.sessionId === activeChat.sessionId
+          ? {
+              ...chat,
+              isLoading: true,
+              messages: [...chat.messages, newMessage],
+            }
+          : chat
+      )
+    );
+    console.log(chats)
     callAPI(activeChat);
     setInputText("");
   };
@@ -26,10 +47,14 @@ function ChatInput() {
   };
 
   useEffect(() => {
-    if (!activeChat.isLoading) {
+    if (!activeChat?.isLoading) {
       inputRef.current?.focus();
     }
-  }, [activeChat.isLoading]);
+  }, [activeChat?.isLoading]);
+
+  if (!activeChat) {
+    return null;
+  }
 
   return (
     <>
