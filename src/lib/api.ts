@@ -38,9 +38,7 @@ function AddFilters(params, filters) {
   }
 }
 
-const callAPI = async (activeChat: Chat) => {
-  console.log(activeChat);
-
+const callAPI = async (activeChat: Chat) : Promise<string> => {
   const apiUrl = "/api";
   const params = new URLSearchParams({
     query_str: activeChat.lastUserMessage.message,
@@ -48,20 +46,17 @@ const callAPI = async (activeChat: Chat) => {
     session_id: activeChat.sessionId,
   });
   AddFilters(params, activeChat.filters);
-
   const fullUrl = `${apiUrl}?${params.toString()}`;
+  let msg = "";
   try {
     const response = await axios.post(fullUrl);
-    const answare: SearchResult = response.data;
-    activeChat.addNewMessage("assistant", answare?.generated_response);
+    msg = response.data?.generated_response;
   } catch (error) {
-    activeChat.addNewMessage(
-      "assistant",
-      `❌ **Lo sentimos**  
-      Ocurrió un error al procesar tu consulta.  
-      Por favor, intentá nuevamente más tarde.`
-    );
+    msg = `❌ **Lo sentimos**  
+    Ocurrió un error al procesar tu consulta.  
+    Por favor, intentá nuevamente más tarde.`;
   }
-};
+  return msg;
+}
 
 export default callAPI;

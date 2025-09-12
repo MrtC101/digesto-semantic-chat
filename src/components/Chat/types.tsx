@@ -45,15 +45,54 @@ export interface SearchFilters {
   limit?: number;
 }
 
-export interface Chat {
+export class Chat {
   sessionId: string;
   tag: Tag;
   messages: ChatMessage[];
-  userMessages: ChatMessage[];
-  assistantMessages: ChatMessage[];
-  lastUserMessage: ChatMessage;
-  lastAssistMessage: ChatMessage;
   filters: SearchFilters;
   isLoading: boolean;
-  addNewMessage: (type: "user" | "assistant", msg: string) => void;
+
+  constructor(
+    tag: Tag,
+    sessionId: string = `session_${Date.now()}_${Math.random()
+      .toString(36)
+      .slice(2, 9)}`,
+    messages: ChatMessage[] = [],
+    isLoading = false
+  ) {
+    this.sessionId = sessionId;
+    this.tag = tag;
+    this.messages = messages;
+    this.filters = {};
+    this.isLoading = isLoading;
+  }
+
+  get userMessages() {
+    return this.messages.filter((msg) => msg.type === "user");
+  }
+  get assistantMessages() {
+    return this.messages.filter((msg) => msg.type === "assistant");
+  }
+  get lastUserMessage() {
+    return this.userMessages[this.userMessages.length - 1];
+  }
+
+  get lastAssistMessage() {
+    return this.assistantMessages[this.assistantMessages.length - 1];
+  }
+
+  addNewMessage(type: "user" | "assistant",msg_text: string) : Chat  {
+    const newMessage: ChatMessage = {
+      id: Date.now().toString(),
+      type: type,
+      message: msg_text,
+      timestamp: new Date(),
+    };
+    return new Chat(
+        this.tag,
+        this.sessionId,
+        [...this.messages, newMessage],
+        true
+      );
+    }
 }
