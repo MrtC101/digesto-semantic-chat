@@ -58,12 +58,13 @@ export class Chat {
       .toString(36)
       .slice(2, 9)}`,
     messages: ChatMessage[] = [],
+    filters: SearchFilters = {},
     isLoading = false
   ) {
     this.sessionId = sessionId;
     this.tag = tag;
     this.messages = messages;
-    this.filters = {};
+    this.filters = filters;
     this.isLoading = isLoading;
   }
 
@@ -81,7 +82,11 @@ export class Chat {
     return this.assistantMessages[this.assistantMessages.length - 1];
   }
 
-  addNewMessage(type: "user" | "assistant",msg_text: string) : Chat  {
+  addNewFilter(newFilters: SearchFilters): Chat {
+    return new Chat(this.tag, this.sessionId, this.messages, newFilters, true);
+  }
+
+  addNewMessage(type: "user" | "assistant", msg_text: string): Chat {
     const newMessage: ChatMessage = {
       id: Date.now().toString(),
       type: type,
@@ -89,10 +94,11 @@ export class Chat {
       timestamp: new Date(),
     };
     return new Chat(
-        this.tag,
-        this.sessionId,
-        [...this.messages, newMessage],
-        true
-      );
-    }
+      this.tag,
+      this.sessionId,
+      [...this.messages, newMessage],
+      this.filters,
+      true
+    );
+  }
 }

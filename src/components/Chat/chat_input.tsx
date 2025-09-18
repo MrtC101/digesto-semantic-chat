@@ -7,7 +7,7 @@ import callAPI from "@/lib/api";
 import { Chat, ChatMessage } from "./types";
 
 function ChatInput() {
-  const { activeChat, updateChats} = useChatContext();
+  const {activeChat, updateChats} = useChatContext();
   const [inputText, setInputText] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -15,16 +15,13 @@ function ChatInput() {
     if (!inputText.trim() || !activeChat || activeChat.isLoading) return;    
     updateChats(activeChat.addNewMessage("user", inputText));
     setInputText("");
-  };
-
-  useEffect(() => {
     if (!activeChat || activeChat.messages.length === 0) return;
     const fetchMsg = async () => {
-      const msg = await callAPI(activeChat); 
+      const msg = await callAPI(activeChat);
       updateChats(activeChat.addNewMessage("assistant", msg));
     };
     fetchMsg();
-  }, [activeChat, updateChats]);
+  };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {

@@ -12,12 +12,10 @@ import { ChatMessage, LoadingDisplay } from "@/components/Chat/chat_message";
 import FilterButton from "./Filter/filter";
 import { Chat } from "./types";
 
-function ChatHeader({ activeChat }: { activeChat: Chat }) {
-  const filterCounts = activeChat
-    ? Object.values(activeChat.filters).filter((v) =>
-        Array.isArray(v) ? v.length > 0 : v !== undefined && v !== ""
-      ).length
-    : 0;
+function ChatHeader() {
+  const { sessionId, filters } = useChatContext();
+  const activeFilters = Object.values(filters).filter((v) => Array.isArray(v) ? v.length > 0 : v !== undefined && v !== "");
+  const filterCounts = activeFilters.length;
 
   return (
     <div className="flex items-center justify-between">
@@ -36,7 +34,7 @@ function ChatHeader({ activeChat }: { activeChat: Chat }) {
         )}
         <FilterButton />
         <Badge variant="outline">
-          Sesión: {activeChat.sessionId.slice(-8)}
+          Sesión: {sessionId.slice(-8)}
         </Badge>
       </div>
     </div>
@@ -44,17 +42,17 @@ function ChatHeader({ activeChat }: { activeChat: Chat }) {
 }
 
 const ChatInterface = () => {
-  const { activeChat } = useChatContext();
+  const { isLoading, messages, sessionId } = useChatContext();
 
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (activeChat?.messages.length > 0 && scrollAreaRef.current) {
+    if (messages.length > 0 && scrollAreaRef.current) {
       scrollAreaRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [activeChat?.messages.length]);
+  }, [messages.length]);
 
   // Verificar que activeChat existe
-  if (!activeChat) {
+  if (!sessionId) {
     return (
       <Card className="flex-1 flex flex-col w-full h-full max-h-[90vh] overflow-hidden">
         <CardContent className="flex items-center justify-center h-full">
@@ -69,7 +67,7 @@ const ChatInterface = () => {
   return (
     <Card className="flex-1 flex flex-col w-full h-full max-h-[90vh] overflow-hidden">
       <CardHeader className="pb-3">
-        <ChatHeader activeChat={activeChat} />
+        <ChatHeader />
       </CardHeader>
       <Separator />
       <CardContent className="pt-5 flex flex-col flex-1 min-h-0">
@@ -78,11 +76,11 @@ const ChatInterface = () => {
           style={{ height: "70vh" }}
         >
           <div className="space-y-4">
-            {activeChat.messages.map((message, index) => (
+            {messages.map((message, index) => (
               <div
                 key={message.id}
                 ref={
-                  index === activeChat.messages.length - 1
+                  index === messages.length - 1
                     ? scrollAreaRef
                     : null
                 }
@@ -90,7 +88,7 @@ const ChatInterface = () => {
                 <ChatMessage message={message} />
               </div>
             ))}
-            {activeChat.isLoading && <LoadingDisplay />}
+            {isLoading && <LoadingDisplay />}
           </div>
         </ScrollArea>
         <ChatInput />

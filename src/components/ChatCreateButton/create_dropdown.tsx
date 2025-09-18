@@ -11,8 +11,8 @@ function CreateDropdown() {
 
   function setNewActiveChat(tag: Tag) {
     const newChat = createNewChat(tag);
-    setActiveChatId(newChat.sessionId);
     setChats((prev) => [...prev, newChat]);
+    setActiveChatId(newChat.sessionId);
   }
 
   useEffect(() => {

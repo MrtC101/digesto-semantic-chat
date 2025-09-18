@@ -9,18 +9,32 @@ import type { SearchFilters } from "../types";
 import useChatContext from "@/hooks/use_chat_context_hook";
 
 export const FilterSidebar = () => {
-  const { activeChat, setChats } = useChatContext();
+  const [newYear, setNewYear] = useState("");
+  const tipoDigestoOptions = [
+    "LEYES",
+    "ORDENANZAS",
+    "RESOLUCIONES",
+    "DECRETOS",
+    "CONVENIOS",
+  ];
+  const estadoOptions = ["PUBLICADO", "PENDIENTE PUBLICACION"];
+  const estadoDigestoOptions = [
+    "NO VIGENTE",
+    "VIGENTE",
+    "DEROGADO/A",
+    "MODIFICADO/A",
+  ];
+  const tipoPublicacionOptions = [
+    "PUBLICO",
+    "INTERNO HCD",
+    "INTERNO EJECUTIVO",
+  ];
 
+  const { activeChat, updateChats } = useChatContext();
   if (!activeChat) return null;
-
   const filters = activeChat.filters;
-
   const updateFilters = (newFilters: SearchFilters) => {
-    setChats(prev => prev.map(chat => 
-      chat.sessionId === activeChat.sessionId 
-        ? { ...chat, filters: newFilters }
-        : chat
-    ));
+    updateChats(activeChat.addNewFilter(newFilters));
   };
 
   const handleCheckboxChange = (
@@ -51,6 +65,15 @@ export const FilterSidebar = () => {
       }
       setNewYear("");
     }
+  };
+
+  const handleYearRemove = (year: number) => {
+    const currentYears = filters.ddganio || [];
+    const newYears = currentYears.filter((y) => y !== year);
+    updateFilters({
+      ...filters,
+      ddganio: newYears.length > 0 ? newYears : undefined,
+    });
   };
 
   const clearAllFilters = () => {
@@ -122,8 +145,7 @@ export const FilterSidebar = () => {
                   <button
                     onClick={() => handleYearRemove(year)}
                     className="ml-1 hover:text-destructive"
-                  >
-                  </button>
+                  ></button>
                 </Badge>
               ))}
             </div>
