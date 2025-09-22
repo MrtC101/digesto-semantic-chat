@@ -77,7 +77,6 @@ export const FilterSidebar = () => {
     });
   };
 
-  // NUEVO: Handler para fecha desde
   const handleFechaDesdeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     updateFilters({
       ...filters,
@@ -85,7 +84,6 @@ export const FilterSidebar = () => {
     });
   };
 
-  // NUEVO: Handler para fecha hasta
   const handleFechaHastaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     updateFilters({
       ...filters,
@@ -93,7 +91,6 @@ export const FilterSidebar = () => {
     });
   };
 
-  // NUEVO: Handler para límite de resultados
   const handleLimitChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     updateFilters({

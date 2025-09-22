@@ -10,7 +10,7 @@ import useChatContext from "@/hooks/use_chat_context_hook";
 import ChatInput from "@/components/Chat/chat_input";
 import { ChatMessage, LoadingDisplay } from "@/components/Chat/chat_message";
 import FilterButton from "./Filter/filter";
-import {motion , AnimatePresence} from "framer-motion";
+import {motion} from "framer-motion";
 
 function ChatHeader() {
   const { sessionId, filters } = useChatContext();
@@ -42,7 +42,7 @@ function ChatHeader() {
 }
 
 const ChatInterface = () => {
-  const { allChats, isLoading, messages, setIsLoading } = useChatContext();
+  const { allChats, isLoading, messages } = useChatContext();
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   useEffect(() => {

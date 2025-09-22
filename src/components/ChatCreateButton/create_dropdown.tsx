@@ -44,7 +44,7 @@ function CreateDropdown() {
     createNewChat,
   } = useChatContext();
 
-  function setNewActiveChat(tag: Tag) {
+  function createChat(tag: Tag) {
     const newSessionId = createNewChat(tag);
     switchToChat(newSessionId);
     addMessage("assistant", welcome_msg);
@@ -62,7 +62,7 @@ function CreateDropdown() {
           <Button
             variant="ghost"
             className="w-full justify-start"
-            onClick={() => setNewActiveChat(tag)}
+            onClick={() => createChat(tag)}
           >
             <span className="mr-2 h-4 w-4 rounded bg-primary text-primary-foreground flex items-center justify-center text-xs">
               {tag.letter}

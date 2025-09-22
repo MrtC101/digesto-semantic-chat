@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/sidebar";
 import type { Chat } from "@/components/Chat/types";
 import useChatContext from "@/hooks/use_chat_context_hook";
+import { Trash2 } from "lucide-react";
 
 interface ChatItem {
   id: string;
@@ -14,7 +15,7 @@ interface ChatItem {
   chat: Chat;
 }
 function SideBarItem() {
-  const {sessionId, isLoading, allChats, switchToChat } = useChatContext();
+  const {sessionId, isLoading, allChats, switchToChat, deleteChat } = useChatContext();
 
   const chatItems: ChatItem[] = allChats.map((chat) => ({
     id: chat.sessionId,
@@ -28,6 +29,10 @@ function SideBarItem() {
     if (!isLoading) {
       switchToChat(chat.sessionId);
     }
+  };
+
+  const handleDelete = (sessionId) => {
+    deleteChat(sessionId);
   };
 
   return (
@@ -52,6 +57,14 @@ function SideBarItem() {
               </Badge>
               {item.sessionId === sessionId && isLoading && (
                 <div className="animate-spin h-3 w-3 border border-current border-t-transparent rounded-full" />
+              )}
+              {item.sessionId !== sessionId && (
+                <button
+                  className="text-red-500 hover:text-red-700"
+                  onClick={() => handleDelete(item.sessionId)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
               )}
             </div>
           </SidebarMenuButton>
