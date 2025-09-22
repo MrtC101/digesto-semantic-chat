@@ -30,11 +30,12 @@ export const FilterSidebar = () => {
     "INTERNO EJECUTIVO",
   ];
 
-  const { activeChat, updateChats } = useChatContext();
-  if (!activeChat) return null;
-  const filters = activeChat.filters;
+  const { allChats, filters, setFilters } = useChatContext();
+
+  if (allChats.length === 0) return null;
+
   const updateFilters = (newFilters: SearchFilters) => {
-    updateChats(activeChat.addNewFilter(newFilters));
+    setFilters(newFilters);
   };
 
   const handleCheckboxChange = (
@@ -73,6 +74,31 @@ export const FilterSidebar = () => {
     updateFilters({
       ...filters,
       ddganio: newYears.length > 0 ? newYears : undefined,
+    });
+  };
+
+  // NUEVO: Handler para fecha desde
+  const handleFechaDesdeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateFilters({
+      ...filters,
+      ddgfechasancion_desde: e.target.value || undefined,
+    });
+  };
+
+  // NUEVO: Handler para fecha hasta
+  const handleFechaHastaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateFilters({
+      ...filters,
+      ddgfechasancion_hasta: e.target.value || undefined,
+    });
+  };
+
+  // NUEVO: Handler para límite de resultados
+  const handleLimitChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    updateFilters({
+      ...filters,
+      limit: value ? parseInt(value) : undefined,
     });
   };
 
@@ -145,7 +171,9 @@ export const FilterSidebar = () => {
                   <button
                     onClick={() => handleYearRemove(year)}
                     className="ml-1 hover:text-destructive"
-                  ></button>
+                  >
+                    ×
+                  </button>
                 </Badge>
               ))}
             </div>
@@ -166,12 +194,7 @@ export const FilterSidebar = () => {
               id="fecha-desde"
               type="date"
               value={filters.ddgfechasancion_desde || ""}
-              onChange={(e) =>
-                (activeChat.filters = {
-                  ...activeChat.filters,
-                  ddgfechasancion_desde: e.target.value || undefined,
-                })
-              }
+              onChange={handleFechaDesdeChange}
             />
           </div>
           <div>
@@ -182,12 +205,7 @@ export const FilterSidebar = () => {
               id="fecha-hasta"
               type="date"
               value={filters.ddgfechasancion_hasta || ""}
-              onChange={(e) =>
-                (activeChat.filters = {
-                  ...activeChat.filters,
-                  ddgfechasancion_hasta: e.target.value || undefined,
-                })
-              }
+              onChange={handleFechaHastaChange}
             />
           </div>
         </CardContent>
@@ -288,12 +306,7 @@ export const FilterSidebar = () => {
             min="1"
             max="100"
             value={filters.limit || ""}
-            onChange={(e) =>
-              (activeChat.filters = {
-                ...activeChat.filters,
-                limit: e.target.value ? parseInt(e.target.value) : 50,
-              })
-            }
+            onChange={handleLimitChange}
           />
           <p className="text-xs text-muted-foreground mt-1">
             Máximo 100 resultados

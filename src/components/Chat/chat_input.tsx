@@ -7,18 +7,27 @@ import callAPI from "@/lib/api";
 import { Chat, ChatMessage } from "./types";
 
 function ChatInput() {
-  const {activeChat, updateChats} = useChatContext();
+  const {
+    allChats,
+    sessionId, 
+    filters,
+    isLoading,
+    setIsLoading,
+    addMessage
+  } = useChatContext();
   const [inputText, setInputText] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSendMessage = () => {
-    if (!inputText.trim() || !activeChat || activeChat.isLoading) return;    
-    updateChats(activeChat.addNewMessage("user", inputText));
-    setInputText("");
-    if (!activeChat || activeChat.messages.length === 0) return;
+
+    setIsLoading(true)
+    if (allChats.length === 0 || !inputText.trim() || isLoading) return;
+    addMessage("user", inputText);    
     const fetchMsg = async () => {
-      const msg = await callAPI(activeChat);
-      updateChats(activeChat.addNewMessage("assistant", msg));
+      const msg = await callAPI(sessionId, inputText, filters);
+      addMessage("assistant", msg);
+      setIsLoading(false);
+      setInputText("");
     };
     fetchMsg();
   };
@@ -31,15 +40,12 @@ function ChatInput() {
   };
 
   useEffect(() => {
-    if (!activeChat?.isLoading) {
+    if (!isLoading) {
       inputRef.current?.focus();
     }
-  }, [activeChat?.isLoading]);
+  }, [isLoading]);
 
-  if (!activeChat) {
-    return null;
-  }
-
+  if (allChats.length === 0) return null;
   return (
     <>
       <div className="flex gap-2 mt-4">
@@ -50,11 +56,11 @@ function ChatInput() {
           onChange={(e) => setInputText(e.target.value)}
           onKeyDown={handleKeyPress}
           className="flex-1"
-          disabled={activeChat.isLoading}
+          disabled={isLoading}
         />
         <Button
           onClick={handleSendMessage}
-          disabled={!inputText.trim() || activeChat.isLoading}
+          disabled={!inputText.trim() || isLoading}
           size="icon"
         >
           <Send className="h-4 w-4" />

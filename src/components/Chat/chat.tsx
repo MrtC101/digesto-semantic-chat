@@ -10,7 +10,7 @@ import useChatContext from "@/hooks/use_chat_context_hook";
 import ChatInput from "@/components/Chat/chat_input";
 import { ChatMessage, LoadingDisplay } from "@/components/Chat/chat_message";
 import FilterButton from "./Filter/filter";
-import { Chat } from "./types";
+import {motion , AnimatePresence} from "framer-motion";
 
 function ChatHeader() {
   const { sessionId, filters } = useChatContext();
@@ -42,17 +42,20 @@ function ChatHeader() {
 }
 
 const ChatInterface = () => {
-  const { isLoading, messages, sessionId } = useChatContext();
+  const { allChats, isLoading, messages, setIsLoading } = useChatContext();
 
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (messages.length > 0 && scrollAreaRef.current) {
-      scrollAreaRef.current.scrollIntoView({ behavior: "smooth" });
+    if ((messages.length > 0 || isLoading) && messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+        inline: "nearest",
+      });
     }
-  }, [messages.length]);
+  }, [messages.length, isLoading]);
 
-  // Verificar que activeChat existe
-  if (!sessionId) {
+  if (allChats.length === 0) {
     return (
       <Card className="flex-1 flex flex-col w-full h-full max-h-[90vh] overflow-hidden">
         <CardContent className="flex items-center justify-center h-full">
@@ -63,10 +66,9 @@ const ChatInterface = () => {
       </Card>
     );
   }
-
   return (
-    <Card className="flex-1 flex flex-col w-full h-full max-h-[90vh] overflow-hidden">
-      <CardHeader className="pb-3">
+    <Card className="flex-1 flex flex-col w-full h-full max-h-[90vh]">
+      <CardHeader className="pb-3 transition-opacity duration-500">
         <ChatHeader />
       </CardHeader>
       <Separator />
@@ -77,18 +79,22 @@ const ChatInterface = () => {
         >
           <div className="space-y-4">
             {messages.map((message, index) => (
-              <div
+              <motion.div
                 key={message.id}
-                ref={
-                  index === messages.length - 1
-                    ? scrollAreaRef
-                    : null
-                }
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
               >
                 <ChatMessage message={message} />
-              </div>
+              </motion.div>
             ))}
-            {isLoading && <LoadingDisplay />}
+            {isLoading && (
+              <div className="animate-pulse">
+                <LoadingDisplay />
+              </div>
+            )}
+            <div ref={messagesEndRef} className="h-1" />
           </div>
         </ScrollArea>
         <ChatInput />

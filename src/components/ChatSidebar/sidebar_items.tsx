@@ -14,9 +14,9 @@ interface ChatItem {
   chat: Chat;
 }
 function SideBarItem() {
-  const { chats, activeChat, setActiveChatId } = useChatContext();
+  const {sessionId, isLoading, allChats, switchToChat } = useChatContext();
 
-  const chatItems: ChatItem[] = chats.map((chat) => ({
+  const chatItems: ChatItem[] = allChats.map((chat) => ({
     id: chat.sessionId,
     tag: chat.tag.name,
     sessionId: chat.sessionId,
@@ -24,9 +24,9 @@ function SideBarItem() {
   }));
 
   const handleChatSelect = (chat: Chat) => {
-    if (!chat.isLoading) {
-      // Prevenir cambios durante carga
-      setActiveChatId(chat.sessionId);
+    // Prevenir cambios durante carga
+    if (!isLoading) {
+      switchToChat(chat.sessionId);
     }
   };
 
@@ -36,9 +36,9 @@ function SideBarItem() {
         <SidebarMenuItem key={item.id}>
           <SidebarMenuButton
             onClick={() => handleChatSelect(item.chat)}
-            disabled={item.chat.isLoading} // Deshabilitar durante carga
+            disabled={isLoading}
             className={`flex flex-col items-start gap-1 p-1 ${
-              activeChat?.sessionId === item.sessionId
+              item.sessionId === sessionId
                 ? "bg-accent text-accent-foreground"
                 : ""
             }`}
@@ -50,7 +50,7 @@ function SideBarItem() {
               <Badge variant="outline" className="text-xs">
                 {item.sessionId.slice(-8)}
               </Badge>
-              {item.chat.isLoading && (
+              {item.sessionId === sessionId && isLoading && (
                 <div className="animate-spin h-3 w-3 border border-current border-t-transparent rounded-full" />
               )}
             </div>

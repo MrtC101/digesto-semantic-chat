@@ -38,14 +38,14 @@ function AddFilters(params, filters) {
   }
 }
 
-const callAPI = async (activeChat: Chat) : Promise<string> => {
+const callAPI = async (session_id, user_msg, filters): Promise<string> => {
   const apiUrl = "/api";
   const params = new URLSearchParams({
-    query_str: activeChat.lastUserMessage.message,
+    query_str: user_msg,
     mode: "GENERATE",
-    session_id: activeChat.sessionId,
+    session_id: session_id,
   });
-  AddFilters(params, activeChat.filters);
+  AddFilters(params, filters);
   const fullUrl = `${apiUrl}?${params.toString()}`;
   let msg = "";
   try {
@@ -57,6 +57,6 @@ const callAPI = async (activeChat: Chat) : Promise<string> => {
     Por favor, intentá nuevamente más tarde.`;
   }
   return msg;
-}
+};
 
 export default callAPI;

@@ -3,40 +3,61 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import type { Tag } from "../Chat/types";
 import useChatContext from "@/hooks/use_chat_context_hook";
-import { createNewChat } from "../Chat/chat_methods";
+import callAPI from "@/lib/api";
+
+const welcome_msg = `👋 **¡Hola!**
+
+  Soy tu **asistente legal**, especializado en el **Digesto Jurídico** de la Municipalidad.
+
+  Podés consultarme sobre:
+
+  - 📘 **Leyes**
+  - 🏛️ **Ordenanzas**
+  - 📄 **Decretos**
+  - 📚 **Otras normativas municipales**
+  - 🗺️ **Información geográfica de Godoy Cruz**
+  Podés consultar la **zonificación**, **distrito** y **barrio** de cualquier dirección.
+
+  > 🗣️ **¿En qué puedo ayudarte hoy?**
+  `;
+const tags: Tag[] = [
+    {
+      name: "Reclamos",
+      letter: "R",
+    },
+    {
+      name: "Consultas Generales",
+      letter: "C",
+    },
+    {
+      name: "Normativas",
+      letter: "N",
+    },
+  ];
 
 function CreateDropdown() {
-  const [tagList, setTagList] = useState<Tag[]>([]);
-  const { setActiveChatId, setChats } = useChatContext();
+  const {
+    sessionId,
+    filters,
+    addMessage,
+    switchToChat,
+    createNewChat,
+  } = useChatContext();
 
   function setNewActiveChat(tag: Tag) {
-    const newChat = createNewChat(tag);
-    setChats((prev) => [...prev, newChat]);
-    setActiveChatId(newChat.sessionId);
+    const newSessionId = createNewChat(tag);
+    switchToChat(newSessionId);
+    addMessage("assistant", welcome_msg);
+    const set_mode = async () => {
+      const msg = await callAPI(sessionId, tag.letter, filters);
+      addMessage("assistant", msg);
+    };
+    set_mode();
   }
-
-  useEffect(() => {
-    // In the future use axios to get tags
-    const tags: Tag[] = [
-      {
-        name: "Reclamos",
-        letter: "R",
-      },
-      {
-        name: "Consultas Generales",
-        letter: "C",
-      },
-      {
-        name: "Normativas",
-        letter: "N",
-      },
-    ];
-    setTagList(tags);
-  }, []);
 
   return (
     <>
-      {tagList.map((tag: Tag) => (
+      {tags.map((tag: Tag) => (
         <DropdownMenuItem key={tag.name} asChild>
           <Button
             variant="ghost"
