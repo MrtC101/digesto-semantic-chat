@@ -7,18 +7,13 @@ import callAPI from "@/lib/api";
 
 const welcome_msg = `👋 **¡Hola!**
 
-  Soy tu **asistente legal**, especializado en el **Digesto Jurídico** de la Municipalidad.
+Soy tu asistente virtual Normita y si me das una orden clara y un contexto breve, puedo ayudarte a:
+ㅤ
+- 📘 **Buscar información** sobre Leyes, Ordenanzas,  Decretos, Resoluciones y Convenios.
+- 📄 **Redactar un borrador** de Ordenanza o Decreto a partir de la información que me brindes.
 
-  Podés consultarme sobre:
-
-  - 📘 **Leyes**
-  - 🏛️ **Ordenanzas**
-  - 📄 **Decretos**
-  - 📚 **Otras normativas municipales**
-  - 🗺️ **Información geográfica de Godoy Cruz**
-  Podés consultar la **zonificación**, **distrito** y **barrio** de cualquier dirección.
-
-  > 🗣️ **¿En qué puedo ayudarte hoy?**
+ㅤ
+> 🗣️ ¿En qué puedo ayudarte hoy?
   `;
 const tags: Tag[] = [
     {
@@ -48,6 +43,7 @@ function CreateDropdown() {
     const newSessionId = createNewChat(tag);
     switchToChat(newSessionId);
     addMessage("assistant", welcome_msg);
+    addMessage("user", tag.letter);
     const set_mode = async () => {
       const msg = await callAPI(sessionId, tag.letter, filters);
       addMessage("assistant", msg);

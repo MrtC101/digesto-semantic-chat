@@ -67,8 +67,7 @@ function ChatInput() {
         </Button>
       </div>
       <p className="text-xs text-muted-foreground mt-2">
-        Presiona Enter para enviar • Los filtros activos se aplicarán
-        automáticamente
+        Presiona Enter para enviar • Normita puede cometer errores, por favor verifica las respuestas.
       </p>
     </>
   );

@@ -111,6 +111,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
               [&_pre]:break-words
               [&_td]:break-words
               [&_th]:break-words
+              [&_hr]:my-4
             "
             dangerouslySetInnerHTML={{
               __html: html,
