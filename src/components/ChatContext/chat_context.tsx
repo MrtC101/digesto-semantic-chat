@@ -121,7 +121,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   // Cambiar a otro chat
-  const rswitchToChat = useCallback(
+  const switchToChat = useCallback(
     (targetSessionId: string) => {
       // Guardar chat actual antes de cambiar
       if (hasUnsavedChanges) {
