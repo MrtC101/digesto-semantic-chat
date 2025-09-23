@@ -59,12 +59,12 @@ function SideBarItem() {
                 <div className="animate-spin h-3 w-3 border border-current border-t-transparent rounded-full" />
               )}
               {item.sessionId !== sessionId && (
-                <button
+                <div
                   className="text-red-500 hover:text-red-700"
                   onClick={() => handleDelete(item.sessionId)}
                 >
                   <Trash2 className="h-4 w-4" />
-                </button>
+                </div>
               )}
             </div>
           </SidebarMenuButton>

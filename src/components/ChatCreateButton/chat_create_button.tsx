@@ -6,12 +6,17 @@ import {
 import { PlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CreateDropdown from "@/components/ChatCreateButton/create_dropdown";
+import useChatContext from "@/hooks/use_chat_context_hook";
 
 function NewChatButton() {
+  const {isLoading} = useChatContext()
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+        <Button
+          className="bg-blue-600 hover:bg-blue-700 text-white"
+          disabled={isLoading}
+        >
           <PlusIcon className="mr-2 h-4 w-4" />
           Nuevo Chat
         </Button>

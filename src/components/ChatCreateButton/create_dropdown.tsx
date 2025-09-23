@@ -33,20 +33,26 @@ const tags: Tag[] = [
 function CreateDropdown() {
   const {
     sessionId,
+    isLoading,
     filters,
     addMessage,
+    setIsLoading,
     switchToChat,
     createNewChat,
   } = useChatContext();
 
-  function createChat(tag: Tag) {
+  function handleCreateChat(tag: Tag) {
     const newSessionId = createNewChat(tag);
+
     switchToChat(newSessionId);
     addMessage("assistant", welcome_msg);
     addMessage("user", tag.letter);
+
+    setIsLoading(true);
     const set_mode = async () => {
       const msg = await callAPI(sessionId, tag.letter, filters);
       addMessage("assistant", msg);
+      setIsLoading(false);
     };
     set_mode();
   }
@@ -58,7 +64,8 @@ function CreateDropdown() {
           <Button
             variant="ghost"
             className="w-full justify-start"
-            onClick={() => createChat(tag)}
+            disabled={isLoading}
+            onClick={() => handleCreateChat(tag)}
           >
             <span className="mr-2 h-4 w-4 rounded bg-primary text-primary-foreground flex items-center justify-center text-xs">
               {tag.letter}

@@ -43,17 +43,19 @@ function ChatHeader() {
 
 const ChatInterface = () => {
   const { allChats, isLoading, messages } = useChatContext();
-
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
   useEffect(() => {
-    if ((messages.length > 0 || isLoading) && messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "end",
-        inline: "nearest",
+    if (messagesEndRef.current) {
+      requestAnimationFrame(() => {
+        messagesEndRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "end",
+          inline: "nearest",
+        });
       });
     }
-  }, [messages.length, isLoading]);
+  }, [messages, isLoading]);
 
   if (allChats.length === 0) {
     return (
@@ -80,7 +82,7 @@ const ChatInterface = () => {
           <div className="space-y-4">
             {messages.map((message, index) => (
               <motion.div
-                key={message.id}
+                key={message.id + index}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
