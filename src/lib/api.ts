@@ -1,4 +1,3 @@
-import { Chat, SearchResult } from "@/components/Chat/types";
 import axios from "axios";
 
 function AddFilters(params, filters) {

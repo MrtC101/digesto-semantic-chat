@@ -8,6 +8,7 @@ export interface ChatStates {
   messages: ChatMessage[];
   filters: SearchFilters;
   isLoading: boolean;
+  isInit: boolean;
 }
 
 export interface ChatContextType {
@@ -17,6 +18,7 @@ export interface ChatContextType {
   messages: ChatMessage[];
   filters: SearchFilters;
   isLoading: boolean;
+  isInit: boolean;
 
   // Métodos para modificar el chat actual
   setTag: (tag: Tag) => void;
@@ -24,6 +26,7 @@ export interface ChatContextType {
   addMessage: (type: "user" | "assistant", text: string) => void;
   setFilters: (filters: SearchFilters) => void;
   setIsLoading: (loading: boolean) => void;
+  setIsInit: (boolean) => void;
 
   // Control de chats
   allChats: Chat[];
@@ -51,6 +54,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [filters, setFilters] = useState<SearchFilters>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isInit, setIsInit] = useState<boolean>(false);
 
   // Control de cambios no guardados
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -66,17 +70,25 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       messages,
       filters,
       isLoading,
+      isInit
     };
     const hasChanged =
       JSON.stringify(currentState) !== JSON.stringify(lastSavedState);
     setHasUnsavedChanges(hasChanged);
-  }, [sessionId, tag, messages, filters, isLoading, lastSavedState]);
+  }, [sessionId, tag, messages, filters, isLoading, lastSavedState, isInit]);
 
   // Guardar chat actual en el store
   const saveCurrentChat = useCallback(() => {
     if (!sessionId || !tag) return;
 
-    const currentChat = new Chat(tag, sessionId, messages, filters, isLoading);
+    const currentChat = new Chat(
+      tag,
+      sessionId,
+      messages,
+      filters,
+      isLoading,
+      isInit
+    );
     chatsStore.current.set(sessionId, currentChat);
 
     // Actualizar lista de chats
@@ -89,10 +101,11 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       messages,
       filters,
       isLoading,
+      isInit
     };
     setLastSavedState(savedState);
     setHasUnsavedChanges(false);
-  }, [sessionId, tag, messages, filters, isLoading]);
+  }, [sessionId, tag, messages, filters, isLoading, isInit]);
 
   // Cargar chat desde el store
   const loadChat = useCallback((targetSessionId: string) => {
@@ -105,6 +118,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     setMessages([...chat.messages]); // Copia para evitar mutaciones
     setFilters({ ...chat.filters }); // Copia para evitar mutaciones
     setIsLoading(chat.isLoading);
+    setIsInit(chat.isInit);
 
     // Marcar como estado guardado
     const loadedState: ChatStates = {
@@ -113,6 +127,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       messages: chat.messages,
       filters: chat.filters,
       isLoading: chat.isLoading,
+      isInit: chat.isInit
     };
     setLastSavedState(loadedState);
     setHasUnsavedChanges(false);
@@ -174,6 +189,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         setMessages([]);
         setFilters({});
         setIsLoading(false);
+        setIsInit(false);
         setLastSavedState(null);
         setHasUnsavedChanges(false);
       }
@@ -208,6 +224,10 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(loading);
   }, []);
 
+  const updateIsInit = useCallback((init: boolean) => {
+    setIsInit(init);
+  }, []);
+
   // Auto-guardar periódico (opcional)
   useEffect(() => {
     if (!hasUnsavedChanges) return;
@@ -226,6 +246,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     messages,
     filters,
     isLoading,
+    isInit,
 
     // Métodos para modificar chat actual
     setTag: updateTag,
@@ -233,6 +254,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     addMessage,
     setFilters: updateFilters,
     setIsLoading: updateIsLoading,
+    setIsInit: updateIsInit,
 
     // Control de chats
     allChats,
