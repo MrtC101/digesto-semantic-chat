@@ -11,7 +11,7 @@ import { motion } from "framer-motion";
 import ChatHeader from "./chat_header";
 
 const ChatInterface = () => {
-  const { allChats, isLoading, messages } = useChatContext();
+  const { messages, allChats, isLoading } = useChatContext();  
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -37,6 +37,7 @@ const ChatInterface = () => {
       </Card>
     );
   }
+
   return (
     <Card className="flex-1 flex flex-col w-full h-full max-h-[90vh]">
       <CardHeader className="pb-3 transition-opacity duration-500">

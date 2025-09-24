@@ -51,6 +51,7 @@ export class Chat {
   messages: ChatMessage[];
   filters: SearchFilters;
   isLoading: boolean;
+  isInit: boolean;
 
   constructor(
     tag: Tag,
@@ -59,13 +60,15 @@ export class Chat {
       .slice(2, 9)}`,
     messages: ChatMessage[] = [],
     filters: SearchFilters = {},
-    isLoading = false
+    isLoading = false,
+    isInit = false
   ) {
     this.sessionId = sessionId;
     this.tag = tag;
     this.messages = messages;
     this.filters = filters;
     this.isLoading = isLoading;
+    this.isInit = isInit;
   }
 
   get userMessages() {
@@ -83,7 +86,7 @@ export class Chat {
   }
 
   addNewFilter(newFilters: SearchFilters): Chat {
-    return new Chat(this.tag, this.sessionId, this.messages, newFilters, true);
+    return new Chat(this.tag, this.sessionId, this.messages, newFilters, this.isLoading, this.isInit);
   }
 
   addNewMessage(type: "user" | "assistant", msg_text: string): Chat {
@@ -98,7 +101,8 @@ export class Chat {
       this.sessionId,
       [...this.messages, newMessage],
       this.filters,
-      true
+      true,
+      false
     );
   }
 }

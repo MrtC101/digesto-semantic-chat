@@ -4,22 +4,42 @@ import { Input } from "@/components/ui/input";
 import { useEffect, useRef, useState } from "react";
 import { Send } from "lucide-react";
 import callAPI from "@/lib/api";
-import { Chat, ChatMessage } from "./types";
+import { welcome_msg } from "../predfined";
 
 function ChatInput() {
   const {
     allChats,
-    sessionId, 
+    sessionId,
     filters,
+    tag,
     isLoading,
+    isInit,
     setIsLoading,
-    addMessage
+    setIsInit,
+    addMessage,
   } = useChatContext();
   const [inputText, setInputText] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleSendMessage = () => {
+  useEffect(() => {
+    if (!isInit) {
+      /*Initialize new chat*/
+      addMessage("assistant", welcome_msg);
+      if (tag.letter !== "N") {
+        addMessage("user", tag.letter);
+        setIsLoading(true);
+        const set_mode = async () => {
+          const msg = await callAPI(sessionId, tag.letter, filters);
+          addMessage("assistant", msg);
+          setIsLoading(false);
+        };
+        set_mode();
+      }
+      setIsInit(true);
+    }
+  }, [addMessage, filters, isInit, sessionId, setIsInit, setIsLoading, tag.letter]);
 
+  const handleSendMessage = () => {
     setIsLoading(true)
     if (allChats.length === 0 || !inputText.trim() || isLoading) return;
     addMessage("user", inputText);    

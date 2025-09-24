@@ -7,9 +7,20 @@ import { PlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CreateDropdown from "@/components/ChatCreateButton/create_dropdown";
 import useChatContext from "@/hooks/use_chat_context_hook";
+import { tags } from "../predfined";
+import { useEffect } from "react";
 
 function NewChatButton() {
-  const {isLoading} = useChatContext()
+  const {isLoading, allChats, createNewChat, switchToChat} = useChatContext()
+
+  useEffect(() => {
+    /* Create default chat */
+    if (allChats.length == 0) {
+      const newSessionId = createNewChat(tags[0]);
+      switchToChat(newSessionId);
+    }
+  }, [allChats.length, createNewChat, switchToChat]);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
