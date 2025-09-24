@@ -19,15 +19,7 @@ const tags: Tag[] = [
     {
       name: "Reclamos",
       letter: "R",
-    },
-    {
-      name: "Consultas Generales",
-      letter: "C",
-    },
-    {
-      name: "Normativas",
-      letter: "N",
-    },
+    }
   ];
 
 function CreateDropdown() {
