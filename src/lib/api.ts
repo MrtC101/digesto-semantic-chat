@@ -1,4 +1,4 @@
-import { SearchResponse } from "@/components/ChatTextBar";
+import { Chat, SearchResult } from "@/components/Chat/types";
 import axios from "axios";
 
 function AddFilters(params, filters) {
@@ -38,27 +38,25 @@ function AddFilters(params, filters) {
   }
 }
 
-const callAPI = async (sessionId, userQuery, filters, setAssistantMsg) => {
+const callAPI = async (session_id, user_msg, filters): Promise<string> => {
   const apiUrl = "/api";
   const params = new URLSearchParams({
-    query_str: userQuery,
+    query_str: user_msg,
     mode: "GENERATE",
-    session_id: sessionId,
+    session_id: session_id,
   });
   AddFilters(params, filters);
   const fullUrl = `${apiUrl}?${params.toString()}`;
+  let msg = "";
   try {
     const response = await axios.post(fullUrl);
-    const answare: SearchResponse = response.data;
-    setAssistantMsg(answare?.generated_response);
+    msg = response.data?.generated_response;
   } catch (error) {
-    setAssistantMsg(
-      `❌ **Lo sentimos**  
-Ocurrió un error al procesar tu consulta.  
-Por favor, intentá nuevamente más tarde.`
-    );
-    //console.error("Error searching:", error);
+    msg = `❌ **Lo sentimos**  
+    Ocurrió un error al procesar tu consulta.  
+    Por favor, intentá nuevamente más tarde.`;
   }
+  return msg;
 };
 
 export default callAPI;

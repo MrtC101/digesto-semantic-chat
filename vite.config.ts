@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "API_URL");
@@ -27,6 +28,22 @@ export default defineConfig(({ mode }) => {
       alias: {
         "@": path.resolve(__dirname, "./src"),
       },
+    },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            motion: ["framer-motion"],
+            radix: [
+              "@radix-ui/react-dialog",
+              "@radix-ui/react-dropdown-menu",
+              "@radix-ui/react-toast",
+            ],
+            lucide: ["lucide-react"],
+          },
+        },
+      },
+      //chunkSizeWarningLimit: 1000, // opcional, solo para silenciar el warning
     },
   };
 });
