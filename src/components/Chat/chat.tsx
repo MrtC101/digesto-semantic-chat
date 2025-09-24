@@ -1,50 +1,19 @@
-import { useEffect, useRef, useState } from "react";
-import { MessageSquare } from "lucide-react";
+import { useEffect, useRef } from "react";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
 
 import useChatContext from "@/hooks/use_chat_context_hook";
 import ChatInput from "@/components/Chat/chat_input";
 import { ChatMessage, LoadingDisplay } from "@/components/Chat/chat_message";
-import FilterButton from "./Filter/filter";
-import {motion} from "framer-motion";
-
-function ChatHeader() {
-  const { sessionId, filters } = useChatContext();
-  const activeFilters = Object.values(filters).filter((v) => Array.isArray(v) ? v.length > 0 : v !== undefined && v !== "");
-  const filterCounts = activeFilters.length;
-
-  return (
-    <div className="flex items-center justify-between">
-      <CardTitle className="flex items-center gap-2">
-        <div className="bg-primary/10 text-primary p-2 rounded-full">
-          <MessageSquare className="h-5 w-5" />
-        </div>
-        <span className="hidden sm:inline">
-          ¡Chateá con <span className="font-bold text-primary">Normita</span>!
-        </span>
-      </CardTitle>
-
-      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        {filterCounts > 0 && (
-          <Badge variant="secondary">{filterCounts} filtros activos</Badge>
-        )}
-        <FilterButton />
-        <Badge variant="outline">
-          Sesión: {sessionId.slice(-8)}
-        </Badge>
-      </div>
-    </div>
-  );
-}
+import { motion } from "framer-motion";
+import ChatHeader from "./chat_header";
 
 const ChatInterface = () => {
   const { allChats, isLoading, messages } = useChatContext();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  
+
   useEffect(() => {
     if (messagesEndRef.current) {
       requestAnimationFrame(() => {
