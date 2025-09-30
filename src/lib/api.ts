@@ -37,7 +37,7 @@ function AddFilters(params, filters) {
   }
 }
 
-const callAPI = async (session_id, user_msg, filters): Promise<string> => {
+const callAPI = async (session_id, user_msg, filters): Promise<[string,string]> => {
   const apiUrl = "/api";
   const params = new URLSearchParams({
     query_str: user_msg,
@@ -47,15 +47,17 @@ const callAPI = async (session_id, user_msg, filters): Promise<string> => {
   AddFilters(params, filters);
   const fullUrl = `${apiUrl}?${params.toString()}`;
   let msg = "";
+  let topic = "";
   try {
     const response = await axios.post(fullUrl);
     msg = response.data?.generated_response;
+    topic = response.data.topic;
   } catch (error) {
     msg = `❌ **Lo sentimos**  
     Ocurrió un error al procesar tu consulta.  
     Por favor, intentá nuevamente más tarde.`;
   }
-  return msg;
+  return [msg, topic];
 };
 
 export default callAPI;

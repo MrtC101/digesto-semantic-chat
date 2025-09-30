@@ -12,6 +12,7 @@ interface ChatItem {
   id: string;
   tag: string;
   sessionId: string;
+  topic: string;
   chat: Chat;
 }
 function SideBarItem() {
@@ -21,6 +22,7 @@ function SideBarItem() {
     id: chat.sessionId,
     tag: chat.tag.name,
     sessionId: chat.sessionId,
+    topic: chat.topic,
     chat,
   }));
 
@@ -37,7 +39,7 @@ function SideBarItem() {
 
   return (
     <SidebarMenu>
-      {chatItems.map((item) => (
+      {chatItems.map((item, index) => (
         <SidebarMenuItem key={item.id}>
           <SidebarMenuButton
             onClick={() => handleChatSelect(item.chat)}
@@ -48,16 +50,23 @@ function SideBarItem() {
                 : ""
             }`}
           >
-            <div className="flex justify-center items-center gap-2 w-full h-full">
+            <div className="grid grid-cols-[32px_1fr_auto_auto] items-center gap-2 w-full h-full">
+              <div className="flex justify-center items-center w-6 h-6 rounded-full bg-black-50 border border-gray-400 text-xs font-semibold">
+                {index + 1}
+              </div>
+
+              <div className="text-xs truncate" title={item.topic}>
+                {item.topic}
+              </div>
+
               <Badge variant="secondary" className="text-xs">
                 {item.tag}
               </Badge>
-              <Badge variant="outline" className="text-xs">
-                {item.sessionId.slice(-8)}
-              </Badge>
+
               {item.sessionId === sessionId && isLoading && (
                 <div className="animate-spin h-3 w-3 border border-current border-t-transparent rounded-full" />
               )}
+
               {item.sessionId !== sessionId && (
                 <div
                   className="text-red-500 hover:text-red-700"

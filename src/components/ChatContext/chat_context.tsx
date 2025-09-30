@@ -1,11 +1,86 @@
 import { createContext, useState, useEffect, useRef, useCallback } from "react";
-import { Chat, Tag, ChatMessage, SearchFilters } from "@/components/Chat/types";
+import { Tag, ChatMessage, SearchFilters } from "@/components/Chat/types";
+
+export class Chat {
+  sessionId: string;
+  tag: Tag;
+  messages: ChatMessage[];
+  topic: string;
+  filters: SearchFilters;
+  isLoading: boolean;
+  isInit: boolean;
+
+  constructor(
+    tag: Tag,
+    sessionId: string = `session_${Date.now()}_${Math.random()
+      .toString(36)
+      .slice(2, 9)}`,
+    messages: ChatMessage[] = [],
+    topic = "",
+    filters: SearchFilters = {},
+    isLoading = false,
+    isInit = false
+  ) {
+    this.sessionId = sessionId;
+    this.tag = tag;
+    this.messages = messages;
+    this.topic = topic;
+    this.filters = filters;
+    this.isLoading = isLoading;
+    this.isInit = isInit;
+  }
+
+  get userMessages() {
+    return this.messages.filter((msg) => msg.type === "user");
+  }
+  get assistantMessages() {
+    return this.messages.filter((msg) => msg.type === "assistant");
+  }
+  get lastUserMessage() {
+    return this.userMessages[this.userMessages.length - 1];
+  }
+
+  get lastAssistMessage() {
+    return this.assistantMessages[this.assistantMessages.length - 1];
+  }
+
+  addNewFilter(newFilters: SearchFilters): Chat {
+    return new Chat(
+      this.tag,
+      this.sessionId,
+      this.messages,
+      this.topic,
+      newFilters,
+      this.isLoading,
+      this.isInit
+    );
+  }
+
+  addNewMessage(type: "user" | "assistant", msg_text: string): Chat {
+    const newMessage: ChatMessage = {
+      id: Date.now().toString(),
+      type: type,
+      message: msg_text,
+      timestamp: new Date(),
+    };
+    return new Chat(
+      this.tag,
+      this.sessionId,
+      [...this.messages, newMessage],
+      this.topic,
+      this.filters,
+      true,
+      false
+    );
+  }
+}
 
 // Estados del chat activo
 export interface ChatStates {
   sessionId: string | null;
   tag: Tag | null;
   messages: ChatMessage[];
+  topic: string | string;
   filters: SearchFilters;
   isLoading: boolean;
   isInit: boolean;
@@ -15,6 +90,7 @@ export interface ChatContextType {
   // Estados del chat actual (hidratados)
   sessionId: string | null;
   tag: Tag | null;
+  topic: string | null;
   messages: ChatMessage[];
   filters: SearchFilters;
   isLoading: boolean;
@@ -27,6 +103,7 @@ export interface ChatContextType {
   setFilters: (filters: SearchFilters) => void;
   setIsLoading: (loading: boolean) => void;
   setIsInit: (boolean) => void;
+  setTopic: (topic: string) => void;
 
   // Control de chats
   allChats: Chat[];
@@ -51,6 +128,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   // Estados hidratados del chat actual
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [tag, setTag] = useState<Tag | null>(null);
+  const [topic, setTopic] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [filters, setFilters] = useState<SearchFilters>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -68,14 +146,24 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       sessionId,
       tag,
       messages,
+      topic,
       filters,
       isLoading,
-      isInit
+      isInit,
     };
     const hasChanged =
       JSON.stringify(currentState) !== JSON.stringify(lastSavedState);
     setHasUnsavedChanges(hasChanged);
-  }, [sessionId, tag, messages, filters, isLoading, lastSavedState, isInit]);
+  }, [
+    sessionId,
+    tag,
+    messages,
+    topic,
+    filters,
+    isLoading,
+    lastSavedState,
+    isInit,
+  ]);
 
   // Guardar chat actual en el store
   const saveCurrentChat = useCallback(() => {
@@ -85,6 +173,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       tag,
       sessionId,
       messages,
+      topic,
       filters,
       isLoading,
       isInit
@@ -99,13 +188,14 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       sessionId,
       tag,
       messages,
+      topic,
       filters,
       isLoading,
-      isInit
+      isInit,
     };
     setLastSavedState(savedState);
     setHasUnsavedChanges(false);
-  }, [sessionId, tag, messages, filters, isLoading, isInit]);
+  }, [sessionId, tag, messages, topic, filters, isLoading, isInit]);
 
   // Cargar chat desde el store
   const loadChat = useCallback((targetSessionId: string) => {
@@ -116,6 +206,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     setSessionId(chat.sessionId);
     setTag(chat.tag);
     setMessages([...chat.messages]); // Copia para evitar mutaciones
+    setTopic(chat.topic);
     setFilters({ ...chat.filters }); // Copia para evitar mutaciones
     setIsLoading(chat.isLoading);
     setIsInit(chat.isInit);
@@ -125,9 +216,10 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       sessionId: chat.sessionId,
       tag: chat.tag,
       messages: chat.messages,
+      topic: chat.topic,
       filters: chat.filters,
       isLoading: chat.isLoading,
-      isInit: chat.isInit
+      isInit: chat.isInit,
     };
     setLastSavedState(loadedState);
     setHasUnsavedChanges(false);
@@ -187,6 +279,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         setSessionId(null);
         setTag(null);
         setMessages([]);
+        setTopic(null);
         setFilters({});
         setIsLoading(false);
         setIsInit(false);
@@ -228,6 +321,10 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     setIsInit(init);
   }, []);
 
+  const updateTopic = useCallback((topic: string) => {
+    setTopic(topic);
+  }, []);
+
   // Auto-guardar periódico (opcional)
   useEffect(() => {
     if (!hasUnsavedChanges) return;
@@ -247,11 +344,13 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     filters,
     isLoading,
     isInit,
+    topic,
 
     // Métodos para modificar chat actual
     setTag: updateTag,
     setMessages: updateMessages,
     addMessage,
+    setTopic: updateTopic,
     setFilters: updateFilters,
     setIsLoading: updateIsLoading,
     setIsInit: updateIsInit,
