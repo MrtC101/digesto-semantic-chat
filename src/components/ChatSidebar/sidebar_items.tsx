@@ -20,7 +20,7 @@ function SideBarItem() {
 
   const chatItems: ChatItem[] = allChats.map((chat) => ({
     id: chat.sessionId,
-    tag: chat.tag.name,
+    tag: chat.tag.letter,
     sessionId: chat.sessionId,
     topic: chat.topic,
     chat,
@@ -51,18 +51,12 @@ function SideBarItem() {
             }`}
           >
             <div className="grid grid-cols-[32px_1fr_auto_auto] items-center gap-2 w-full h-full">
-              <div className="flex justify-center items-center w-6 h-6 rounded-full bg-black-50 border border-gray-400 text-xs font-semibold">
-                {index + 1}
-              </div>
-
-              <div className="text-xs truncate" title={item.topic}>
-                {item.topic}
-              </div>
-
-              <Badge variant="secondary" className="text-xs">
+              <span className="ml-2 mr-2 h-4 w-4 rounded bg-primary text-primary-foreground flex items-center justify-center text-xs">
                 {item.tag}
-              </Badge>
-
+              </span>
+              <div className="text-xs truncate" title={item.topic}>
+                {item.topic || "Chat sin iniciar"}
+              </div>
               {item.sessionId === sessionId && isLoading && (
                 <div className="animate-spin h-3 w-3 border border-current border-t-transparent rounded-full" />
               )}
