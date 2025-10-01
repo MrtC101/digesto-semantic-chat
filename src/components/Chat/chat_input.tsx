@@ -14,6 +14,7 @@ function ChatInput() {
     tag,
     isLoading,
     isInit,
+    setTopic,
     setIsLoading,
     setIsInit,
     addMessage,
@@ -29,23 +30,25 @@ function ChatInput() {
         addMessage("user", tag.letter);
         setIsLoading(true);
         const set_mode = async () => {
-          const msg = await callAPI(sessionId, tag.letter, filters);
+          const [msg, topic] = await callAPI(sessionId, tag.letter, filters);
           addMessage("assistant", msg);
+          setTopic(topic);
           setIsLoading(false);
         };
         set_mode();
       }
       setIsInit(true);
     }
-  }, [addMessage, filters, isInit, sessionId, setIsInit, setIsLoading, tag.letter]);
+  }, [addMessage, filters, isInit, sessionId, setIsInit, setTopic, setIsLoading, tag.letter]);
 
   const handleSendMessage = () => {
     setIsLoading(true)
     if (allChats.length === 0 || !inputText.trim() || isLoading) return;
     addMessage("user", inputText);    
     const fetchMsg = async () => {
-      const msg = await callAPI(sessionId, inputText, filters);
+      const [msg, topic] = await callAPI(sessionId, inputText, filters);
       addMessage("assistant", msg);
+      setTopic(topic);
       setIsLoading(false);
       setInputText("");
     };

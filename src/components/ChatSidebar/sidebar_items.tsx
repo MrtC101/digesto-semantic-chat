@@ -12,6 +12,7 @@ interface ChatItem {
   id: string;
   tag: string;
   sessionId: string;
+  topic: string;
   chat: Chat;
 }
 function SideBarItem() {
@@ -19,8 +20,9 @@ function SideBarItem() {
 
   const chatItems: ChatItem[] = allChats.map((chat) => ({
     id: chat.sessionId,
-    tag: chat.tag.name,
+    tag: chat.tag.letter,
     sessionId: chat.sessionId,
+    topic: chat.topic,
     chat,
   }));
 
@@ -37,7 +39,7 @@ function SideBarItem() {
 
   return (
     <SidebarMenu>
-      {chatItems.map((item) => (
+      {chatItems.map((item, index) => (
         <SidebarMenuItem key={item.id}>
           <SidebarMenuButton
             onClick={() => handleChatSelect(item.chat)}
@@ -48,16 +50,17 @@ function SideBarItem() {
                 : ""
             }`}
           >
-            <div className="flex justify-center items-center gap-2 w-full h-full">
-              <Badge variant="secondary" className="text-xs">
+            <div className="grid grid-cols-[32px_1fr_auto_auto] items-center gap-2 w-full h-full">
+              <span className="ml-2 mr-2 h-4 w-4 rounded bg-primary text-primary-foreground flex items-center justify-center text-xs">
                 {item.tag}
-              </Badge>
-              <Badge variant="outline" className="text-xs">
-                {item.sessionId.slice(-8)}
-              </Badge>
+              </span>
+              <div className="text-xs truncate" title={item.topic}>
+                {item.topic || "Chat sin iniciar"}
+              </div>
               {item.sessionId === sessionId && isLoading && (
                 <div className="animate-spin h-3 w-3 border border-current border-t-transparent rounded-full" />
               )}
+
               {item.sessionId !== sessionId && (
                 <div
                   className="text-red-500 hover:text-red-700"
