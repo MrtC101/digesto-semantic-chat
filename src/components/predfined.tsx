@@ -16,8 +16,8 @@ export const tags: Tag[] = [
         name: "Normativo",
         letter: "N",
     },
-    {
-        name: "Reclamos",
-        letter: "R",
-    },
+    // {
+    //     name: "Reclamos",
+    //     letter: "R",
+    // },
 ];
