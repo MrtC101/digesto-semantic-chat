@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import FilterButton from "./Filter/filter";
 import { CardTitle } from "../ui/card";
 import useChatContext from "@/hooks/use_chat_context_hook";
+import { Button } from "../ui/button";
 
 function ChatHeader() {
   const { sessionId, filters } = useChatContext();
@@ -10,6 +11,13 @@ function ChatHeader() {
     Array.isArray(v) ? v.length > 0 : v !== undefined && v !== ""
   );
   const filterCounts = activeFilters.length;
+
+  const handleDownloadPDF = () => {
+    const link = document.createElement("a");
+    link.href = `/Instructivo_de_Uso_Normita.pdf`; // PDF en public
+    link.download = "Instructivo_de_Uso_Normita.pdf";
+    link.click();
+  };
 
   return (
     <div className="flex items-center justify-between">
@@ -28,6 +36,13 @@ function ChatHeader() {
         )}
         <FilterButton />
         <Badge variant="outline">Sesión: {sessionId.slice(-8)}</Badge>
+        <Button
+          title="Descargar Instructivo de uso"
+          className="w-8 h-8 p-0 rounded-full border-2 border-white bg-transparent text-white hover:bg-white hover:text-blue-500"
+          onClick={handleDownloadPDF}
+        >
+          ?
+        </Button>
       </div>
     </div>
   );
