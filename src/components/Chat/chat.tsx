@@ -49,7 +49,7 @@ const ChatInterface = () => {
           className="flex-1 overflow-y-auto w-full pr-4"
           style={{ height: "70vh" }}
         >
-          <div className="space-y-4">
+          <div className="space-y-4 w-full max-w-100">
             {messages.map((message, index) => (
               <motion.div
                 key={message.id + index}
@@ -57,6 +57,7 @@ const ChatInterface = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.25, ease: "easeOut" }}
+                className="w-full max-w-full"
               >
                 <ChatMessage message={message} />
               </motion.div>

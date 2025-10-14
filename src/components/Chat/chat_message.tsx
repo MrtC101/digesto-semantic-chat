@@ -83,10 +83,11 @@ export function ChatMessage({ message }: ChatMessageProps) {
       }`}
     >
       <div
-        className={`flex gap-3 max-w-[80%] ${
+        className={`flex gap-3 ${
           message.type === "user" ? "flex-row-reverse" : "flex-row"
         }`}
       >
+        {/* Message icon */}
         {message.type === "user" ? (
           <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-gray-600 text-white">
             <User className="h-4 w-4" />
@@ -95,24 +96,27 @@ export function ChatMessage({ message }: ChatMessageProps) {
           <NormitaPicture />
         )}
 
-        <div className="rounded-lg p-3 bg-gray-600 text-white">
+        <div className="rounded-lg p-3 bg-gray-600 text-white ">
           <div
             className="
+              w-full
               markdown
               text-base
               leading-relaxed
               break-words
+              [&_p]:break-all
+              [&_p]:text-base
+              [&_p]:leading-relaxed
               [&_a]:text-sky-300
               [&_a]:underline
-              hover:[&_a]:text-sky-500
-              [&_p]:break-words
               [&_p]:whitespace-pre-wrap
-              [&_code]:break-words
-              [&_pre]:break-words
-              [&_td]:break-words
-              [&_th]:break-words
+              [&_pre]:break-all
+              [&_code]:break-all
+              [&_td]:break-all
+              [&_th]:break-all
               [&_hr]:my-4
-            "
+              hover:[&_a]:text-sky-500
+              "
             dangerouslySetInnerHTML={{
               __html: html,
             }}
