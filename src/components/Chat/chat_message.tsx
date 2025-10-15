@@ -120,14 +120,22 @@ export function ChatMessage({ message }: ChatMessageProps) {
           <div className="max-w-[800px] overflow-x-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-700 rounded px-3 py-2">
             <div
               className="
-              leading-relaxed
-              [&_p]:text-base
-              [&_p]:leading-relaxed
-              [&_a]:text-sky-300
-              [&_a]:underline
-              [&_hr]:my-4
-              hover:[&_a]:text-sky-500
-              "
+            leading-relaxed
+            [&_p]:text-base
+            [&_p]:leading-relaxed
+            [&_a]:text-sky-300
+            [&_a]:underline
+            [&_hr]:my-4
+            hover:[&_a]:text-sky-500
+            [&_pre]:bg-gray-800 
+            [&_pre]:text-white 
+            [&_pre]:p-2 
+            [&_pre]:mb-2
+            [&_pre]:mt-2 
+            [&_pre]:rounded-lg
+            [&_pre]:border-gray-700
+            [&_pre]:overflow-x-auto
+            "
               dangerouslySetInnerHTML={{
                 __html: html,
               }}
