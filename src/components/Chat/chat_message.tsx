@@ -59,7 +59,7 @@ interface ChatMessageProps {
 
 export function ChatMessage({ message }: ChatMessageProps) {
   const [html, setHtml] = useState<string>("");
-  
+
   useEffect(() => {
     (async () => {
       try {
@@ -74,11 +74,11 @@ export function ChatMessage({ message }: ChatMessageProps) {
       }
     })();
   }, [message.message]);
-  
+
   return (
     <div
       key={message.id}
-      className={`flex gap-3 ${
+      className={`max-w-[84vw] sm:max-w-[100vw] w-full flex gap-3 ${
         message.type === "user" ? "justify-end" : "justify-start"
       }`}
     >
@@ -95,39 +95,53 @@ export function ChatMessage({ message }: ChatMessageProps) {
         ) : (
           <NormitaPicture />
         )}
-
-        <div className="rounded-lg p-3 bg-gray-600 text-white ">
-          <div
-            className="
-              w-full
-              markdown
-              text-base
+        {/* Se modifica el max-w de esta manera porque usar procentaje es inconsistente debido al scrollArea */}
+        <div
+          className="rounded-lg 
+          bg-gray-600 
+          min-w-[150px] 
+          max-w-[300px] sm:max-w-[500px] md:max-w-[600px] lg:max-w-[700px] xl:max-w-[800px]
+          flex flex-col shadow-md"
+        >
+          {/* Header con botón copiar */}
+          <div className="flex items-center justify-between px-3 pt-2 pb-1 border-b border-gray-500">
+            <span className="font-semibold text-white text-sm">
+              {`${message.type === "user" ? "Usuario" : "Normita"}`}
+            </span>
+            <button
+              className="text-xs px-2 py-1 bg-gray-500 hover:bg-gray-400 rounded text-white transition"
+              onClick={() => navigator.clipboard.writeText(message.message)}
+              title="Copiar texto"
+            >
+              Copiar
+            </button>
+          </div>
+          {/* Contenido del mensaje con scroll horizontal */}
+          <div className="max-w-[800px] overflow-x-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-700 rounded px-3 py-2">
+            <div
+              className="
               leading-relaxed
-              break-words
-              [&_p]:break-all
               [&_p]:text-base
               [&_p]:leading-relaxed
               [&_a]:text-sky-300
               [&_a]:underline
-              [&_p]:whitespace-pre-wrap
-              [&_pre]:break-all
-              [&_code]:break-all
-              [&_td]:break-all
-              [&_th]:break-all
               [&_hr]:my-4
               hover:[&_a]:text-sky-500
               "
-            dangerouslySetInnerHTML={{
-              __html: html,
-            }}
-          />
-
-          <p className="text-xs opacity-70 mt-2">
-            {message.timestamp.toLocaleTimeString("es-ES", {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </p>
+              dangerouslySetInnerHTML={{
+                __html: html,
+              }}
+            />
+          </div>
+          {/* Timestamp alineado a la derecha */}
+          <div className="flex justify-end px-3 pb-2">
+            <p className="text-xs opacity-70 text-white">
+              {message.timestamp.toLocaleTimeString("es-ES", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </p>
+          </div>
         </div>
       </div>
     </div>
