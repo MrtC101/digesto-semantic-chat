@@ -1,6 +1,7 @@
 import useChatContext from "@/hooks/use_chat_context_hook";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useRef, useState } from "react";
 import { Send } from "lucide-react";
 import callAPI from "@/lib/api";
@@ -20,7 +21,9 @@ function ChatInput() {
     addMessage,
   } = useChatContext();
   const [inputText, setInputText] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const [textareaRows, setTextareaRows] = useState(0);
+  const maxRows = 4;
 
   useEffect(() => {
     if (!isInit) {
@@ -62,6 +65,13 @@ function ChatInput() {
     }
   };
 
+  const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const lineCount = e.target.value.split("\n").length;
+    const rows = Math.min(maxRows, lineCount);
+    setInputText(e.target.value);
+    setTextareaRows(rows);
+  };
+
   useEffect(() => {
     if (!isLoading) {
       inputRef.current?.focus();
@@ -71,17 +81,19 @@ function ChatInput() {
   if (allChats.length === 0) return null;
   return (
     <>
-      <div className="flex gap-2 mt-4">
-        <Input
+      <div className="flex gap-2 mt-4 items-center">
+        <Textarea
           ref={inputRef}
           placeholder="Escribe tu consulta aquí..."
           value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
+          onChange={handleInput}
           onKeyDown={handleKeyPress}
-          className="flex-1"
+          className="flex-1 resize-none h-[60px] max-h-[160px] overflow-y-auto"
           disabled={isLoading}
+          rows={textareaRows}
         />
         <Button
+          className="h-full flex items-center justify-center"
           onClick={handleSendMessage}
           disabled={!inputText.trim() || isLoading}
           size="icon"
@@ -90,7 +102,8 @@ function ChatInput() {
         </Button>
       </div>
       <p className="text-xs text-muted-foreground mt-2">
-        Presiona Enter para enviar • Normita puede cometer errores, por favor verifica las respuestas.
+        Presiona Enter para enviar • Normita puede cometer errores, por favor
+        verifica las respuestas.
       </p>
     </>
   );
