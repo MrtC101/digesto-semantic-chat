@@ -6,7 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { SearchFilters } from "../types";
-import useChatContext from "@/hooks/use_chat_context_hook";
+import useChatContext from "@/hooks/use-chat-context-hook";
 
 export const FilterSidebar = () => {
   const [newYear, setNewYear] = useState("");

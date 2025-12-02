@@ -37,19 +37,17 @@ function AddFilters(params, filters) {
   }
 }
 
-const callAPI = async (session_id, user_msg, filters): Promise<[string,string]> => {
-  const apiUrl = "/api";
+const chatService = async (session_id, user_msg, filters): Promise<[string,string]> => {
   const params = new URLSearchParams({
     query_str: user_msg,
     mode: "GENERATE",
     session_id: session_id,
   });
   AddFilters(params, filters);
-  const fullUrl = `${apiUrl}?${params.toString()}`;
   let msg = "";
   let topic = "";
   try {
-    const response = await axios.post(fullUrl);
+    const response = await axios.post(`api/chat/from_contenidos?${params.toString()}`);
     msg = response.data?.generated_response;
     topic = response.data.topic;
   } catch (error) {
@@ -60,4 +58,4 @@ const callAPI = async (session_id, user_msg, filters): Promise<[string,string]> 
   return [msg, topic];
 };
 
-export default callAPI;
+export default chatService;

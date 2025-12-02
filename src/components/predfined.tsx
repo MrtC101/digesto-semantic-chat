@@ -1,4 +1,4 @@
-import { Tag } from "./Chat/types";
+import { Tag } from "./chat/types";
 
 export const welcome_msg = `👋 **¡Hola!**
 
@@ -21,3 +21,5 @@ export const tags: Tag[] = [
     //     letter: "R",
     // },
 ];
+
+export const RETURN_URL = 'https://farogafchomo.godoycruz.gob.ar/k2bmigra/com.k2b.hk2binicio';

@@ -1,10 +1,10 @@
-import useChatContext from "@/hooks/use_chat_context_hook";
+import useChatContext from "@/hooks/use-chat-context-hook";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useRef, useState } from "react";
 import { Send } from "lucide-react";
-import callAPI from "@/lib/api";
+import chatService from "@/lib/chat_service";
 import { welcome_msg } from "../predfined";
 
 function ChatInput() {
@@ -33,7 +33,7 @@ function ChatInput() {
         addMessage("user", tag.letter);
         setIsLoading(true);
         const set_mode = async () => {
-          const [msg, topic] = await callAPI(sessionId, tag.letter, filters);
+          const [msg, topic] = await chatService(sessionId, tag.letter, filters);
           addMessage("assistant", msg);
           setTopic(topic);
           setIsLoading(false);
@@ -49,7 +49,7 @@ function ChatInput() {
     if (allChats.length === 0 || !inputText.trim() || isLoading) return;
     addMessage("user", inputText);    
     const fetchMsg = async () => {
-      const [msg, topic] = await callAPI(sessionId, inputText, filters);
+      const [msg, topic] = await chatService(sessionId, inputText, filters);
       addMessage("assistant", msg);
       setTopic(topic);
       setIsLoading(false);

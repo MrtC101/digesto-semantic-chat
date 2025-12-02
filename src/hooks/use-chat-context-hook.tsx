@@ -1,7 +1,7 @@
 import { useContext } from "react";
-import { ChatContext, ChatContextType } from "@/components/ChatContext/chat_context";
+import { ChatContext, ChatContextType } from "@/contexts/chat_context";
 
-export default function useChatContext(): ChatContextType {
+function useChatContext(): ChatContextType {
   const context = useContext(ChatContext);
   
   if (context === undefined) {
@@ -10,3 +10,5 @@ export default function useChatContext(): ChatContextType {
   
   return context;
 }
+
+export default useChatContext;

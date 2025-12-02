@@ -5,9 +5,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { PlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import CreateDropdown from "@/components/ChatCreateButton/create_dropdown";
-import useChatContext from "@/hooks/use_chat_context_hook";
-import { tags } from "../predfined";
+import CreateDropdown from "@/components/chat/ChatCreateButton/create_dropdown";
+import useChatContext from "@/hooks/use-chat-context-hook";
+import { tags } from "../../predfined";
 import { useEffect } from "react";
 
 function NewChatButton() {

@@ -4,11 +4,12 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-import useChatContext from "@/hooks/use_chat_context_hook";
-import ChatInput from "@/components/Chat/chat_input";
-import { ChatMessage, LoadingDisplay } from "@/components/Chat/chat_message";
+import useChatContext from "@/hooks/use-chat-context-hook";
+import ChatInput from "@/components/chat/chat_input";
+import { ChatMessage, LoadingDisplay } from "@/components/chat/chat_message";
 import { motion } from "framer-motion";
 import ChatHeader from "./chat_header";
+
 
 const ChatInterface = () => {
   const { messages, allChats, isLoading } = useChatContext();  

@@ -1,8 +1,8 @@
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import type { Tag } from "../Chat/types";
-import useChatContext from "@/hooks/use_chat_context_hook";
-import { tags } from "../predfined";
+import type { Tag } from "../types";
+import useChatContext from "@/hooks/use-chat-context-hook";
+import { tags } from "../../predfined";
 
 function CreateDropdown() {
   const {

@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, useRef, useCallback } from "react";
-import { Tag, ChatMessage, SearchFilters } from "@/components/Chat/types";
+import { Tag, ChatMessage, SearchFilters } from "@/components/chat/types";
 
 export class Chat {
   sessionId: string;

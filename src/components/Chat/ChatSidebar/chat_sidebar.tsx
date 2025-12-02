@@ -3,7 +3,7 @@ import {
   SidebarContent,
   SidebarHeader,
 } from "@/components/ui/sidebar";
-import SideBarItem from "@/components/ChatSidebar/sidebar_items";
+import SideBarItem from "@/components/chat/ChatSidebar/sidebar_items";
 import { Scale } from "lucide-react";
 
 function SideBar() {

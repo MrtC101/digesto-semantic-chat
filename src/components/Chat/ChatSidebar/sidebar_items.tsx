@@ -4,8 +4,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import type { Chat } from "@/components/Chat/types";
-import useChatContext from "@/hooks/use_chat_context_hook";
+import type { Chat } from "@/components/chat/types";
+import useChatContext from "@/hooks/use-chat-context-hook";
 import { Trash2 } from "lucide-react";
 
 interface ChatItem {
