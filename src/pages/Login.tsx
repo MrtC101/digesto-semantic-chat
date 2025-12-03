@@ -32,13 +32,16 @@ export default function AuthPanel() {
       }
 
       // Intentar login con el token
-      await login(token);
-      
-      // Si llegamos aquí, el login fue exitoso
-      setSuccess('¡Acceso autorizado! Bienvenido al sistema.');
-      setError('');
+      try {
+        await login(token);
+        // Si llegamos aquí, el login fue exitoso
+        setSuccess('¡Acceso autorizado! Bienvenido al sistema.');
+        setError('');
+      } catch (loginError) {
+        console.error('Error de login:', loginError);
+        setError('Tu sesión ha expirado o se ha cerrado inesperadamente, por favor, vuelve a iniciar sesión para continuar');
+      }      
       setLoading(false);
-
     } catch (err) {
       console.error('Error al validar acceso:', err);
       setError('Tu sesión ha expirado o se ha cerrado inesperadamente, por favor, vuelve a iniciar sesión para continuar');

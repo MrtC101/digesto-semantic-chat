@@ -24,18 +24,24 @@ function ChatHeader() {
   return (
     <div className="flex items-center justify-between">
       <CardTitle className="flex items-center gap-2">
-        <div className="bg-primary/10 text-primary p-2 rounded-full">
-          <MessageSquare className="h-5 w-5" />
-        </div>
-        <span className="hidden sm:inline">
-          ¡Chateá con <span className="font-bold text-primary">Normita</span>!
-        </span>
-        <Badge className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white border-0 px-2 py-1 gap-1 shadow-lg hover:shadow-xl transition-all duration-200">
-          <span className="flex items-center justify-center w-8 h-8 rounded-full bg-white/20 text-xs font-bold">
+        <Badge className="
+          bg-gray-700 hover:bg-primary/10
+          text-gray-300 hover:text-white
+          px-2 py-1 gap-1 
+          shadow-lg hover:shadow-gray-900/50
+          transition-all duration-200">
+          <span className="
+          flex items-center justify-center 
+          w-8 h-8 rounded-full 
+          bg-gradient-to-br from-[#636aaf] to-[#9e1663] hover:from-[#7379bf] hover:to-[#b01873]
+          text-xs font-bold">
             {username.toUpperCase().slice(0, 2)}
           </span>
           <span className="font-semibold">{username.toUpperCase()}</span>
         </Badge>
+        <span className="hidden sm:inline">
+          ¡Chateá con <span className="font-bold text-primary">Normita</span>!
+        </span>
       </CardTitle>
 
       <div className="flex items-center gap-2 text-sm text-muted-foreground">

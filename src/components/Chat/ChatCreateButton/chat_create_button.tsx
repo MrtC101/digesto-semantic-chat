@@ -25,7 +25,14 @@ function NewChatButton() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          className="bg-blue-600 hover:bg-blue-700 text-white"
+          title="Iniciar un nuevo chat"
+          className="
+          inline-flex items-center justify-center 
+          rounded-lg 
+          bg-gray-800 hover:bg-gray-700 
+          border border-gray-700 hover:border-gray-600 text-gray-300 hover:text-white 
+          transition-all duration-200 shadow-lg hover:shadow-gray-900/50
+          "
           disabled={isLoading}
         >
           <PlusIcon className="mr-2 h-4 w-4" />

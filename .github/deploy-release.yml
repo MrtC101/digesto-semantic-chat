@@ -1,0 +1,29 @@
+name: Build & Deploy Frontend
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Build app
+        run: npm run build
+
+      - name: Pack artifact
+        run: tar -czf frontend.tar.gz dist
+
+      - name: Deploy to VM
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          scp frontend.tar.gz $SSH_USER@$SSH_HOST:/tmp/
+          ssh $SSH_USER@$SSH_HOST "bash /opt/deploy_frontend.sh"
