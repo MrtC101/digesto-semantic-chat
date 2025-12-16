@@ -32,15 +32,14 @@ export default function AuthPanel() {
       }
 
       // Intentar login con el token
-      try {
-        await login(token);
-        // Si llegamos aquí, el login fue exitoso
+      await login(token);
+      if(isAuthenticated) {
         setSuccess('¡Acceso autorizado! Bienvenido al sistema.');
         setError('');
-      } catch (loginError) {
-        console.error('Error de login:', loginError);
+      } else {
         setError('Tu sesión ha expirado o se ha cerrado inesperadamente, por favor, vuelve a iniciar sesión para continuar');
-      }      
+
+      }
       setLoading(false);
     } catch (err) {
       console.error('Error al validar acceso:', err);
@@ -67,13 +66,13 @@ export default function AuthPanel() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl p-8 max-w-md w-full">
+    <div className="bg-background flex items-center justify-center min-h-screen p-4">
+      <div className="w-full max-w-md rounded-lg shadow-xl p-8 bg-white">
         <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">
+          <h1 className="text-2xl font-bold mb-2 text-slate-700">
             Panel de Acceso
           </h1>
-          <p className="text-gray-600 text-sm">
+          <p className="text-sm text-slate-700">
             Sistema de validación de usuarios
           </p>
         </div>
@@ -129,7 +128,14 @@ export default function AuthPanel() {
         {!loading && (
           <button
             onClick={handleVolver}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+            className="
+              w-full 
+              py-3 px-4
+              bg-gray-600 hover:bg-gray-700
+              text-white text-sm font-semibold 
+              rounded-lg transition-colors duration-200
+              flex items-center justify-center gap-2
+              "
           >
             <ArrowLeft className="w-5 h-5" />
             Volver al inicio

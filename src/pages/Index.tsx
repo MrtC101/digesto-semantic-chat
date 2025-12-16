@@ -1,14 +1,12 @@
 import ChatInterface from "@/components/chat/chat";
-import SideBar from "@/components/chat/ChatSidebar/chat_sidebar";
-import NewChatButton from "@/components/chat/ChatCreateButton/chat_create_button";
 import { ChatProvider } from "@/contexts/chat_context";
+import NewChatButton from "@/components/chat/ChatCreateButton/chat_create_button";
+import SideBarItem from "@/components/chat/ChatSidebar/sidebar_items";
 import { Sidebar, SidebarContent, SidebarHeader, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { RETURN_URL } from "@/components/predfined";
 import { useAuth } from "@/contexts/auth_context";
-import { useNavigate } from "react-router-dom";
 import { Scale } from "lucide-react";
-import SideBarItem from "@/components/chat/ChatSidebar/sidebar_items";
 
 const Index = () => {
   const { logout } = useAuth();
@@ -42,8 +40,8 @@ const Index = () => {
                 </SidebarContent>
               </Sidebar>
             </div>
-            <div className="flex-1 flex flex-col p-5 min-w-0 h-max-screen">
-              <div className="mb-4 flex justify-between items-center">
+            <div className="flex-1 flex flex-col p-2 min-w-0 h-max-screen">
+              <div className="mt-1 mb-1 flex justify-between items-center">
                 <div className="flex items-center gap-12">
                   <SidebarTrigger
                     title="Abrir / Cerrar Menú de Chats"
@@ -56,8 +54,7 @@ const Index = () => {
                     transition-all duration-200 shadow-lg hover:shadow-gray-900/50
                     "
                   />
-                  <NewChatButton
-                  />
+                  <NewChatButton/>
                 </div>
                 <Button
                   title="Volver a Godoy Cruz Digital"
@@ -76,9 +73,7 @@ const Index = () => {
                   Volver
                 </Button>
               </div>
-              <div className="flex-1">
-                <ChatInterface />
-              </div>
+              <ChatInterface />
             </div>
           </SidebarProvider>
         </ChatProvider>

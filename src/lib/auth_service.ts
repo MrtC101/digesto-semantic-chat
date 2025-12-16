@@ -32,15 +32,15 @@ export const authService = {
     });
 
     if (!response.ok) {
-      throw new Error(`Auth failed: ${response.status}`);
+      throw new Error(`Auth failed (${response.status}): ${response.statusText} `);
     }
 
     const data = await response.json();
-
+    console.log(data)
     if (!data?.usuario) {
       throw new Error('Invalid auth response');
     }
-
+    
     return data.usuario;
   },
 
