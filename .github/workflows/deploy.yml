@@ -30,10 +30,10 @@ jobs:
         run: npm install
 
       - name: Build application
-        run: npm run build deploy
+        run: npm run build
 
-      - name: Pack artifact
-        run: tar -czf .artifacts/${APP_NAME}-${{ steps.version.outputs.version }}.tar.gz deploy
+      - name: Pack build
+        run: tar -czf ${APP_NAME}-${{ steps.version.outputs.version }}.tar.gz dist
 
       - name: Set deploy target
         run: |
@@ -43,15 +43,15 @@ jobs:
             echo "TARGET_HOST=${{ secrets.PROD_HOST }}" >> $GITHUB_ENV
           fi
 
-      - name: Upload & deploy to server
+      - name: Upload artifact to server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ env.TARGET_HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          source: "./.artifacts/${APP_NAME}-${{ steps.version.outputs.version }}.tar.gz"
-          target: "${DEPLOY_DIR}/"
+          source: "${APP_NAME}-${{ steps.version.outputs.version }}.tar.gz"
+          target: "${{ env.DEPLOY_DIR }}/"
 
       - name: Deploy on server
         uses: appleboy/ssh-action@v1
