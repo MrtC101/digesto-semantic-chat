@@ -32,11 +32,15 @@ jobs:
       - name: Resolve version
         id: version
         run: |
-          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
-            echo "version=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+          # Obtener último tag en la rama
+          TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -n "$TAG" ]; then
+            echo "version=$TAG" >> "$GITHUB_OUTPUT"
           else
+            # Si no hay tag, usar nombre de la rama
             echo "version=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
           fi
+
 
       - name: Install dependencies
         run: npm install
