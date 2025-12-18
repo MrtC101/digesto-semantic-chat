@@ -62,6 +62,7 @@ jobs:
           port: ${{ secrets.PORT }}
           source: "dist.tar.gz"
           target: "${{ env.DEPLOY_DIR }}/"
+          tar_exec: ""
 
       - name: Extract and cleanup
         uses: appleboy/ssh-action@v1
