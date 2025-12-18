@@ -31,7 +31,12 @@ jobs:
 
       - name: Resolve version
         id: version
-        run: echo "version=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            echo "version=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Install dependencies
         run: npm install
@@ -72,8 +77,10 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             RELEASE=${{ steps.version.outputs.version }}
-            mv ~/dist.tar.gz ${{ env.DEPLOY_DIR }}/
-            cd ${{ env.DEPLOY_DIR }}
+            DEPLOY_DIR=${{ env.DEPLOY_DIR }}
+            
+            mv ~/dist.tar.gz $DEPLOY_DIR/
+            cd $DEPLOY_DIR
             mkdir -p $RELEASE
             cd $RELEASE
             tar -xzf ../dist.tar.gz
