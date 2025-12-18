@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           secure: false,
           rewrite: (path) =>
-            path.replace(/^\/api/, "/normita/api/v1/chat/from_contenidos"),
+            path.replace(/^\/api/, "/normita/api/v1"),
         },
       },
     },
