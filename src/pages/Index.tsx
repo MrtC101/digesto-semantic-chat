@@ -1,7 +1,7 @@
 import ChatInterface from "@/components/chat/chat";
 import { ChatProvider } from "@/contexts/chat_context";
-import NewChatButton from "@/components/chat/ChatCreateButton/chat_create_button";
-import SideBarItem from "@/components/chat/ChatSidebar/sidebar_items";
+import NewChatButton from "@/components/chat/chatCreateButton/chat_create_button";
+import SideBarItem from "@/components/chat/chatSidebar/sidebar_items";
 import { Sidebar, SidebarContent, SidebarHeader, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { RETURN_URL } from "@/components/predfined";
