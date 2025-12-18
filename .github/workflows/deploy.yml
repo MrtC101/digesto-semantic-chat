@@ -20,20 +20,32 @@ jobs:
   build-deploy:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
 
       - name: Resolve version
         id: version
         run: echo "version=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build application
-        run: npm run build-workflow
+        run: npm run build
 
-      - name: Pack build
-        run: tar -czf ${APP_NAME}-${{ steps.version.outputs.version }}.tar.gz dist
+      - name: Verify build output
+        run: |
+          echo "Build completed successfully"
+          echo "Contents of dist directory:"
+          ls -lah dist/
+          echo "Total files:"
+          find dist -type f | wc -l
 
       - name: Set deploy target
         run: |
@@ -43,15 +55,16 @@ jobs:
             echo "TARGET_HOST=${{ secrets.PROD_HOST }}" >> $GITHUB_ENV
           fi
 
-      - name: Upload artifact to server
+      - name: Upload build to server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ env.TARGET_HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          source: "${APP_NAME}-${{ steps.version.outputs.version }}.tar.gz"
-          target: "${{ env.DEPLOY_DIR }}/"
+          source: "dist/*"
+          target: "${{ env.DEPLOY_DIR }}/temp-${{ steps.version.outputs.version }}"
+          strip_components: 1
 
       - name: Deploy on server
         uses: appleboy/ssh-action@v1
@@ -63,7 +76,33 @@ jobs:
           script: |
             set -e
             RELEASE=${{ steps.version.outputs.version }}
-            mkdir -p $DEPLOY_DIR/$RELEASE
-            tar -xzf $DEPLOY_DIR/${APP_NAME}-$RELEASE.tar.gz -C $DEPLOY_DIR/$RELEASE
-            ln -sfn $DEPLOY_DIR/$RELEASE $DEPLOY_DIR/current
-            rm $DEPLOY_DIR/${APP_NAME}-$RELEASE.tar.gz
+            
+            echo "Creating release directory..."
+            mkdir -p ${{ env.DEPLOY_DIR }}/$RELEASE
+            
+            echo "Moving files from temp to release directory..."
+            mv ${{ env.DEPLOY_DIR }}/temp-$RELEASE/* ${{ env.DEPLOY_DIR }}/$RELEASE/
+            
+            echo "Cleaning up temp directory..."
+            rm -rf ${{ env.DEPLOY_DIR }}/temp-$RELEASE
+            
+            echo "Creating symlink to current release..."
+            ln -sfn ${{ env.DEPLOY_DIR }}/$RELEASE ${{ env.DEPLOY_DIR }}/current
+            
+            echo "Deployment completed successfully!"
+            echo "Release: $RELEASE"
+            echo "Location: ${{ env.DEPLOY_DIR }}/$RELEASE"
+            
+            echo "Listing deployed files:"
+            ls -lah ${{ env.DEPLOY_DIR }}/current/
+
+      - name: Deployment summary
+        run: |
+          echo "### Deployment Summary :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment**: ${{ github.event.inputs.target }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version**: ${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Host**: ${{ env.TARGET_HOST }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Deploy Path**: ${{ env.DEPLOY_DIR }}/current" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Deployment completed successfully!" >> $GITHUB_STEP_SUMMARY
