@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build --minify --outDir",
-    "build:dev": "vite build --mode development",
+    "build-workflow": "vite build --minify --outDir dist",
     "lint": "eslint .",
     "preview": "vite preview"
   },
