@@ -61,8 +61,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           source: "dist.tar.gz"
-          target: "${{ env.DEPLOY_DIR }}/"
-          tar_exec: ""
+          target: "~/"
 
       - name: Extract and cleanup
         uses: appleboy/ssh-action@v1
@@ -73,6 +72,7 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             RELEASE=${{ steps.version.outputs.version }}
+            mv ~/dist.tar.gz ${{ env.DEPLOY_DIR }}/
             cd ${{ env.DEPLOY_DIR }}
             mkdir -p $RELEASE
             cd $RELEASE
