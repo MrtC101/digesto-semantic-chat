@@ -1,7 +1,7 @@
 name: Build & Deploy Frontend
 
 on:
-  workflow_dispatch:   # permite disparar manualmente con inputs
+  workflow_dispatch: 
     inputs:
       target:
         description: 'Deploy target'
@@ -31,9 +31,6 @@ jobs:
 
       - name: Build application
         run: npm run build deploy
-
-      - name: Prepare artifacts directory
-        run: mkdir -p .artifacts
 
       - name: Pack artifact
         run: tar -czf .artifacts/${APP_NAME}-${{ steps.version.outputs.version }}.tar.gz deploy
