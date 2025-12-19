@@ -85,18 +85,13 @@ const ChatInterface = () => {
             <SidebarTrigger
               title="Abrir / Cerrar Menú de Chats"
               className="
-                h-9 w-9
-                rounded-lg
-                bg-gray-900 
-                border-0
-                shadow-none
-                text-gray-300
-                hover:text-white
-                hover:bg-gray-800
-                focus-visible:outline-none
-                focus-visible:ring-2
-                focus-visible:ring-gray-600
-                transition-colors duration-200
+                h-9 w-9 
+                rounded-lg 
+                bg-gray-800 hover:bg-gray-700 
+                border border-gray-700 hover:border-gray-600 
+                text-gray-300 hover:text-white 
+                transition-all duration-200 
+                shadow-sm hover:shadow-md
               "
             />
             <div className="flex flex-col">
@@ -114,13 +109,12 @@ const ChatInterface = () => {
               className="
                 gap-2 
                 text-gray-300 hover:text-white 
-                bg-gray-900
                 hover:bg-gray-800
                 transition-all duration-200
               "
               onClick={handleDownloadPDF}
             >
-              <Download className="h-4 w-4 " />
+              <Download className="h-4 w-4" />
               <span className="hidden md:inline">Instructivo</span>
             </Button>
 
@@ -141,7 +135,7 @@ const ChatInterface = () => {
               ">
                 {username.toUpperCase().slice(0, 2)}
               </div>
-              <span className="font-medium">{username.toUpperCase()}</span>
+              <span className="font-medium">{username}</span>
             </Badge>
 
             <Button
@@ -151,7 +145,6 @@ const ChatInterface = () => {
               onClick={handleBack}
               className="
                 gap-2
-                bg-gray-900 
                 text-gray-300 hover:text-white 
                 hover:bg-gray-800
                 transition-all duration-200
@@ -185,10 +178,13 @@ const ChatInterface = () => {
       </div>
 
       {/* Área de mensajes */}
-      <div className="flex-1 flex flex-col items-center overflow-hidden">
-        <CardContent className="flex flex-col flex-1 w-full max-w-4xl px-6 pt-4 pb-2">
-          <ScrollArea className="flex-1 pr-4">
-            <div className="space-y-4">
+      <div className="flex flex-col items-center max-h-[93vh]">
+        <CardContent className="flex flex-col min-h-0 pt-2 max-w-[1000px]">
+          <ScrollArea
+            className="overflow-y-auto w-full"
+            style={{ height: "68vh" }}
+          >
+            <div className="space-y-4 w-full">
               {messages.map((message, index) => (
                 <motion.div
                   key={message.id + index}
@@ -208,11 +204,7 @@ const ChatInterface = () => {
               <div ref={messagesEndRef} className="h-1" />
             </div>
           </ScrollArea>
-          
-          {/* Input del chat */}
-          <div className="pt-4">
-            <ChatInput />
-          </div>
+          <ChatInput />
         </CardContent>
       </div>
     </Card>
