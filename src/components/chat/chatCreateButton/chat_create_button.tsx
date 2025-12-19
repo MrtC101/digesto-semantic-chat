@@ -11,15 +11,7 @@ import { tags } from "../../predfined";
 import { useEffect } from "react";
 
 function NewChatButton() {
-  const {isLoading, allChats, createNewChat, switchToChat} = useChatContext()
-
-  useEffect(() => {
-    /* Create default chat */
-    if (allChats.length == 0) {
-      const newSessionId = createNewChat(tags[0]);
-      switchToChat(newSessionId);
-    }
-  }, [allChats.length, createNewChat, switchToChat]);
+  const { isLoading } = useChatContext()
 
   return (
     <DropdownMenu>

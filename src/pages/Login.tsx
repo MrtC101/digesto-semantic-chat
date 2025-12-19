@@ -16,7 +16,7 @@ export default function AuthPanel() {
   const validateAccess = async () => {
     try {
       let token = params.get('token');
-     
+
       if (!token) {
         const allParams = Array.from(params.entries());
         if (allParams.length > 0) {
@@ -26,14 +26,14 @@ export default function AuthPanel() {
       }
 
       if (!token) {
-        setError('No se ha proporcionado un token de acceso');
+        setError('Tu sesión de Godoy Cruz Digital a expirado. Vuelva a inicar sesión para ingresar a Normita');
         setLoading(false);
         return;
       }
 
       // Intentar login con el token
       await login(token);
-      if(isAuthenticated) {
+      if (isAuthenticated) {
         setSuccess('¡Acceso autorizado! Bienvenido al sistema.');
         setError('');
       } else {
@@ -42,7 +42,7 @@ export default function AuthPanel() {
       }
       setLoading(false);
     } catch (err) {
-      console.error('Error al validar acceso:', err);
+      //console.error('Error al validar acceso:', err);
       setError('Tu sesión ha expirado o se ha cerrado inesperadamente, por favor, vuelve a iniciar sesión para continuar');
       setSuccess('');
       setLoading(false);
