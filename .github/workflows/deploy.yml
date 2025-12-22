@@ -11,6 +11,10 @@ on:
         options:
           - homo
           - prod
+      version:
+        description: "Tag or Version Name"
+        required: true
+        type: string
 
 env:
   APP_NAME: frontend
@@ -28,20 +32,7 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
-
-      - name: Resolve version
-        id: version
-        run: |
-          # Obtener último tag en la rama
-          TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-          if [ -n "$TAG" ]; then
-            echo "version=$TAG" >> "$GITHUB_OUTPUT"
-          else
-            # Si no hay tag, usar nombre de la rama
-            echo "version=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
-          fi
-
-
+          
       - name: Install dependencies
         run: npm install
 
@@ -80,7 +71,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           script: |
-            RELEASE=${{ steps.version.outputs.version }}
+            RELEASE=${{ github.event.inputs.version }}
             DEPLOY_DIR=${{ env.DEPLOY_DIR }}
             
             mv ~/dist.tar.gz $DEPLOY_DIR/
