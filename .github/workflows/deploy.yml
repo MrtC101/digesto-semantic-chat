@@ -1,7 +1,7 @@
 name: Build & Deploy Frontend
 
 on:
-  workflow_dispatch:   # permite disparar manualmente con inputs
+  workflow_dispatch: 
     inputs:
       target:
         description: 'Deploy target'
@@ -18,25 +18,41 @@ env:
 
 jobs:
   build-deploy:
-    runs-on: ubuntu-22.04
+    runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
 
       - name: Resolve version
         id: version
-        run: echo "version=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+        run: |
+          # Obtener último tag en la rama
+          TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -n "$TAG" ]; then
+            echo "version=$TAG" >> "$GITHUB_OUTPUT"
+          else
+            # Si no hay tag, usar nombre de la rama
+            echo "version=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          fi
+
 
       - name: Install dependencies
         run: npm install
 
       - name: Build application
-        run: npm run build deploy
+        run: npm run build-workflow
 
-      - name: Prepare artifacts directory
-        run: mkdir -p .artifacts
-
-      - name: Pack artifact
-        run: tar -czf .artifacts/${APP_NAME}-${{ steps.version.outputs.version }}.tar.gz deploy
+      - name: Create tarball
+        run: |
+          cd dist
+          tar -czf ../dist.tar.gz .
+          cd ..
 
       - name: Set deploy target
         run: |
@@ -46,17 +62,17 @@ jobs:
             echo "TARGET_HOST=${{ secrets.PROD_HOST }}" >> $GITHUB_ENV
           fi
 
-      - name: Upload & deploy to server
+      - name: Upload tarball
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ env.TARGET_HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          source: "./.artifacts/${APP_NAME}-${{ steps.version.outputs.version }}.tar.gz"
-          target: "${DEPLOY_DIR}/"
+          source: "dist.tar.gz"
+          target: "~/"
 
-      - name: Deploy on server
+      - name: Extract and cleanup
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ env.TARGET_HOST }}
@@ -64,9 +80,16 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           script: |
-            set -e
             RELEASE=${{ steps.version.outputs.version }}
-            mkdir -p $DEPLOY_DIR/$RELEASE
-            tar -xzf $DEPLOY_DIR/${APP_NAME}-$RELEASE.tar.gz -C $DEPLOY_DIR/$RELEASE
-            ln -sfn $DEPLOY_DIR/$RELEASE $DEPLOY_DIR/current
-            rm $DEPLOY_DIR/${APP_NAME}-$RELEASE.tar.gz
+            DEPLOY_DIR=${{ env.DEPLOY_DIR }}
+            
+            mv ~/dist.tar.gz $DEPLOY_DIR/
+            cd $DEPLOY_DIR
+            mkdir -p $RELEASE
+            cd $RELEASE
+            tar -xzf ../dist.tar.gz
+            cd ..
+            rm dist.tar.gz
+            ln -sfn $RELEASE current
+            echo "Deployed version: $RELEASE"
+            ls -lah

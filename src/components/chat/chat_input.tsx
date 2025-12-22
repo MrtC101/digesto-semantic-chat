@@ -47,7 +47,7 @@ function ChatInput() {
   const handleSendMessage = () => {
     setIsLoading(true)
     if (allChats.length === 0 || !inputText.trim() || isLoading) return;
-    addMessage("user", inputText);    
+    addMessage("user", inputText);
     const fetchMsg = async () => {
       const [msg, topic] = await chatService(sessionId, inputText, filters);
       addMessage("assistant", msg);
@@ -92,14 +92,17 @@ function ChatInput() {
           disabled={isLoading}
           rows={textareaRows}
         />
-        <Button
+        <div
           className="h-full flex items-center justify-center"
-          onClick={handleSendMessage}
-          disabled={!inputText.trim() || isLoading}
-          size="icon"
         >
-          <Send className="h-4 w-4" />
-        </Button>
+          <Button
+            onClick={handleSendMessage}
+            disabled={!inputText.trim() || isLoading}
+            size="icon"
+          >
+            <Send className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
       <p className="text-xs text-muted-foreground mt-2">
         Presiona Enter para enviar • Normita puede cometer errores, por favor
