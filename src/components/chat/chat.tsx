@@ -8,16 +8,14 @@ import useChatContext from "@/hooks/use-chat-context-hook";
 import ChatInput from "@/components/chat/chat_input";
 import { ChatMessage, LoadingDisplay } from "@/components/chat/chat_message";
 import { motion } from "framer-motion";
-import ChatHeader from "./chat_header";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth_context";
 import { tags } from "@/components/predfined";
 import NewChatButton from "@/components/chat/chatCreateButton/chat_create_button";
-import { MessageSquare, Download, ArrowLeft, User } from "lucide-react";
+import { Download, ArrowLeft } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import FilterButton from "./filter/filter";
-import { CardTitle } from "../ui/card";
 
 const ChatInterface = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
