@@ -73,14 +73,22 @@ jobs:
           script: |
             RELEASE=${{ github.event.inputs.version }}
             DEPLOY_DIR=${{ env.DEPLOY_DIR }}
-            
-            mv ~/dist.tar.gz $DEPLOY_DIR/
-            cd $DEPLOY_DIR
-            mkdir -p $RELEASE
-            cd $RELEASE
-            tar -xzf ../dist.tar.gz
-            cd ..
-            rm dist.tar.gz
-            ln -sfn $RELEASE current
+            TMP_RELEASE="${RELEASE}.tmp"
+            mv ~/dist.tar.gz "$DEPLOY_DIR/"
+            cd "$DEPLOY_DIR"
+            # Limpieza defensiva
+            rm -rf "$TMP_RELEASE"
+            # Preparar staging
+            mkdir "$TMP_RELEASE"
+            tar -xzf dist.tar.gz -C "$TMP_RELEASE"
+            # (opcional pero recomendado)
+            # validar estructura mínima
+            test -f "$TMP_RELEASE/index.html"
+            # Reemplazo atómico
+            rm -rf "$RELEASE"
+            mv "$TMP_RELEASE" "$RELEASE"
+            # Symlink atómico
+            ln -sfn "$RELEASE" current
+            rm -f dist.tar.gz
             echo "Deployed version: $RELEASE"
             ls -lah

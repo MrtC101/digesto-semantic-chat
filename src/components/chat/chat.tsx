@@ -34,7 +34,7 @@ const ChatInterface = () => {
 
   const handleBack = async () => {
     await logout();
-    window.location.href = RETURN_URL;
+    window.location.href = import.meta.env.VITE_RETURN_URL;
   };
 
   useEffect(() => {
