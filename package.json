@@ -4,9 +4,10 @@
   "version": "2.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build --minify --outDir",
-    "build-workflow": "vite build --minify --outDir dist",
+    "dev": "vite --mode homo",
+    "build": "vite build --mode homo --minify --outDir",
+    "build-homo": "vite build --mode homo --minify --outDir dist",
+    "build-prod": "vite build --mode prod --minify --outDir dist",
     "lint": "eslint .",
     "preview": "vite preview"
   },

@@ -12,7 +12,7 @@ import ChatHeader from "./chat_header";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth_context";
-import { RETURN_URL, tags } from "@/components/predfined";
+import { tags } from "@/components/predfined";
 import NewChatButton from "@/components/chat/chatCreateButton/chat_create_button";
 import { MessageSquare, Download, ArrowLeft, User } from "lucide-react";
 import { Badge } from "@/components/ui/badge";

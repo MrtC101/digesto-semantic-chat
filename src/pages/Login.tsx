@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { AlertCircle, Loader2, ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/contexts/auth_context';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { RETURN_URL } from '@/components/predfined';
 
 export default function AuthPanel() {
   const { username, isAuthenticated, login } = useAuth();
@@ -62,7 +61,7 @@ export default function AuthPanel() {
   }, [isAuthenticated, navigate]);
 
   const handleVolver = () => {
-    window.location.href = RETURN_URL;
+    window.location.href = import.meta.env.VITE_RETURN_URL;
   };
 
   return (

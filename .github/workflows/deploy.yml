@@ -37,7 +37,7 @@ jobs:
         run: npm install
 
       - name: Build application
-        run: npm run build-workflow
+        run: npm run build-${{github.event.inputs.target}}
 
       - name: Create tarball
         run: |
