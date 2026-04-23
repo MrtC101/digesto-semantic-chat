@@ -38,38 +38,33 @@ function SideBarItem() {
   };
 
   return (
-    <SidebarMenu>
+    <SidebarMenu className="p-2">
       {chatItems.map((item, index) => (
-        <SidebarMenuItem key={item.id}>
+        <SidebarMenuItem key={item.id} className="group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:justify-center">
           <SidebarMenuButton
             onClick={() => handleChatSelect(item.chat)}
             disabled={isLoading}
-            className={`flex flex-col items-start gap-1 p-1 ${
-              item.sessionId === sessionId
-                ? "bg-accent text-accent-foreground"
-                : ""
-            }`}
+            tooltip={item.topic || "Chat sin iniciar"}
+            isActive={item.sessionId === sessionId}
+            className="p-2"
           >
-            <div className="grid grid-cols-[32px_1fr_auto_auto] items-center gap-2 w-full h-full">
-              <span className="ml-2 mr-2 h-4 w-4 rounded bg-primary text-primary-foreground flex items-center justify-center text-xs">
-                {item.tag}
-              </span>
-              <div className="text-xs truncate" title={item.topic}>
-                {item.topic || "Chat sin iniciar"}
+            <span className="h-4 w-4 shrink-0 rounded bg-primary text-primary-foreground flex items-center justify-center text-xs">
+              {item.tag}
+            </span>
+            <span className="text-xs truncate flex-1" title={item.topic}>
+              {item.topic || "Chat sin iniciar"}
+            </span>
+            {item.sessionId === sessionId && isLoading && (
+              <div className="animate-spin h-3 w-3 shrink-0 border border-current border-t-transparent rounded-full" />
+            )}
+            {item.sessionId !== sessionId && (
+              <div
+                className="shrink-0 text-red-500 hover:text-red-700"
+                onClick={(e) => { e.stopPropagation(); handleDelete(item.sessionId); }}
+              >
+                <Trash2 className="h-4 w-4" />
               </div>
-              {item.sessionId === sessionId && isLoading && (
-                <div className="animate-spin h-3 w-3 border border-current border-t-transparent rounded-full" />
-              )}
-
-              {item.sessionId !== sessionId && (
-                <div
-                  className="text-red-500 hover:text-red-700"
-                  onClick={() => handleDelete(item.sessionId)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </div>
-              )}
-            </div>
+            )}
           </SidebarMenuButton>
         </SidebarMenuItem>
       ))}

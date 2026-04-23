@@ -8,12 +8,11 @@ import useChatContext from "@/hooks/use-chat-context-hook";
 import ChatInput from "@/components/chat/chat_input";
 import { ChatMessage, LoadingDisplay } from "@/components/chat/chat_message";
 import { motion } from "framer-motion";
-import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth_context";
 import { tags } from "@/components/predfined";
 import NewChatButton from "@/components/chat/chatCreateButton/chat_create_button";
-import { Download, ArrowLeft } from "lucide-react";
+import { Download, ArrowLeft, Scale } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import FilterButton from "./filter/filter";
 
@@ -78,22 +77,13 @@ const ChatInterface = () => {
       {/* Header Principal - Solo información esencial */}
       <CardHeader className="pb-3 pt-4 px-6">
         <div className="flex items-center justify-between">
-          {/* Lado izquierdo - Navegación y título */}
+          {/* Lado izquierdo - Logo */}
           <div className="flex items-center gap-3">
-            <SidebarTrigger
-              title="Abrir / Cerrar Menú de Chats"
-              className="
-                h-9 w-9 
-                rounded-lg 
-                bg-gray-800 hover:bg-gray-700 
-                border border-gray-700 hover:border-gray-600 
-                text-gray-300 hover:text-white 
-                transition-all duration-200 
-                shadow-sm hover:shadow-md
-              "
-            />
+            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-[#636aaf] to-[#9e1663] shadow-lg">
+              <Scale className="h-6 w-6 text-white" />
+            </div>
             <div className="flex flex-col">
-              <h2 className="text-lg font-semibold text-white">Chat Normita</h2>
+              <h1 className="text-xl font-bold text-white drop-shadow-[0_2px_8px_rgba(168,85,247,0.4)]">Normita IA</h1>
               <p className="text-xs text-gray-400">Sesión: {sessionId.slice(-8)}</p>
             </div>
           </div>
