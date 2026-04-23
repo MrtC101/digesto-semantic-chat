@@ -1,26 +1,12 @@
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Filter } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Card } from "@/components/ui/card";
 import { FilterSidebar } from "./filter_sidebar";
 
-function FilterButton() {
+function FilterButton({ trigger }: { trigger: React.ReactNode }) {
   return (
     <Popover>
-      <PopoverTrigger asChild>
-        <Button variant="outline" className="flex items-center gap-2">
-          <Filter className="h-4 w-4" />
-          Filtros
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent
-        className="z-50 w-80 p-0 bg-background border"
-        align="end"
-      >
+      <PopoverTrigger asChild>{trigger}</PopoverTrigger>
+      <PopoverContent className="z-50 w-80 p-0 bg-background border" align="end">
         <Card className="border-0">
           <div className="border-b p-4">
             <h3 className="font-semibold text-lg">Filtros de Búsqueda</h3>
