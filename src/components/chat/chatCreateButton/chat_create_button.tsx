@@ -17,18 +17,19 @@ function NewChatButton() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
+          variant="ghost"
           title="Iniciar un nuevo chat"
           className="
-          inline-flex items-center justify-center 
-          rounded-lg 
-          bg-gray-800 hover:bg-gray-700 
-          border border-gray-700 hover:border-gray-600 text-gray-300 hover:text-white 
-          transition-all duration-200 shadow-lg hover:shadow-gray-900/50
+          w-full h-8 text-sm inline-flex items-center justify-center
+          rounded-lg
+          text-gray-300 hover:text-white hover:bg-gray-800
+          transition-all duration-200
+          group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:p-0
           "
           disabled={isLoading}
         >
-          <PlusIcon className="mr-2 h-4 w-4" />
-          Nuevo Chat
+          <PlusIcon className="shrink-0 h-4 w-4 group-data-[collapsible=icon]:mr-0 mr-2" />
+          <span className="group-data-[collapsible=icon]:hidden">Nuevo Chat</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent

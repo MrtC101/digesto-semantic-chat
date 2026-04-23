@@ -16,6 +16,7 @@ export const FilterSidebar = () => {
     "RESOLUCIONES",
     "DECRETOS",
     "CONVENIOS",
+    "MEMOS",
   ];
   const estadoOptions = ["PUBLICADO", "PENDIENTE PUBLICACION"];
   const estadoDigestoOptions = [

@@ -19,7 +19,7 @@ nativo de shadcn/ui con `tooltip`).
 - **Qué:** el `SidebarTrigger` está actualmente en `chat.tsx` (header del chat).
   Moverlo dentro del `SidebarHeader` en `Index.tsx` (línea 15), como primer
   elemento antes del logo, o como ícono fijo en la parte inferior del sidebar.
-- **Estado:** [ ] pendiente
+- **Estado:** [x] completado — sidebar usa `collapsible="icon"`, logo movido al header del chat, trigger dentro del `SidebarHeader`
 
 ### A2. Mover `NewChatButton` al sidebar
 
@@ -28,7 +28,7 @@ nativo de shadcn/ui con `tooltip`).
   de chats). Reemplazar el `Button` exterior por `SidebarMenuButton` con prop
   `tooltip="Nuevo Chat"` para que cuando el sidebar esté colapsado muestre
   solo el ícono `+`.
-- **Estado:** [ ] pendiente
+- **Estado:** [x] completado — botón movido al `SidebarContent`, texto oculto en modo colapsado, ícono `+` centrado
 
 ### A3. Eliminar la barra de herramientas intermedia de `chat.tsx`
 
@@ -36,7 +36,7 @@ nativo de shadcn/ui con `tooltip`).
 - **Qué:** una vez movidos `NewChatButton` y `FilterButton`, eliminar el `div`
   de líneas 161-176 completo. También quitar el badge de "filtros activos" de
   ese bloque (se reubica en el ChatInput, paso B3).
-- **Estado:** [ ] pendiente — hacer después de A1 y A2
+- **Estado:** [x] completado — barra eliminada, `NewChatButton` quitado de `chat.tsx`, `FilterButton` pendiente de mover (paso B3/B4)
 
 ---
 

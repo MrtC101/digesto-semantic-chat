@@ -11,10 +11,8 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth_context";
 import { tags } from "@/components/predfined";
-import NewChatButton from "@/components/chat/chatCreateButton/chat_create_button";
 import { Download, ArrowLeft, Scale } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import FilterButton from "./filter/filter";
 
 const ChatInterface = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -59,11 +57,7 @@ const ChatInterface = () => {
   }
   
   const { username } = useAuth();
-  const { sessionId, filters } = useChatContext();
-  const activeFilters = Object.values(filters).filter((v) =>
-    Array.isArray(v) ? v.length > 0 : v !== undefined && v !== ""
-  );
-  const filterCounts = activeFilters.length;
+  const { sessionId } = useChatContext();
 
   const handleDownloadPDF = () => {
     const link = document.createElement("a");
@@ -147,31 +141,10 @@ const ChatInterface = () => {
 
       <Separator className="bg-gray-800" />
 
-      {/* Barra de herramientas - Acciones del chat */}
-      <div className="px-6 py-3 bg-gray-900/50 border-b border-gray-800">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <NewChatButton />
-            {filterCounts > 0 && (
-              <Badge variant="secondary" className="text-xs">
-                {filterCounts} filtro{filterCounts > 1 ? 's' : ''} activo{filterCounts > 1 ? 's' : ''}
-              </Badge>
-            )}
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <FilterButton />
-          </div>
-        </div>
-      </div>
-
       {/* Área de mensajes */}
-      <div className="flex flex-col items-center max-h-[93vh]">
-        <CardContent className="flex flex-col min-h-0 pt-2 max-w-[1000px]">
-          <ScrollArea
-            className="overflow-y-auto w-full"
-            style={{ height: "68vh" }}
-          >
+      <div className="flex flex-col flex-1 items-center min-h-0">
+        <CardContent className="flex flex-col flex-1 min-h-0 pt-2 pb-4 px-4 w-full max-w-[1000px]">
+          <ScrollArea className="flex-1 overflow-y-auto w-full">
             <div className="space-y-4 w-full">
               {messages.map((message, index) => (
                 <motion.div
@@ -192,7 +165,9 @@ const ChatInterface = () => {
               <div ref={messagesEndRef} className="h-1" />
             </div>
           </ScrollArea>
-          <ChatInput />
+          <div className="shrink-0">
+            <ChatInput />
+          </div>
         </CardContent>
       </div>
     </Card>

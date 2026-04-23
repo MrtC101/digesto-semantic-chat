@@ -2,6 +2,7 @@ import ChatInterface from "@/components/chat/chat";
 import { ChatProvider } from "@/contexts/chat_context";
 import SideBarItem from "@/components/chat/chatSidebar/sidebar_items";
 import { Sidebar, SidebarContent, SidebarHeader, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import NewChatButton from "@/components/chat/chatCreateButton/chat_create_button";
 
 const Index = () => {
   return (
@@ -14,10 +15,13 @@ const Index = () => {
                 <SidebarHeader className="border-b p-4 flex-shrink-0">
                   <div className="flex items-center justify-between group-data-[collapsible=icon]:justify-center">
                     <span className="font-semibold text-lg group-data-[collapsible=icon]:hidden">Chats</span>
-                    <SidebarTrigger className="h-9 w-9 flex-shrink-0 rounded-lg bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-gray-600 text-gray-300 hover:text-white transition-all duration-200" />
+                    <SidebarTrigger className="h-9 w-9 flex-shrink-0 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all duration-200" />
                   </div>
                 </SidebarHeader>
                 <SidebarContent className="flex-1 overflow-y-auto">
+                  <div className="px-2 py-1 border-b border-gray-800 flex group-data-[collapsible=icon]:justify-center">
+                    <NewChatButton />
+                  </div>
                   <SideBarItem />
                 </SidebarContent>
               </Sidebar>
