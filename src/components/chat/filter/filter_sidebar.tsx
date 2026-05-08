@@ -1,23 +1,10 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import type { SearchFilters } from "../types";
 import useChatContext from "@/hooks/use-chat-context-hook";
 
 export const FilterSidebar = () => {
-  const [newYear, setNewYear] = useState("");
-  const tipoDigestoOptions = [
-    "LEYES",
-    "ORDENANZAS",
-    "RESOLUCIONES",
-    "DECRETOS",
-    "CONVENIOS",
-    "MEMOS",
-  ];
   const estadoOptions = ["PUBLICADO", "PENDIENTE PUBLICACION"];
   const estadoDigestoOptions = [
     "NO VIGENTE",
@@ -55,262 +42,66 @@ export const FilterSidebar = () => {
     });
   };
 
-  const handleYearAdd = () => {
-    const year = parseInt(newYear);
-    if (year && year > 1900 && year <= new Date().getFullYear()) {
-      const currentYears = filters.ddganio || [];
-      if (!currentYears.includes(year)) {
-        updateFilters({
-          ...filters,
-          ddganio: [...currentYears, year].sort((a, b) => b - a),
-        });
-      }
-      setNewYear("");
-    }
-  };
-
-  const handleYearRemove = (year: number) => {
-    const currentYears = filters.ddganio || [];
-    const newYears = currentYears.filter((y) => y !== year);
-    updateFilters({
-      ...filters,
-      ddganio: newYears.length > 0 ? newYears : undefined,
-    });
-  };
-
-  const handleFechaDesdeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateFilters({
-      ...filters,
-      ddgfechasancion_desde: e.target.value || undefined,
-    });
-  };
-
-  const handleFechaHastaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateFilters({
-      ...filters,
-      ddgfechasancion_hasta: e.target.value || undefined,
-    });
-  };
-
-  const handleLimitChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    updateFilters({
-      ...filters,
-      limit: value ? parseInt(value) : undefined,
-    });
-  };
-
-  const clearAllFilters = () => {
-    updateFilters({});
-  };
-
-  const activeFiltersCount = Object.values(filters).filter((v) =>
-    Array.isArray(v) ? v.length > 0 : v !== undefined && v !== ""
-  ).length;
+  const toLabel = (str: string) =>
+    str.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
 
   return (
-    <div className="p-4 space-y-6">
-      <div className="flex items-center justify-between">
-        <span className="text-sm font-medium">
-          Filtros activos: {activeFiltersCount}
-        </span>
-        {activeFiltersCount > 0 && (
-          <Button variant="outline" size="sm" onClick={clearAllFilters}>
-            Limpiar todo
-          </Button>
-        )}
-      </div>
+    <div className="px-3 pt-2 pb-1 text-xs">
+      <Accordion type="multiple" className="w-full">
+        <AccordionItem value="estado">
+          <AccordionTrigger className="text-xs py-2">Estado de Publicación</AccordionTrigger>
+          <AccordionContent className="space-y-1 pb-3">
+            {estadoOptions.map((estado) => (
+              <label key={estado} className="flex items-center gap-2 py-0.5 cursor-pointer">
+                <Checkbox
+                  id={`estado-${estado}`}
+                  checked={filters.estado?.includes(estado) || false}
+                  onCheckedChange={(checked) =>
+                    handleCheckboxChange("estado", estado, checked as boolean)
+                  }
+                />
+                <span>{toLabel(estado)}</span>
+              </label>
+            ))}
+          </AccordionContent>
+        </AccordionItem>
 
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm">Tipo de Digesto</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          {tipoDigestoOptions.map((tipo) => (
-            <div key={tipo} className="flex items-center space-x-2">
-              <Checkbox
-                id={`tipo-${tipo}`}
-                checked={filters.tipo_digesto?.includes(tipo) || false}
-                onCheckedChange={(checked) =>
-                  handleCheckboxChange("tipo_digesto", tipo, checked as boolean)
-                }
-              />
-              <Label htmlFor={`tipo-${tipo}`} className="text-sm font-normal">
-                {tipo}
-              </Label>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
+        <AccordionItem value="estado-digesto">
+          <AccordionTrigger className="text-xs py-2">Vigencia</AccordionTrigger>
+          <AccordionContent className="space-y-1 pb-3">
+            {estadoDigestoOptions.map((estado) => (
+              <label key={estado} className="flex items-center gap-2 py-0.5 cursor-pointer">
+                <Checkbox
+                  id={`estado-digesto-${estado}`}
+                  checked={filters.estado_digesto?.includes(estado) || false}
+                  onCheckedChange={(checked) =>
+                    handleCheckboxChange("estado_digesto", estado, checked as boolean)
+                  }
+                />
+                <span>{toLabel(estado)}</span>
+              </label>
+            ))}
+          </AccordionContent>
+        </AccordionItem>
 
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm">Años</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="flex gap-2">
-            <Input
-              type="number"
-              placeholder="Año"
-              value={newYear}
-              onChange={(e) => setNewYear(e.target.value)}
-              min="1900"
-              max={new Date().getFullYear()}
-            />
-            <Button size="sm" onClick={handleYearAdd} disabled={!newYear}>
-              +
-            </Button>
-          </div>
-          {filters.ddganio && filters.ddganio.length > 0 && (
-            <div className="flex flex-wrap gap-1">
-              {filters.ddganio.map((year) => (
-                <Badge key={year} variant="secondary" className="text-xs">
-                  {year}
-                  <button
-                    onClick={() => handleYearRemove(year)}
-                    className="ml-1 hover:text-destructive"
-                  >
-                    ×
-                  </button>
-                </Badge>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm">Fechas de Sanción</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div>
-            <Label htmlFor="fecha-desde" className="text-xs">
-              Desde
-            </Label>
-            <Input
-              id="fecha-desde"
-              type="date"
-              value={filters.ddgfechasancion_desde || ""}
-              onChange={handleFechaDesdeChange}
-            />
-          </div>
-          <div>
-            <Label htmlFor="fecha-hasta" className="text-xs">
-              Hasta
-            </Label>
-            <Input
-              id="fecha-hasta"
-              type="date"
-              value={filters.ddgfechasancion_hasta || ""}
-              onChange={handleFechaHastaChange}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm">Estado</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          {estadoOptions.map((estado) => (
-            <div key={estado} className="flex items-center space-x-2">
-              <Checkbox
-                id={`estado-${estado}`}
-                checked={filters.estado?.includes(estado) || false}
-                onCheckedChange={(checked) =>
-                  handleCheckboxChange("estado", estado, checked as boolean)
-                }
-              />
-              <Label
-                htmlFor={`estado-${estado}`}
-                className="text-sm font-normal"
-              >
-                {estado}
-              </Label>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm">Estado del Digesto</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          {estadoDigestoOptions.map((estado) => (
-            <div key={estado} className="flex items-center space-x-2">
-              <Checkbox
-                id={`estado-digesto-${estado}`}
-                checked={filters.estado_digesto?.includes(estado) || false}
-                onCheckedChange={(checked) =>
-                  handleCheckboxChange(
-                    "estado_digesto",
-                    estado,
-                    checked as boolean
-                  )
-                }
-              />
-              <Label
-                htmlFor={`estado-digesto-${estado}`}
-                className="text-sm font-normal"
-              >
-                {estado}
-              </Label>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm">Tipo de Publicación</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          {tipoPublicacionOptions.map((tipo) => (
-            <div key={tipo} className="flex items-center space-x-2">
-              <Checkbox
-                id={`tipo-pub-${tipo}`}
-                checked={filters.tipo_publicacion?.includes(tipo) || false}
-                onCheckedChange={(checked) =>
-                  handleCheckboxChange(
-                    "tipo_publicacion",
-                    tipo,
-                    checked as boolean
-                  )
-                }
-              />
-              <Label
-                htmlFor={`tipo-pub-${tipo}`}
-                className="text-sm font-normal"
-              >
-                {tipo}
-              </Label>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm">Límite de Resultados</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Input
-            id="FiltroLimite"
-            type="number"
-            placeholder="50"
-            min="1"
-            max="100"
-            value={filters.limit || ""}
-            onChange={handleLimitChange}
-          />
-          <p className="text-xs text-muted-foreground mt-1">
-            Máximo 100 resultados
-          </p>
-        </CardContent>
-      </Card>
+        <AccordionItem value="tipo-publicacion">
+          <AccordionTrigger className="text-xs py-2">Tipo de Publicación</AccordionTrigger>
+          <AccordionContent className="space-y-1 pb-3">
+            {tipoPublicacionOptions.map((tipo) => (
+              <label key={tipo} className="flex items-center gap-2 py-0.5 cursor-pointer">
+                <Checkbox
+                  id={`tipo-pub-${tipo}`}
+                  checked={filters.tipo_publicacion?.includes(tipo) || false}
+                  onCheckedChange={(checked) =>
+                    handleCheckboxChange("tipo_publicacion", tipo, checked as boolean)
+                  }
+                />
+                <span>{toLabel(tipo)}</span>
+              </label>
+            ))}
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </div>
   );
 };

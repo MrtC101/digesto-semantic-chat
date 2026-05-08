@@ -1,7 +1,8 @@
 import DOMPurify from "dompurify";
-import { Bot, User } from "lucide-react";
+import { Bot, Copy, Check } from "lucide-react";
 import { marked } from "marked";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/contexts/auth_context";
 import type { ChatMessage as ChatMessageType } from "./types";
 
 function NormitaPicture() {
@@ -58,7 +59,15 @@ interface ChatMessageProps {
 }
 
 export function ChatMessage({ message }: ChatMessageProps) {
+  const { username } = useAuth();
   const [html, setHtml] = useState<string>("");
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(message.message);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     (async () => {
@@ -89,8 +98,8 @@ export function ChatMessage({ message }: ChatMessageProps) {
       >
         {/* Message icon */}
         {message.type === "user" ? (
-          <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-gray-600 text-white">
-            <User className="h-4 w-4" />
+          <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-br from-[#636aaf] to-[#9e1663] text-xs font-bold text-white">
+            {username.toUpperCase().slice(0, 2)}
           </div>
         ) : (
           <NormitaPicture />
@@ -106,14 +115,14 @@ export function ChatMessage({ message }: ChatMessageProps) {
           {/* Header con botón copiar */}
           <div className="flex items-center justify-between px-3 pt-2 pb-1 border-b border-gray-500">
             <span className="font-semibold text-white text-sm">
-              {`${message.type === "user" ? "Usuario" : "Normita"}`}
+              {message.type === "user" ? username.slice(0, 2).toUpperCase() + username.slice(2).toLowerCase() : "Normita"}
             </span>
             <button
-              className="text-xs px-2 py-1 bg-gray-500 hover:bg-gray-400 rounded text-white transition"
-              onClick={() => navigator.clipboard.writeText(message.message)}
+              className="p-1 rounded hover:bg-gray-500 text-gray-300 hover:text-white transition"
+              onClick={handleCopy}
               title="Copiar texto"
             >
-              Copiar
+              {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
             </button>
           </div>
           {/* Contenido del mensaje con scroll horizontal */}
