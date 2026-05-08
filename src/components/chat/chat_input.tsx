@@ -117,8 +117,9 @@ function ChatInput() {
   return (
     <>
       <p className="text-xs text-muted-foreground mt-2 mb-2 text-center">
-        Presiona Enter para enviar • Normita puede cometer errores, por favor
-        verifica las respuestas.
+        La información proporcionada por Normita no siempre es exacta o actualizada.
+        <br />
+        Se recomienda corroborar la información en fuentes oficiales.
       </p>
       <Textarea
         ref={inputRef}
@@ -320,14 +321,17 @@ function ChatInput() {
           })()}
         </div>
 
-        <Button
-          onClick={handleSendMessage}
-          disabled={!inputText.trim() || isLoading}
-          size="sm"
-          className="aspect-square px-0"
-        >
-          <Send className="h-4 w-4" />
-        </Button>
+        <div className="flex items-center gap-2">
+          <span className="hidden md:inline text-xs text-muted-foreground">Presiona Enter para enviar</span>
+          <Button
+            onClick={handleSendMessage}
+            disabled={!inputText.trim() || isLoading}
+            size="sm"
+            className="aspect-square px-0"
+          >
+            <Send className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
     </>
   );
