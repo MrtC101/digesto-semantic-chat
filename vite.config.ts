@@ -32,14 +32,10 @@ export default defineConfig(({ mode }) => {
     build: {
       rollupOptions: {
         output: {
-          manualChunks: {
-            motion: ["framer-motion"],
-            radix: [
-              "@radix-ui/react-dialog",
-              "@radix-ui/react-dropdown-menu",
-              "@radix-ui/react-toast",
-            ],
-            lucide: ["lucide-react"],
+          manualChunks: (id) => {
+            if (id.includes("framer-motion")) return "motion";
+            if (id.includes("@radix-ui")) return "radix";
+            if (id.includes("lucide-react")) return "lucide";
           },
         },
       },
