@@ -19,7 +19,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <AuthProvider>
-              <BrowserRouter>
+              <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
                 <Routes>
                   <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
                   <Route path="/login" element={<Login />} />

@@ -37,7 +37,7 @@ function ChatHeader() {
           text-xs font-bold">
             {username.toUpperCase().slice(0, 2)}
           </span>
-          <span className="font-semibold">{username.toUpperCase()}</span>
+          <span className="font-semibold">{username.slice(0, 2).toUpperCase() + username.slice(2).toLowerCase()}</span>
         </Badge>
         <span className="hidden sm:inline">
           ¡Chateá con <span className="font-bold text-primary">Normita</span>!

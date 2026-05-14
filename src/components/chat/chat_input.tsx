@@ -117,9 +117,7 @@ function ChatInput() {
   return (
     <>
       <p className="text-xs text-muted-foreground mt-2 mb-2 text-center">
-        La información proporcionada por Normita no siempre es exacta o actualizada.
-        <br />
-        Se recomienda corroborar la información en fuentes oficiales.
+        Puedo cometer errores, por favor verifica las respuestas en los enlaces que proporciono o en Dpto Despacho
       </p>
       <Textarea
         ref={inputRef}

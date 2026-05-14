@@ -16,8 +16,8 @@ import { Badge } from "@/components/ui/badge";
 
 const ChatInterface = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const { logout } = useAuth();
-  const { messages, isLoading, allChats, createNewChat, switchToChat } = useChatContext()
+  const { logout, username } = useAuth();
+  const { messages, isLoading, allChats, createNewChat, switchToChat, sessionId } = useChatContext()
 
   useEffect(() => {
     /* Create default chat */
@@ -56,9 +56,6 @@ const ChatInterface = () => {
     );
   }
   
-  const { username } = useAuth();
-  const { sessionId } = useChatContext();
-
   const handleDownloadPDF = () => {
     const link = document.createElement("a");
     link.href = `/Instructivo_de_Uso_Normita.pdf`;
@@ -117,7 +114,7 @@ const ChatInterface = () => {
               ">
                 {username.toUpperCase().slice(0, 2)}
               </div>
-              <span className="font-medium">{username}</span>
+              <span className="font-medium">{username.slice(0, 2).toUpperCase() + username.slice(2).toLowerCase()}</span>
             </Badge>
 
             <Button
