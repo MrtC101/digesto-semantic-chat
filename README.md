@@ -59,25 +59,27 @@ Desde PowerShell o cualquier terminal con el [GitHub CLI](https://cli.github.com
 
 ```bash
 gh workflow run deploy.yml \
+  --ref <rama> \
   -f target=<homo|prod> \
   -f version=<NOMBRE_VERSION>
 ```
 
 Parámetros:
 
+- `--ref`: rama desde la que se ejecuta el workflow (ej: `develop`, `master`). Sin este flag usa la rama por defecto del repositorio (`master`).
 - `target`: servidor destino (`homo` o `prod`)
 - `version`: nombre de la carpeta que se creará en el servidor remoto, a modo de tag o versión (ej: `HOMO`, `1.2.0`, `v2-rc1`)
 
-Ejemplo — desplegar a homologación:
+Ejemplo — desplegar a homologación desde `develop`:
 
 ```bash
-gh workflow run deploy.yml -f target=homo -f version=HOMO
+gh workflow run deploy.yml --ref develop -f target=homo -f version=HOMO
 ```
 
-Ejemplo — desplegar a producción:
+Ejemplo — desplegar a producción desde `master`:
 
 ```bash
-gh workflow run deploy.yml -f target=prod -f version=1.3.0
+gh workflow run deploy.yml --ref master -f target=prod -f version=1.3.0
 ```
 
 El workflow construye el bundle (`npm run build-homo` / `npm run build-prod`), lo empaqueta y lo sube al servidor bajo `/home/hgarrido/DigestoSemanticSearch/frontend/<version>`, actualizando el symlink `current` de forma atómica.
