@@ -138,7 +138,7 @@ function ChatInput() {
             <PopoverTrigger asChild>
               <Button variant="ghost" size="sm" className="gap-1 text-xs">
                 <FileText className="h-3 w-3" />
-                <span className="hidden sm:inline">Tipo</span>
+                <span className="hidden sm:inline">Tipo de Normativa</span>
                 {!!filters.tipo_digesto?.length && (
                   <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px]">
                     {filters.tipo_digesto.length}

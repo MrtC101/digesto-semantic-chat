@@ -136,6 +136,11 @@ export function ChatMessage({ message }: ChatMessageProps) {
             [&_a]:underline
             [&_hr]:my-4
             hover:[&_a]:text-sky-500
+            [&_ul]:list-disc
+            [&_ul]:pl-5
+            [&_ol]:list-decimal
+            [&_ol]:pl-5
+            [&_li]:mb-1
             [&_pre]:bg-gray-800 
             [&_pre]:text-white 
             [&_pre]:p-2 

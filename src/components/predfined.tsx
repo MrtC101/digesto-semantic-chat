@@ -1,15 +1,13 @@
 import { Tag } from "./chat/types";
 
-export const welcome_msg = `👋 **¡Hola!**
+export const welcome_msg = `¡Hola! Soy Normita, tu asistente virtual. Con una instrucción clara y breve contexto, puedo:
 
-Soy tu asistente virtual Normita y si me das una orden clara y un contexto breve, puedo ayudarte a:
-ㅤ
-- 📘 **Buscar información** sobre Leyes, Ordenanzas,  Decretos, Resoluciones y Convenios.
-- 📄 **Redactar un borrador** de Ordenanza o Decreto a partir de la información que me brindes.
+- **Buscar** Leyes, Ordenanzas, Decretos, Resoluciones, Convenios y Memos.
+- **Redactar** borradores de Ordenanzas o Decretos basados en tu información.
 
-ㅤ
-> 🗣️ ¿En qué puedo ayudarte hoy?
-  `;
+Consultá el instructivo (arriba a la derecha) para conocer mis alcances.
+
+¿En qué te ayudo hoy?`;
 
 export const tags: Tag[] = [
     {
