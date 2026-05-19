@@ -58,8 +58,8 @@ const ChatInterface = () => {
   
   const handleDownloadPDF = () => {
     const link = document.createElement("a");
-    link.href = `/Instructivo_de_Uso_Normita.pdf`;
-    link.download = "Instructivo_de_Uso_Normita.pdf";
+    link.href = `/Instructivo de uso Normita V3.pdf`;
+    link.download = "Instructivo de uso Normita V3.pdf";
     link.click();
   };
 
