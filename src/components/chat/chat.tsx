@@ -10,13 +10,12 @@ import { ChatMessage, LoadingDisplay } from "@/components/chat/chat_message";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth_context";
-import { tags } from "@/components/predfined";
 import { Download, ArrowLeft, Scale } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 const ChatInterface = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const { logout, username } = useAuth();
+  const { logout, username, tags } = useAuth();
   const { messages, isLoading, allChats, createNewChat, switchToChat, sessionId } = useChatContext()
 
   useEffect(() => {

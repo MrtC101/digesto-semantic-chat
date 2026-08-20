@@ -7,8 +7,6 @@ import { PlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CreateDropdown from "@/components/chat/chatCreateButton/create_dropdown";
 import useChatContext from "@/hooks/use-chat-context-hook";
-import { tags } from "../../predfined";
-import { useEffect } from "react";
 
 function NewChatButton() {
   const { isLoading } = useChatContext()

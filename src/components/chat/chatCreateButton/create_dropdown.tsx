@@ -2,7 +2,7 @@ import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import type { Tag } from "../types";
 import useChatContext from "@/hooks/use-chat-context-hook";
-import { tags } from "../../predfined";
+import { useAuth } from "@/contexts/auth_context";
 
 function CreateDropdown() {
   const {
@@ -11,6 +11,7 @@ function CreateDropdown() {
     switchToChat,
     createNewChat,
   } = useChatContext();
+  const { tags } = useAuth();
 
   function handleCreateChat(tag: Tag) {
     const newSessionId = createNewChat(tag);
@@ -20,7 +21,7 @@ function CreateDropdown() {
   return (
     <>
       {tags.map((tag: Tag) => (
-        <DropdownMenuItem key={tag.name} asChild>
+        <DropdownMenuItem key={tag.clave} asChild>
           <Button
             variant="ghost"
             className="w-full justify-start"

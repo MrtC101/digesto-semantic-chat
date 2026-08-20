@@ -1,12 +1,17 @@
+import { Modo } from "@/components/chat/types";
 
-interface User {
-    token: string;
-    username: string;
+// Respuesta de /login/status y /login/validate_token
+export interface AuthStatus {
+    status?: string;
+    logged_in?: boolean;
+    usuario: string;
+    modos?: Modo[];
+    roles?: unknown[];
 }
 
 export const authService = {
   // Verifica si el usuario está autenticado consultando al backend
-  async checkAuth(): Promise<any> {
+  async checkAuth(): Promise<AuthStatus> {
     try {
       const response = await fetch('/api/login/status', {
         method: 'GET',
@@ -19,11 +24,11 @@ export const authService = {
       return data;
     } catch (error) {
       console.error('Error verificando autenticación:', error);
-      return false;
+      throw error;
     }
   },
 
-  async validateToken(token: string): Promise<string> {
+  async validateToken(token: string): Promise<AuthStatus> {
     const response = await fetch('/api/login/validate_token', {
       method: 'POST',
       credentials: 'include',
@@ -36,12 +41,11 @@ export const authService = {
     }
 
     const data = await response.json();
-    console.log(data)
     if (!data?.usuario) {
       throw new Error('Invalid auth response');
     }
-    
-    return data.usuario;
+
+    return data;
   },
 
   async logout(): Promise<void> {

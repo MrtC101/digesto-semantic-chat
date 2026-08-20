@@ -61,11 +61,13 @@ function ChatInput() {
     if (!isInit) {
       /*Initialize new chat*/
       addMessage("assistant", welcome_msg);
-      if (tag.letter !== "N") {
-        addMessage("user", tag.letter);
+      /* Los modos con clave arrancan enviándola como primer mensaje;
+         el modo normativo tiene clave vacía y no envía nada. */
+      if (tag.clave) {
+        addMessage("user", tag.clave);
         setIsLoading(true);
         const set_mode = async () => {
-          const [msg, topic] = await chatService(sessionId, tag.letter, filters);
+          const [msg, topic] = await chatService(sessionId, tag.clave, filters);
           addMessage("assistant", msg);
           setTopic(topic);
           setIsLoading(false);
@@ -74,7 +76,7 @@ function ChatInput() {
       }
       setIsInit(true);
     }
-  }, [addMessage, filters, isInit, sessionId, setIsInit, setTopic, setIsLoading, tag.letter]);
+  }, [addMessage, filters, isInit, sessionId, setIsInit, setTopic, setIsLoading, tag.clave]);
 
   const handleSendMessage = () => {
     setIsLoading(true)

@@ -1,4 +1,11 @@
+// Modo tal como lo devuelve el backend en /login/status y /login/validate_token
+export interface Modo {
+  clave: string;
+  nombre: string;
+}
+
 export interface Tag {
+  clave: string;
   name: string;
   letter: string;
 }
