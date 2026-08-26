@@ -1,0 +1,97 @@
+name: Build & Deploy Frontend
+
+on:
+  workflow_dispatch: 
+    inputs:
+      target:
+        description: 'Deploy target'
+        required: true
+        default: 'homo'
+        type: choice
+        options:
+          - homo
+          - prod
+      version:
+        description: "Tag or Version Name"
+        required: true
+        type: string
+
+env:
+  APP_NAME: frontend
+  DEPLOY_DIR: /home/hgarrido/DigestoSemanticSearch/frontend
+
+jobs:
+  build-deploy:
+    runs-on: self-hosted
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build application
+        run: npm run build-${{github.event.inputs.target}}
+
+      - name: Create tarball
+        run: |
+          cd dist
+          tar -czf ../dist.tar.gz .
+          cd ..
+
+      - name: Set deploy target
+        run: |
+          if [ "${{ github.event.inputs.target }}" = "homo" ]; then
+            echo "TARGET_HOST=${{ secrets.HOMO_HOST }}" >> $GITHUB_ENV
+          else
+            echo "TARGET_HOST=${{ secrets.PROD_HOST }}" >> $GITHUB_ENV
+          fi
+
+      - name: Upload tarball
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ env.TARGET_HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          source: "dist.tar.gz"
+          target: "~/"
+
+      - name: Extract and cleanup
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ env.TARGET_HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+            RELEASE=${{ github.event.inputs.version }}
+            DEPLOY_DIR=${{ env.DEPLOY_DIR }}
+            TMP_RELEASE="${RELEASE}.tmp"
+            mv ~/dist.tar.gz "$DEPLOY_DIR/"
+            cd "$DEPLOY_DIR"
+            # Limpieza defensiva
+            rm -rf "$TMP_RELEASE"
+            # Preparar staging
+            mkdir "$TMP_RELEASE"
+            tar -xzf dist.tar.gz -C "$TMP_RELEASE"
+            # (opcional pero recomendado)
+            # validar estructura mínima
+            test -f "$TMP_RELEASE/index.html"
+            # Reemplazo atómico
+            rm -rf "$RELEASE"
+            mv "$TMP_RELEASE" "$RELEASE"
+            # Symlink atómico
+            ln -sfn "$RELEASE" current
+            rm -f dist.tar.gz
+            echo "Deployed version: $RELEASE"
+            ls -lah

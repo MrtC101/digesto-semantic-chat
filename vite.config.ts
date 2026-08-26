@@ -1,5 +1,5 @@
 import { defineConfig, loadEnv } from "vite";
-import react from "@vitejs/plugin-react-swc";
+import react from "@vitejs/plugin-react";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 
@@ -10,14 +10,14 @@ export default defineConfig(({ mode }) => {
   return {
     server: {
       host: "::",
-      port: 8080,
+      port: 8082,
       proxy: {
         "/api": {
           target: env.API_URL,
           changeOrigin: true,
           secure: false,
           rewrite: (path) =>
-            path.replace(/^\/api/, "/normita/api/v1/chat/from_contenidos"),
+            path.replace(/^\/api/, "/normita/api/v1"),
         },
       },
     },
@@ -32,14 +32,10 @@ export default defineConfig(({ mode }) => {
     build: {
       rollupOptions: {
         output: {
-          manualChunks: {
-            motion: ["framer-motion"],
-            radix: [
-              "@radix-ui/react-dialog",
-              "@radix-ui/react-dropdown-menu",
-              "@radix-ui/react-toast",
-            ],
-            lucide: ["lucide-react"],
+          manualChunks: (id) => {
+            if (id.includes("framer-motion")) return "motion";
+            if (id.includes("@radix-ui")) return "radix";
+            if (id.includes("lucide-react")) return "lucide";
           },
         },
       },

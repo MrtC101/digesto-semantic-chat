@@ -1,23 +1,44 @@
-import { Tag } from "./Chat/types";
+import { Modo, Tag } from "./chat/types";
 
-export const welcome_msg = `👋 **¡Hola!**
+export const welcome_msg = `¡Hola! Soy Normita, tu asistente virtual. Con una instrucción clara y breve contexto, puedo:
 
-Soy tu asistente virtual Normita y si me das una orden clara y un contexto breve, puedo ayudarte a:
-ㅤ
-- 📘 **Buscar información** sobre Leyes, Ordenanzas,  Decretos, Resoluciones y Convenios.
-- 📄 **Redactar un borrador** de Ordenanza o Decreto a partir de la información que me brindes.
+- **Buscar** Leyes, Ordenanzas, Decretos, Resoluciones, Convenios, Memos y Procedimientos.
+- **Redactar** borradores de Ordenanzas o Decretos basados en tu información.
 
-ㅤ
-> 🗣️ ¿En qué puedo ayudarte hoy?
-  `;
+Consultá el instructivo (arriba a la derecha) para conocer mis alcances.
 
-export const tags: Tag[] = [
-    {
+¿En qué te ayudo hoy?`;
+
+/**
+ * Configuración visual de cada modo. La clave es la que devuelve el backend
+ * en `modos`; permite renombrar el modo o cambiar su inicial sin tocar el modo
+ * en sí. Un modo que no figure acá se muestra con su `nombre` del backend y la
+ * primera letra como inicial.
+ */
+export const tag_styles: Record<string, Partial<Omit<Tag, "clave">>> = {
+    "": {
         name: "Normativo",
         letter: "N",
     },
-    // {
-    //     name: "Reclamos",
-    //     letter: "R",
-    // },
-];
+    redmine: {
+        name: "Redmine",
+        letter: "R",
+    },
+};
+
+/** Modos asumidos cuando el backend no informa ninguno. */
+export const default_modos: Modo[] = [{ clave: "", nombre: "Normativo" }];
+
+/** Construye los tags visibles a partir de los modos habilitados del usuario. */
+export function buildTags(modos?: Modo[]): Tag[] {
+    const source = modos?.length ? modos : default_modos;
+    return source.map(({ clave, nombre }) => {
+        const style = tag_styles[clave] ?? {};
+        const name = style.name ?? nombre;
+        return {
+            clave,
+            name,
+            letter: style.letter ?? name.charAt(0).toUpperCase(),
+        };
+    });
+}

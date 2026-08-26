@@ -19,6 +19,7 @@ export default {
     },
     extend: {
       colors: {
+        chat: "var(--chat-card)",
         card: {
           DEFAULT: "var(--card)",
           foreground: "var(--card-foreground)",
